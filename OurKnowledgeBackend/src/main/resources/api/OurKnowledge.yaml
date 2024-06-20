@@ -1,0 +1,276 @@
+openapi: 3.0.3
+info:
+  title: OurKnowledge
+  description: Web application for the search of qualified developers for a development project
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+
+  /technology/list:
+    get:
+      summary: list all relevant technologies
+      operationId: listRelevantTechnologies
+      tags:
+        - technology
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listRelevantTechnologiesResponse'
+
+  /technology/add:
+    post:
+      summary: add technology
+      operationId: addTechnology
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/addTechnologyRequest'
+
+        required: true
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found - Technology not found
+        '409':
+          description: Conflict - Duplicate instance exception
+
+  /technology/delete:
+    post:
+      summary: delete technology from relevant
+      operationId: deleteTechnology
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/deleteTechnologyRequest'
+
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /user/login:
+    post:
+      summary: login User
+
+      operationId: login
+      tags:
+        - user
+      requestBody:
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/loginRequest'
+
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginResponse'
+
+
+  /user:
+    get:
+      summary: showProfileDetails
+      operationId: showProfile
+      tags:
+        - user
+      requestBody:
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/profileRequest'
+
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profileResponse'
+
+  /knowledge/add:
+    post:
+      summary: add knowledge
+      operationId: addKnowledge
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addKnowledgeRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /knowledge/delete:
+    post:
+      summary: delete knowledge
+      operationId: deleteKnowledge
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/deleteKnowledgeRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /knowledge/update:
+    post:
+      summary: update mainSkill or likeIt
+      operationId: updateKnowledge
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateKnowledgeRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+
+    loginRequest:
+      type: object
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
+
+    loginResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        role:
+          type: integer
+
+    technologiesList:
+      type: object
+      properties:
+        parentTechnology:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            parentId:
+              type: integer
+            relevant:
+              type: boolean
+        childTechnologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/technologiesList'
+
+    listRelevantTechnologiesResponse:
+      $ref: '#/components/schemas/technologiesList'
+
+    addTechnologyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        parent:
+          type: integer
+        userId:
+          type: integer
+
+    deleteTechnologyRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        technologyId:
+          type: integer
+        deleteChildren:
+          type: boolean
+
+    profileRequest:
+      type: object
+      properties:
+        profileId:
+          type: integer
+        userId:
+          type: integer
+          description: Id from the user who send the petition
+
+    profileResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        startDate:
+          type: string
+        #projects:
+        #  type: array
+        #  properties:
+        #    project:
+        #      type: object
+        #      properties:
+        #        id:
+        #          type: integer
+        #        name:
+        #          type: string
+        KnownTechnologies:
+          $ref: '#/components/schemas/technologiesList'
+
+    addKnowledgeRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        technologyId:
+          type: integer
+
+    deleteKnowledgeRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        knowledgeId:
+          type: integer
+
+    updateKnowledgeRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        knowledgeId:
+          type: integer
+        mainSkill:
+          type: boolean
+        likeIt:
+          type: boolean
