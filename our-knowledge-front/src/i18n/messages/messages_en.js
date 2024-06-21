@@ -2,6 +2,8 @@ export default {
 
     'project.app.Footer.text': 'Our Knowledge - Final grade work',
     'project.app.Header.home': 'Home',
+    'project.app.Header.technologies': 'Technologies',
+    'project.app.Header.profile': 'My Profile',
     'project.app.Header.logout': 'Logout',
     'project.app.Home.welcome': 'Welcome to Our Knowledge',
 
@@ -26,6 +28,8 @@ export default {
     'project.global.validator.required': 'Required field',
 
     'project.users.Login.title': 'Login',
-    'project.users.SignUp.fields.confirmPassword': 'Confirm password'
+    'project.users.SignUp.fields.confirmPassword': 'Confirm password',
+
+    'project.technologies.List.title': 'Relevant Technologies'
 
 }

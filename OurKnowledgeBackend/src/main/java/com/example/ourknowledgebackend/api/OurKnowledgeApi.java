@@ -9,6 +9,7 @@ import com.example.ourknowledgebackend.service.impl.TechnologyServiceImpl;
 import com.example.ourknowledgebackend.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
