@@ -3,7 +3,9 @@ package com.example.ourknowledgebackend.api;
 import com.example.ourKnowledge.api.TechnologyApi;
 import com.example.ourKnowledge.api.UserApi;
 import com.example.ourKnowledge.api.model.*;
+import com.example.ourknowledgebackend.api.mappers.ApiTechnologyMapper;
 import com.example.ourknowledgebackend.exceptions.*;
+import com.example.ourknowledgebackend.model.entities.Technology;
 import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.impl.TechnologyServiceImpl;
 import com.example.ourknowledgebackend.service.impl.UserServiceImpl;
@@ -34,15 +36,15 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
 
     @Override
     public ResponseEntity addTechnology(AddTechnologyRequestDTO addTechnologyRequestDTO) {
-        Long parentId = addTechnologyRequestDTO.getParent() != null ? addTechnologyRequestDTO.getParent().longValue() : null;
+        Long parentId = addTechnologyRequestDTO.getParentId() != null ? addTechnologyRequestDTO.getParentId().longValue() : null;
         try {
-            technologyServiceImpl.addTechnology(addTechnologyRequestDTO.getName(), parentId, addTechnologyRequestDTO.getUserId().longValue());
+            return ResponseEntity.status(200).body(ApiTechnologyMapper.INSTANCE.mapAddResponse(
+                    technologyServiceImpl.addTechnology(addTechnologyRequestDTO.getName(), parentId, addTechnologyRequestDTO.getUserId().longValue())));
         } catch (InstanceNotFoundException e) {
             return ResponseEntity.status(404).body(e);
         } catch (DuplicateInstanceException e) {
             return ResponseEntity.status(409).body(e);
         }
-        return ResponseEntity.status(200).body("Technology Added");
     }
 
     @Override

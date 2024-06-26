@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +44,7 @@ class TechnologyServiceTest {
         Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
 
-        TechnologiesTreeList result = technologyService.listRelevantTechnologies();
+        List<TechnologiesTreeList> result = technologyService.listRelevantTechnologies();
 
         // no se puede porque los array vacíos tienen distinto hash
         /*
@@ -62,11 +63,10 @@ class TechnologyServiceTest {
         assertEquals(expected, result);
          */
 
-        assertNull(result.getParentTechnology());
-        assertEquals(result.getChildTechnologies().get(0).getParentTechnology(), technology1);
-        assertEquals(result.getChildTechnologies().get(1).getParentTechnology(), technology2);
-        assertEquals(result.getChildTechnologies().get(0).getChildTechnologies().get(0).getParentTechnology(), technology3);
-        assertEquals(result.getChildTechnologies().get(0).getChildTechnologies().get(1).getParentTechnology(), technology4);
+        assertEquals(result.get(0).getParentTechnology(), technology1);
+        assertEquals(result.get(1).getParentTechnology(), technology2);
+        assertEquals(result.get(0).getChildTechnologies().get(0).getParentTechnology(), technology3);
+        assertEquals(result.get(0).getChildTechnologies().get(1).getParentTechnology(), technology4);
     }
 
     @Test
@@ -78,15 +78,14 @@ class TechnologyServiceTest {
         technologyDao.save(new Technology("Java", null, false));
         technologyDao.save(new Technology("SpringBoot", technology3.getId(), false));
 
-        TechnologiesTreeList result = technologyService.listRelevantTechnologies();
+        List<TechnologiesTreeList> result = technologyService.listRelevantTechnologies();
 
-        assertNull(result.getParentTechnology());
-        assertEquals(result.getChildTechnologies().get(0).getParentTechnology(), technology1);
-        assertEquals(result.getChildTechnologies().get(1).getParentTechnology(), technology2);
-        assertEquals(result.getChildTechnologies().get(0).getChildTechnologies().get(0).getParentTechnology(), technology3);
-        assertEquals(result.getChildTechnologies().get(0).getChildTechnologies().get(1).getParentTechnology(), technology4);
-        assertEquals(result.getChildTechnologies().size(), 2);
-        assertEquals(result.getChildTechnologies().get(0).getChildTechnologies().size(), 2);
+        assertEquals(result.get(0).getParentTechnology(), technology1);
+        assertEquals(result.get(1).getParentTechnology(), technology2);
+        assertEquals(result.get(0).getChildTechnologies().get(0).getParentTechnology(), technology3);
+        assertEquals(result.get(0).getChildTechnologies().get(1).getParentTechnology(), technology4);
+        assertEquals(result.size(), 2);
+        assertEquals(result.get(0).getChildTechnologies().size(), 2);
     }
 
     @Test
@@ -98,10 +97,9 @@ class TechnologyServiceTest {
         technologyDao.save(new Technology("Java", null, false));
         technologyDao.save(new Technology("SpringBoot", technology3.getId(), false));
 
-        TechnologiesTreeList result = technologyService.listRelevantTechnologies();
+        List<TechnologiesTreeList> result = technologyService.listRelevantTechnologies();
 
-        assertNull(result.getParentTechnology());
-        assertEquals(result.getChildTechnologies().size(), 0);
+        assertEquals(result.size(), 0);
     }
 
     @Test

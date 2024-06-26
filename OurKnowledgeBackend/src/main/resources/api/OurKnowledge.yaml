@@ -35,9 +35,14 @@ paths:
               $ref: '#/components/schemas/addTechnologyRequest'
 
         required: true
+
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addTechnologyResponse'
         '404':
           description: Not Found - Technology not found
         '409':
@@ -60,6 +65,11 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+
+              schema:
+                $ref: '#/components/schemas/deleteTechnologyResponse'
 
   /user/login:
     post:
@@ -171,10 +181,12 @@ components:
       properties:
         id:
           type: integer
+        userName:
+          type: string
         role:
           type: integer
 
-    technologiesList:
+    technologyTree:
       type: object
       properties:
         parentTechnology:
@@ -191,20 +203,34 @@ components:
         childTechnologies:
           type: array
           items:
-            $ref: '#/components/schemas/technologiesList'
+            $ref: '#/components/schemas/technologyTree'
 
     listRelevantTechnologiesResponse:
-      $ref: '#/components/schemas/technologiesList'
+      type: array
+      items:
+        $ref: '#/components/schemas/technologyTree'
 
     addTechnologyRequest:
       type: object
       properties:
         name:
           type: string
-        parent:
+        parentId:
           type: integer
         userId:
           type: integer
+
+    addTechnologyResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        parentId:
+          type: integer
+        relevant:
+          type: boolean
 
     deleteTechnologyRequest:
       type: object
@@ -215,6 +241,14 @@ components:
           type: integer
         deleteChildren:
           type: boolean
+
+    deleteTechnologyResponse:
+      type: object
+      properties:
+        technologyId:
+          type: integer
+        technologyName:
+          type: integer
 
     profileRequest:
       type: object
@@ -245,7 +279,8 @@ components:
         #        name:
         #          type: string
         KnownTechnologies:
-          $ref: '#/components/schemas/technologiesList'
+
+          $ref: '#/components/schemas/technologyTree'
 
     addKnowledgeRequest:
       type: object

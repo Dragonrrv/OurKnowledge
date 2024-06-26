@@ -28,7 +28,7 @@ public class TechnologyServiceImpl implements TechnologyService {
     private final KnowledgeDao knowledgeDao;
 
     @Override
-    public TechnologiesTreeList listRelevantTechnologies() {
+    public List<TechnologiesTreeList> listRelevantTechnologies() {
         List<Technology> allTechnologies = technologyDao.findAllByRelevantTrue();
 
         Map<Long, List<Technology>> technologiesMap = allTechnologies.stream()
@@ -36,7 +36,7 @@ public class TechnologyServiceImpl implements TechnologyService {
 
         TechnologiesTreeList root = fillTechnologyTreeList(null, technologiesMap, 0L);
 
-        return root;
+        return root.getChildTechnologies();
     }
 
     private TechnologiesTreeList fillTechnologyTreeList(Technology parent, Map<Long, List<Technology>> technologiesMap, Long parentId) {

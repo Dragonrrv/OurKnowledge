@@ -3,15 +3,18 @@ import {combineReducers} from 'redux';
 import * as actionTypes from './actionTypes';
 
 const initialState = {
-    technologies: null
+    technologies: null,
 };
 
 const technologies = (state = initialState.technologies, action) => {
 
     switch (action.type) {
 
-        case actionTypes.LIST_COMPLETED:
-            return action.technologiesTree.technologies;
+        case actionTypes.TECHNOLOGIES_UPDATED:
+            return action.technologies;
+
+        case actionTypes.FIND_TECHNOLOGIES_COMPLETED:
+            return action.technologies;
 
         default:
             return state;

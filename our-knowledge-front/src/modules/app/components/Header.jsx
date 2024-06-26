@@ -7,7 +7,6 @@ import users from '../../users';
 const Header = () => {
 
     const userRole = useSelector(users.selectors.getUserRole);
-
     
     return (
 
@@ -17,7 +16,7 @@ const Header = () => {
                     if (userRole === "Admin") {
                         return (
                             <li className="nav-item">
-                                <Link className="nav-link" to="/technologies/list">
+                                <Link className="nav-link" to="/administration/technologies">
                                     <FormattedMessage id="project.app.Header.technologies"/>
                                 </Link>
                             </li>
