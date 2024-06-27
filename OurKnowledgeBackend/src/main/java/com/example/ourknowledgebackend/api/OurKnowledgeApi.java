@@ -38,8 +38,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
     public ResponseEntity addTechnology(AddTechnologyRequestDTO addTechnologyRequestDTO) {
         Long parentId = addTechnologyRequestDTO.getParentId() != null ? addTechnologyRequestDTO.getParentId().longValue() : null;
         try {
-            return ResponseEntity.status(200).body(ApiTechnologyMapper.INSTANCE.mapAddResponse(
-                    technologyServiceImpl.addTechnology(addTechnologyRequestDTO.getName(), parentId, addTechnologyRequestDTO.getUserId().longValue())));
+            return ResponseEntity.status(200).body(technologyServiceImpl.addTechnology(addTechnologyRequestDTO.getName(), parentId, addTechnologyRequestDTO.getUserId().longValue()));
         } catch (InstanceNotFoundException e) {
             return ResponseEntity.status(404).body(e);
         } catch (DuplicateInstanceException e) {
@@ -50,14 +49,13 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
     @Override
     public ResponseEntity deleteTechnology(DeleteTechnologyRequestDTO deleteTechnologyRequestDTO) {
         try {
-            technologyServiceImpl.deleteTechnology(deleteTechnologyRequestDTO.getUserId().longValue(),
-                    deleteTechnologyRequestDTO.getTechnologyId().longValue(), deleteTechnologyRequestDTO.getDeleteChildren());
+            return ResponseEntity.status(200).body(technologyServiceImpl.deleteTechnology(deleteTechnologyRequestDTO.getUserId().longValue(),
+                    deleteTechnologyRequestDTO.getTechnologyId().longValue(), deleteTechnologyRequestDTO.getDeleteChildren()));
         } catch (InstanceNotFoundException | HaveChildrenException | PermissionException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.status(200).body("Technology Deleted");
     }
 
     @Override

@@ -18,7 +18,7 @@ const TechnologyTreeList = ({ technologyTreeList, parentTechnologyId}) => {
         dispatch(actions.addTechnology(2, newTechnologyName, parentTechnologyId));
         setNewTechnologyName('');
     };
-
+    let pos
     return(
 
         <div>

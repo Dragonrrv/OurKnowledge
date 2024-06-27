@@ -26,8 +26,8 @@ const clearTechnologyTree = () => ({
 export const addTechnology = (userId, technologyName, parentId, onSuccess,
                                        onErrors) => dispatch =>
     backend.technologyService.addTechnology(userId,
-        technologyName, parentId, technology => {
-            dispatch(technologiesUpdated(technology));
+        technologyName, parentId, technologies => {
+            dispatch(technologiesUpdated(technologies));
             onSuccess();
         },
         onErrors);
@@ -35,8 +35,8 @@ export const addTechnology = (userId, technologyName, parentId, onSuccess,
 export const removeTechnology = (userId, technologyId, deleteChildren, onSuccess,
                                        onErrors) => dispatch =>
     backend.technologyService.deleteTechnology(userId,
-        technologyId, deleteChildren, technology => {
-            dispatch(technologiesUpdated(technology));
+        technologyId, deleteChildren, technologies => {
+            dispatch(technologiesUpdated(technologies));
             onSuccess();
         },
         onErrors);

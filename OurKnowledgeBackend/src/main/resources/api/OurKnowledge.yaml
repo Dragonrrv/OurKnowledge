@@ -221,16 +221,9 @@ components:
           type: integer
 
     addTechnologyResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        parentId:
-          type: integer
-        relevant:
-          type: boolean
+      type: array
+      items:
+        $ref: '#/components/schemas/technologyTree'
 
     deleteTechnologyRequest:
       type: object
@@ -243,12 +236,9 @@ components:
           type: boolean
 
     deleteTechnologyResponse:
-      type: object
-      properties:
-        technologyId:
-          type: integer
-        technologyName:
-          type: integer
+      type: array
+      items:
+        $ref: '#/components/schemas/technologyTree'
 
     profileRequest:
       type: object

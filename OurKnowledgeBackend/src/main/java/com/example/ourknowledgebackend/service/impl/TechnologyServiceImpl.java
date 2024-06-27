@@ -52,7 +52,7 @@ public class TechnologyServiceImpl implements TechnologyService {
 
 
     @Override
-    public Technology addTechnology(String name, Long parentId, Long userId) throws InstanceNotFoundException, DuplicateInstanceException {
+    public List<TechnologiesTreeList> addTechnology(String name, Long parentId, Long userId) throws InstanceNotFoundException, DuplicateInstanceException {
         User user = permissionChecker.checkUser(userId);
         if (parentId != null) {
             permissionChecker.checkTechnology(parentId);
@@ -69,17 +69,18 @@ public class TechnologyServiceImpl implements TechnologyService {
                 technology.setRelevant(true);
                 technologyDao.save(technology);
             }
+            return listRelevantTechnologies();
         } else {
             if (technology == null) {
                 technology = technologyDao.save(new Technology(name, parentId, false));
             }
             knowledgeService.addKnowledge(userId, technology.getId());
         }
-        return technology;
+        return listRelevantTechnologies(); //Necesita actualización
     }
 
     @Override
-    public void deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException {
+    public List<TechnologiesTreeList> deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException {
         User user = permissionChecker.checkUser(userId);
         Technology technology = permissionChecker.checkTechnology(technologyId);
         if (!user.getRole().equals("Admin")) {
@@ -99,6 +100,7 @@ public class TechnologyServiceImpl implements TechnologyService {
                 technologyDao.delete(technology);
             }
         }
+        return listRelevantTechnologies();
     }
 
     private void deleteTechnologiesTree(Technology technology){
