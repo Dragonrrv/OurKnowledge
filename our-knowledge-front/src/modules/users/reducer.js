@@ -4,9 +4,10 @@ import * as actionTypes from './actionTypes';
 
 const initialState = {
     user: {
-        id: 2,
-        name: "Roberto",
-        role: "Admin"
+        id: 1,
+        name: "Juan",
+        email: "Juan@ejemplo.com",
+        role: "Developer"
     }
 };
 

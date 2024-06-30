@@ -21,7 +21,7 @@ const TechnologyTree = ({ technologyTree }) => {
     };
 
     const handleRemove = () => {
-        const hasChildren = technologyTree.childTechnologies.length > 0;
+        const hasChildren = technologyTree.childrenTechnology.length > 0;
         const confirmMessage = hasChildren
             ? 'project.administration.technology.haveChildren.explanation'
             : 'project.administration.technology.delete.confirmation';
@@ -93,7 +93,7 @@ const TechnologyTree = ({ technologyTree }) => {
             <div style={{ paddingLeft: '2em' }}>
                 {isOpen && (
                     <TechnologyTreeList
-                        technologyTreeList={technologyTree.childTechnologies}
+                        technologyTreeList={technologyTree.childrenTechnology}
                         parentTechnologyId={technologyTree.parentTechnology.id}
                     />
                 )}
@@ -108,7 +108,7 @@ TechnologyTree.propTypes = {
             id: PropTypes.number.isRequired,
             name: PropTypes.string.isRequired
         }).isRequired,
-        childTechnologies: PropTypes.array.isRequired
+        childrenTechnology: PropTypes.array.isRequired
     }).isRequired
 };
 

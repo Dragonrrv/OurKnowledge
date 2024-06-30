@@ -24,7 +24,7 @@ const Header = () => {
                     } else if (userRole === "Developer") {
                         return (
                             <li className="nav-item">
-                                <Link className="nav-link" to="/user/profile">
+                                <Link className="nav-link" to="/developers/profile">
                                     <FormattedMessage id="project.app.Header.profile"/>
                                 </Link>
                             </li>

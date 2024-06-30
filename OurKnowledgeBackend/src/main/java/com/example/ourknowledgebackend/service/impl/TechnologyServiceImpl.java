@@ -28,31 +28,31 @@ public class TechnologyServiceImpl implements TechnologyService {
     private final KnowledgeDao knowledgeDao;
 
     @Override
-    public List<TechnologiesTreeList> listRelevantTechnologies() {
+    public List<TechnologyTree> listRelevantTechnologies() {
         List<Technology> allTechnologies = technologyDao.findAllByRelevantTrue();
 
         Map<Long, List<Technology>> technologiesMap = allTechnologies.stream()
                 .collect(Collectors.groupingBy(tech -> tech.getParentId() != null ? tech.getParentId() : 0L));
 
-        TechnologiesTreeList root = fillTechnologyTreeList(null, technologiesMap, 0L);
+        TechnologyTree root = fillTechnologyTreeList(null, technologiesMap, 0L);
 
-        return root.getChildTechnologies();
+        return root.getChildrenTechnology();
     }
 
-    private TechnologiesTreeList fillTechnologyTreeList(Technology parent, Map<Long, List<Technology>> technologiesMap, Long parentId) {
+    private TechnologyTree fillTechnologyTreeList(Technology parent, Map<Long, List<Technology>> technologiesMap, Long parentId) {
         List<Technology> childTechnologies = technologiesMap.get(parentId);
-        ArrayList<TechnologiesTreeList> childTreeList = new ArrayList<>();
+        ArrayList<TechnologyTree> childTreeList = new ArrayList<>();
         if (childTechnologies != null) {
             for (Technology technology : childTechnologies) {
                 childTreeList.add(fillTechnologyTreeList(technology, technologiesMap, technology.getId()));
             }
         }
-        return new TechnologiesTreeList(parent, childTreeList);
+        return new TechnologyTree(parent, childTreeList);
     }
 
 
     @Override
-    public List<TechnologiesTreeList> addTechnology(String name, Long parentId, Long userId) throws InstanceNotFoundException, DuplicateInstanceException {
+    public List<TechnologyTree> addTechnology(String name, Long parentId, Long userId) throws InstanceNotFoundException, DuplicateInstanceException {
         User user = permissionChecker.checkUser(userId);
         if (parentId != null) {
             permissionChecker.checkTechnology(parentId);
@@ -80,7 +80,7 @@ public class TechnologyServiceImpl implements TechnologyService {
     }
 
     @Override
-    public List<TechnologiesTreeList> deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException {
+    public List<TechnologyTree> deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException {
         User user = permissionChecker.checkUser(userId);
         Technology technology = permissionChecker.checkTechnology(technologyId);
         if (!user.getRole().equals("Admin")) {

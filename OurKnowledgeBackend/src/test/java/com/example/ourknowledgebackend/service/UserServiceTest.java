@@ -53,11 +53,10 @@ class UserServiceTest {
         UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
 
         assertEquals(userProfile.getUser(), user);
-        assertNull(userProfile.getKnowledgeTreeList().getParentKnowledge());
-        assertEquals(userProfile.getKnowledgeTreeList().getChildKnowledges().get(0).getParentKnowledge(), knowledge1);
-        assertEquals(userProfile.getKnowledgeTreeList().getChildKnowledges().get(1).getParentKnowledge(), knowledge2);
-        assertEquals(userProfile.getKnowledgeTreeList().getChildKnowledges().get(1).getChildKnowledges().get(0).getParentKnowledge(), knowledge3);
-        assertEquals(userProfile.getKnowledgeTreeList().getChildKnowledges().get(1).getChildKnowledges().get(1).getParentKnowledge(), knowledge4);
-        assertEquals(userProfile.getKnowledgeTreeList().getChildKnowledges().get(1).getChildKnowledges().size(), 2);
+        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParentKnowledge(), knowledge1);
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getParentKnowledge(), knowledge2);
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildrenKnowledge().get(0).getParentKnowledge(), knowledge3);
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildrenKnowledge().get(1).getParentKnowledge(), knowledge4);
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildrenKnowledge().size(), 2);
     }
 }

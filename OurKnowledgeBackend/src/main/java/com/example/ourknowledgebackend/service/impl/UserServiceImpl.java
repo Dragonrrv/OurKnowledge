@@ -1,6 +1,5 @@
 package com.example.ourknowledgebackend.service.impl;
 
-import com.example.ourKnowledge.api.model.LoginResponseDTO;
 import com.example.ourknowledgebackend.model.*;
 import com.example.ourknowledgebackend.model.entities.User;
 import com.example.ourknowledgebackend.model.entities.UserDao;
@@ -9,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException();
         }
         Optional<User> user = userDao.findById(profileId);
-        KnowledgeTreeList knowledgeTreeList = knowledgeService.listUserKnowledge(user.get());
+        List<KnowledgeTree> knowledgeTreeList = knowledgeService.listUserKnowledge(user.get());
 
         return new UserProfile(user.get(), knowledgeTreeList);
     }

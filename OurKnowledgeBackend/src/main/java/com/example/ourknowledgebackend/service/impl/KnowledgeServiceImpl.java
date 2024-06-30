@@ -25,26 +25,26 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     private final TechnologyDao technologyDao;
 
-    public KnowledgeTreeList listUserKnowledge(User user) {
+    public List<KnowledgeTree> listUserKnowledge(User user) {
         List<Knowledge> knowledges = knowledgeDao.findAllByUser(user);
 
         Map<Long, List<Knowledge>> knowledgesMap = knowledges.stream()
                 .collect(Collectors.groupingBy(know -> know.getTechnology().getParentId() != null ? know.getTechnology().getParentId() : 0L));
 
-        KnowledgeTreeList root = fillKnowledgeTreeList(null, knowledgesMap, 0L);
+        KnowledgeTree root = fillKnowledgeTreeList(null, knowledgesMap, 0L);
 
-        return root;
+        return root.getChildrenKnowledge();
     }
 
-    private KnowledgeTreeList fillKnowledgeTreeList(Knowledge parent, Map<Long, List<Knowledge>> knowledgeMap, Long parentId) {
+    private KnowledgeTree fillKnowledgeTreeList(Knowledge parent, Map<Long, List<Knowledge>> knowledgeMap, Long parentId) {
         List<Knowledge> childKnowledges = knowledgeMap.get(parentId);
-        ArrayList<KnowledgeTreeList> childTreeList = new ArrayList<>();
+        ArrayList<KnowledgeTree> childTreeList = new ArrayList<>();
         if (childKnowledges != null) {
             for (Knowledge knowledge : childKnowledges) {
                 childTreeList.add(fillKnowledgeTreeList(knowledge, knowledgeMap, knowledge.getTechnology().getId()));
             }
         }
-        return new KnowledgeTreeList(parent, childTreeList);
+        return new KnowledgeTree(parent, childTreeList);
     }
 
     @Override

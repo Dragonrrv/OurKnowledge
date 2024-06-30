@@ -27,13 +27,16 @@ export default {
     'project.global.fields.name': 'Name',
     'project.global.fields.password': 'Password',
     'project.global.fields.userName': 'Username',
+    'project.global.fields.yes': 'yes',
+    'project.global.fields.mainSkill': 'Main Skill',
+    'project.global.fields.likeIt': 'Like it',
     'project.global.fields.technologyName': 'Technology Name',
     'project.global.validator.passwordsDoNotMatch': 'Passwords do not match',
     'project.global.validator.required': 'Required field',
 
     'project.users.Login.title': 'Login',
 
-    'project.administration.technologies.title': 'Relevant Technologies',
+    'project.administration.technologies.title': 'Relevant Profile',
     'project.administration.technologies.statistics': 'Statistics',
     'project.administration.technologies.add': 'Add a new Technology',
     'project.administration.technologies.empty': 'There is still no technologies ¡start to add now!',

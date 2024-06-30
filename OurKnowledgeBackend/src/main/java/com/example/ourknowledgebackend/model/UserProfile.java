@@ -2,17 +2,19 @@ package com.example.ourknowledgebackend.model;
 
 import com.example.ourknowledgebackend.model.entities.User;
 
+import java.util.List;
+
 public class UserProfile {
     User user;
 
     //ArrayList<Project>
 
-    KnowledgeTreeList knowledgeTreeList;
+    List<KnowledgeTree> knowledgeTreeList;
 
     public UserProfile() {
     }
 
-    public UserProfile(User user, KnowledgeTreeList knowledgeTreeList) {
+    public UserProfile(User user, List<KnowledgeTree> knowledgeTreeList) {
         user.setPassword(null);
         user.setRole(null);
         this.user = user;
@@ -27,11 +29,11 @@ public class UserProfile {
         this.user = user;
     }
 
-    public KnowledgeTreeList getKnowledgeTreeList() {
+    public List<KnowledgeTree> getKnowledgeTreeList() {
         return knowledgeTreeList;
     }
 
-    public void setKnowledgeTreeList(KnowledgeTreeList knowledgeTreeList) {
+    public void setKnowledgeTreeList(List<KnowledgeTree> knowledgeTreeList) {
         this.knowledgeTreeList = knowledgeTreeList;
     }
 }

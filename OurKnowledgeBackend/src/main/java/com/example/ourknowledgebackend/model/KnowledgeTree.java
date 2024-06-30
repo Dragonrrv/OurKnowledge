@@ -5,19 +5,19 @@ import com.example.ourknowledgebackend.model.entities.Knowledge;
 import java.util.ArrayList;
 
 // the first Knowledge is always null
-public class KnowledgeTreeList {
+public class KnowledgeTree {
 
     Knowledge parentKnowledge;
 
-    ArrayList<KnowledgeTreeList> childKnowledges;
+    ArrayList<KnowledgeTree> childrenKnowledge;
 
-    public KnowledgeTreeList() {
+    public KnowledgeTree() {
 
     }
 
-    public KnowledgeTreeList(Knowledge parentKnowledge, ArrayList<KnowledgeTreeList> childKnowledges) {
+    public KnowledgeTree(Knowledge parentKnowledge, ArrayList<KnowledgeTree> childrenKnowledge) {
         this.parentKnowledge = parentKnowledge;
-        this.childKnowledges = childKnowledges;
+        this.childrenKnowledge = childrenKnowledge;
     }
 
     public Knowledge getParentKnowledge() {
@@ -28,11 +28,11 @@ public class KnowledgeTreeList {
         this.parentKnowledge = parentKnowledge;
     }
 
-    public ArrayList<KnowledgeTreeList> getChildKnowledges() {
-        return childKnowledges;
+    public ArrayList<KnowledgeTree> getChildrenKnowledge() {
+        return childrenKnowledge;
     }
 
-    public void setChildKnowledges(ArrayList<KnowledgeTreeList> childKnowledges) {
-        this.childKnowledges = childKnowledges;
+    public void setChildrenKnowledge(ArrayList<KnowledgeTree> childrenKnowledge) {
+        this.childrenKnowledge = childrenKnowledge;
     }
 }

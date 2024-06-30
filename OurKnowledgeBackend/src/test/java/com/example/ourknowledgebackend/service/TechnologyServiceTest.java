@@ -5,7 +5,7 @@ import com.example.ourknowledgebackend.exceptions.HaveChildrenException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.exceptions.PermissionException;
 import com.example.ourknowledgebackend.model.entities.*;
-import com.example.ourknowledgebackend.model.TechnologiesTreeList;
+import com.example.ourknowledgebackend.model.TechnologyTree;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +44,7 @@ class TechnologyServiceTest {
         Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
 
-        List<TechnologiesTreeList> result = technologyService.listRelevantTechnologies();
+        List<TechnologyTree> result = technologyService.listRelevantTechnologies();
 
         // no se puede porque los array vacíos tienen distinto hash
         /*
@@ -65,8 +65,8 @@ class TechnologyServiceTest {
 
         assertEquals(result.get(0).getParentTechnology(), technology1);
         assertEquals(result.get(1).getParentTechnology(), technology2);
-        assertEquals(result.get(0).getChildTechnologies().get(0).getParentTechnology(), technology3);
-        assertEquals(result.get(0).getChildTechnologies().get(1).getParentTechnology(), technology4);
+        assertEquals(result.get(0).getChildrenTechnology().get(0).getParentTechnology(), technology3);
+        assertEquals(result.get(0).getChildrenTechnology().get(1).getParentTechnology(), technology4);
     }
 
     @Test
@@ -78,14 +78,14 @@ class TechnologyServiceTest {
         technologyDao.save(new Technology("Java", null, false));
         technologyDao.save(new Technology("SpringBoot", technology3.getId(), false));
 
-        List<TechnologiesTreeList> result = technologyService.listRelevantTechnologies();
+        List<TechnologyTree> result = technologyService.listRelevantTechnologies();
 
         assertEquals(result.get(0).getParentTechnology(), technology1);
         assertEquals(result.get(1).getParentTechnology(), technology2);
-        assertEquals(result.get(0).getChildTechnologies().get(0).getParentTechnology(), technology3);
-        assertEquals(result.get(0).getChildTechnologies().get(1).getParentTechnology(), technology4);
+        assertEquals(result.get(0).getChildrenTechnology().get(0).getParentTechnology(), technology3);
+        assertEquals(result.get(0).getChildrenTechnology().get(1).getParentTechnology(), technology4);
         assertEquals(result.size(), 2);
-        assertEquals(result.get(0).getChildTechnologies().size(), 2);
+        assertEquals(result.get(0).getChildrenTechnology().size(), 2);
     }
 
     @Test
@@ -97,7 +97,7 @@ class TechnologyServiceTest {
         technologyDao.save(new Technology("Java", null, false));
         technologyDao.save(new Technology("SpringBoot", technology3.getId(), false));
 
-        List<TechnologiesTreeList> result = technologyService.listRelevantTechnologies();
+        List<TechnologyTree> result = technologyService.listRelevantTechnologies();
 
         assertEquals(result.size(), 0);
     }
@@ -106,10 +106,12 @@ class TechnologyServiceTest {
     void addTechnology() {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
         try {
-            Technology technology = technologyService.addTechnology("Java", null, user.getId());
-            Optional<Technology> result = technologyDao.findById(technology.getId());
+            String name = "Java";
+            Long parentId = null;
+            technologyService.addTechnology(name, parentId, user.getId());
+            Optional<Technology> result = technologyDao.findByNameAndParentId(name, parentId);
 
-            assertEquals(technology, result.get());
+            assert(result.isPresent());
 
         } catch (InstanceNotFoundException | DuplicateInstanceException e) {
             assert false;
@@ -120,9 +122,12 @@ class TechnologyServiceTest {
     void addTechnologyAdmin() {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
         try {
-            Technology technology = technologyService.addTechnology("Java", null, user.getId());
+            String name = "Java";
+            Long parentId = null;
+            technologyService.addTechnology(name, parentId, user.getId());
+            Optional<Technology> result = technologyDao.findByNameAndParentId(name, parentId);
 
-            assert technology.isRelevant();
+            assert(result.isPresent());
 
         } catch (InstanceNotFoundException | DuplicateInstanceException e) {
             assert false;
@@ -132,8 +137,12 @@ class TechnologyServiceTest {
     @Test
     void addTechnologyDeveloper() {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        String name = "Java";
+        Long parentId = null;
         try {
-            Technology technology = technologyService.addTechnology("Java", null, user.getId());
+            technologyService.addTechnology(name, parentId, user.getId());
+            Technology technology = technologyDao.findByNameAndParentId(name, parentId).get();
+
             Optional<Knowledge> knowledge = knowledgeDao.findByUserAndTechnology(user, technology);
 
             assertFalse(technology.isRelevant());
@@ -150,8 +159,10 @@ class TechnologyServiceTest {
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
+        String name = "SpringBoot";
         try {
-            Technology technology = technologyService.addTechnology("SpringBoot", technology2.getId(), user.getId());
+            technologyService.addTechnology(name, technology2.getId(), user.getId());
+            Technology technology = technologyDao.findByNameAndParentId(name, technology2.getId()).get();
             Optional<Knowledge> knowledge1 = knowledgeDao.findByUserAndTechnology(user, technology1);
             Optional<Knowledge> knowledge2 = knowledgeDao.findByUserAndTechnology(user, technology2);
             Optional<Knowledge> knowledge3 = knowledgeDao.findByUserAndTechnology(user, technology3);
@@ -169,9 +180,12 @@ class TechnologyServiceTest {
     @Test
     void addExistedTechnologyDeveloper() {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
-        technologyDao.save(new Technology("Java", null, false));
+        String name = "Java";
+        Long parentId = null;
+        technologyDao.save(new Technology(name, parentId, false));
         try {
-            Technology technology = technologyService.addTechnology("Java", null, user.getId());
+            technologyService.addTechnology(name, parentId, user.getId());
+            Technology technology = technologyDao.findByNameAndParentId(name, parentId).get();
             Optional<Knowledge> knowledge = knowledgeDao.findByUserAndTechnology(user, technology);
 
             assertFalse(technology.isRelevant());
@@ -185,9 +199,12 @@ class TechnologyServiceTest {
     @Test
     void addExistedTechnologyAdmin() {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
-        technologyDao.save(new Technology("Java", null, false));
+        String name = "Java";
+        Long parentId = null;
+        technologyDao.save(new Technology(name, parentId, false));
         try {
-            Technology technology = technologyService.addTechnology("Java", null, user.getId());
+            technologyService.addTechnology(name, parentId, user.getId());
+            Technology technology = technologyDao.findByNameAndParentId(name, parentId).get();
 
             assert technology.isRelevant();
 
@@ -199,7 +216,7 @@ class TechnologyServiceTest {
     @Test
     void addTechnologyUserNotFound() {
         try {
-            Technology technology = technologyService.addTechnology("Java", null, NON_EXISTENT_ID);
+            technologyService.addTechnology("Java", null, NON_EXISTENT_ID);
         } catch (InstanceNotFoundException e) {
             assert true;
         } catch (DuplicateInstanceException e) {
@@ -211,7 +228,7 @@ class TechnologyServiceTest {
     void addTechnologyParentTechnologyNotFound() {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
         try {
-            Technology technology = technologyService.addTechnology("Java", NON_EXISTENT_ID, user.getId());
+            technologyService.addTechnology("Java", NON_EXISTENT_ID, user.getId());
         } catch (InstanceNotFoundException e) {
             assert true;
         } catch (DuplicateInstanceException e) {
@@ -224,7 +241,7 @@ class TechnologyServiceTest {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
         technologyDao.save(new Technology("Java", null, true));
         try {
-            Technology technology = technologyService.addTechnology("Java", null, user.getId());
+            technologyService.addTechnology("Java", null, user.getId());
         } catch (InstanceNotFoundException e) {
             assert false;
         } catch (DuplicateInstanceException e) {

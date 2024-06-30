@@ -30,12 +30,9 @@ paths:
       requestBody:
         content:
           application/json:
-
             schema:
               $ref: '#/components/schemas/addTechnologyRequest'
-
         required: true
-
       responses:
         '200':
           description: OK
@@ -57,34 +54,28 @@ paths:
       requestBody:
         content:
           application/json:
-
             schema:
               $ref: '#/components/schemas/deleteTechnologyRequest'
-
         required: true
       responses:
         '200':
           description: OK
           content:
             application/json:
-
               schema:
                 $ref: '#/components/schemas/deleteTechnologyResponse'
 
   /user/login:
     post:
       summary: login User
-
       operationId: login
       tags:
         - user
       requestBody:
         content:
           application/json:
-
             schema:
               $ref: '#/components/schemas/loginRequest'
-
         required: true
       responses:
         '200':
@@ -96,7 +87,7 @@ paths:
 
 
   /user:
-    get:
+    post:
       summary: showProfileDetails
       operationId: showProfile
       tags:
@@ -205,10 +196,41 @@ components:
           items:
             $ref: '#/components/schemas/technologyTree'
 
+    knowledgeTree:
+      type: object
+      properties:
+        parentKnowledge:
+          type: object
+          properties:
+            id:
+              type: integer
+            likeIt:
+              type: boolean
+            mainSkill:
+              type: boolean
+            technology:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                parentId:
+                  type: integer
+                relevant:
+                  type: boolean
+        childrenKnowledge:
+          type: array
+          items:
+            $ref: '#/components/schemas/knowledgeTree'
+
     listRelevantTechnologiesResponse:
-      type: array
-      items:
-        $ref: '#/components/schemas/technologyTree'
+      type: object
+      properties:
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/technologyTree'
 
     addTechnologyRequest:
       type: object
@@ -221,9 +243,12 @@ components:
           type: integer
 
     addTechnologyResponse:
-      type: array
-      items:
-        $ref: '#/components/schemas/technologyTree'
+      type: object
+      properties:
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/technologyTree'
 
     deleteTechnologyRequest:
       type: object
@@ -236,9 +261,12 @@ components:
           type: boolean
 
     deleteTechnologyResponse:
-      type: array
-      items:
-        $ref: '#/components/schemas/technologyTree'
+      type: object
+      properties:
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/technologyTree'
 
     profileRequest:
       type: object
@@ -268,9 +296,13 @@ components:
         #          type: integer
         #        name:
         #          type: string
-        KnownTechnologies:
-
-          $ref: '#/components/schemas/technologyTree'
+        knowledgeTreeList:
+          type: object
+          properties:
+            technologies:
+              type: array
+              items:
+                $ref: '#/components/schemas/knowledgeTree'
 
     addKnowledgeRequest:
       type: object
