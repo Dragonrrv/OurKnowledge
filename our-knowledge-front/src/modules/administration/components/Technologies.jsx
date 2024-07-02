@@ -43,7 +43,7 @@ const Technologies= () => {
                 </thead>
                 <tbody>
                     <tr>
-                        <TechnologyTreeList technologyTreeList={technologyTreeList} parentTechnologyId={null}/>
+                        <TechnologyTreeList technologyTreeList={technologyTreeList} parentTechnologyId={null} root={true}/>
                     </tr>
                 </tbody>
             </table>

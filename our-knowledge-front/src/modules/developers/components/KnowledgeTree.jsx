@@ -15,8 +15,6 @@ const KnowledgeTree = ({ knowledgeTree }) => {
         setIsOpen(!isOpen);
     };
 
-    console.log(knowledgeTree)
-
     function box(ok) {
         if(ok){
             return <OkBox/>
@@ -68,9 +66,16 @@ const KnowledgeTree = ({ knowledgeTree }) => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label onClick={toggleOpen} style={{ cursor: 'pointer' }}>
+                <div onClick={toggleOpen} style={{ cursor: 'pointer' }}>
+                    {!isOpen && knowledgeTree.childrenKnowledge.length>0 && (
+                        <span style={{ color: 'darkgrey', fontSize: '20px', display: 'inline-block', transform: 'rotate(180deg)' }}>^</span>
+                    )}
+                    {isOpen && knowledgeTree.childrenKnowledge.length>0 && (
+                        <span style={{ color: 'darkgrey', fontSize: '20px', position: 'relative', top: '5px' }}>^</span>
+                    )}
+                    {knowledgeTree.childrenKnowledge.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
                     {knowledgeTree.parentKnowledge.technology.name}
-                </label>
+                </div>
                 <div style={{ display: 'flex', gap: '60px' }}>
                     <Box ok={knowledgeTree.parentKnowledge.mainSkill} />
                     <Box ok={knowledgeTree.parentKnowledge.likeIt} />
@@ -80,6 +85,7 @@ const KnowledgeTree = ({ knowledgeTree }) => {
                 {isOpen && (
                     <KnowledgeTreeList
                         knowledgeTreeList={knowledgeTree.childrenKnowledge}
+                        root={false}
                     />
                 )}
             </div>

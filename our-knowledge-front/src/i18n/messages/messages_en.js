@@ -28,6 +28,7 @@ export default {
     'project.global.fields.password': 'Password',
     'project.global.fields.userName': 'Username',
     'project.global.fields.yes': 'yes',
+    'project.global.fields.unknown': 'Unknown',
     'project.global.fields.mainSkill': 'Main Skill',
     'project.global.fields.likeIt': 'Like it',
     'project.global.fields.technologyName': 'Technology Name',
@@ -36,12 +37,15 @@ export default {
 
     'project.users.Login.title': 'Login',
 
-    'project.administration.technologies.title': 'Relevant Profile',
+    'project.administration.technologies.title': 'Relevant Technologies',
     'project.administration.technologies.statistics': 'Statistics',
     'project.administration.technologies.add': 'Add a new Technology',
     'project.administration.technologies.empty': 'There is still no technologies ¡start to add now!',
     'project.administration.technology.haveChildren': 'This technology have children technologies',
     'project.administration.technology.haveChildren.explanation': 'Are you sure you want to delete this technology and all his children?',
-    'project.administration.technology.delete.confirmation': 'Are you sure you want to delete this technology?'
+    'project.administration.technology.delete.confirmation': 'Are you sure you want to delete this technology?',
+
+    'project.developers.profile.startDate': 'On the company since: ',
+    'project.developers.button.updateProfile': 'Update Profile'
 
 }

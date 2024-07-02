@@ -8,7 +8,7 @@ import {useDispatch} from "react-redux";
 import {useIntl} from "react-intl";
 import AddTechnology from "../../common/components/AddTechnology";
 
-const TechnologyTree = ({ technologyTree }) => {
+const TechnologyTree = ({ technologyTree}) => {
     const intl = useIntl();
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(true);
@@ -56,11 +56,18 @@ const TechnologyTree = ({ technologyTree }) => {
     }, []);
 
     return (
-        <div onContextMenu={handleAddMenu}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label onClick={toggleOpen} style={{ cursor: 'pointer' }}>
+        <div>
+            <div onContextMenu={handleAddMenu} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div onClick={toggleOpen} style={{ cursor: 'pointer'}}>
+                    {!isOpen && technologyTree.childrenTechnology.length>0 && (
+                        <span style={{ color: 'darkgrey', fontSize: '20px', display: 'inline-block', transform: 'rotate(180deg)' }}>^</span>
+                    )}
+                    {isOpen && technologyTree.childrenTechnology.length>0 && (
+                        <span style={{ color: 'darkgrey', fontSize: '20px', position: 'relative', top: '5px' }}>^</span>
+                    )}
+                    {technologyTree.childrenTechnology.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
                     {technologyTree.parentTechnology.name}
-                </label>
+                </div>
                 <button
                     onClick={handleRemove}
                     title={`${intl.formatMessage({ id: 'project.global.buttons.delete' })} ${technologyTree.parentTechnology.name}`}
@@ -70,7 +77,9 @@ const TechnologyTree = ({ technologyTree }) => {
                         border: 'none',
                         background: 'red',
                         cursor: 'pointer',
-                        borderRadius: '30%'
+                        borderRadius: '30%',
+                        height: '25px', // Ajusta la altura
+                        lineHeight: '25px', // Ajusta la altura del texto
                     }}
                 >
                     X
@@ -95,6 +104,7 @@ const TechnologyTree = ({ technologyTree }) => {
                     <TechnologyTreeList
                         technologyTreeList={technologyTree.childrenTechnology}
                         parentTechnologyId={technologyTree.parentTechnology.id}
+                        root={false}
                     />
                 )}
             </div>
