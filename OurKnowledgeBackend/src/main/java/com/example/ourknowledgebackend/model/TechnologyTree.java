@@ -1,37 +1,18 @@
 package com.example.ourknowledgebackend.model;
 
 import com.example.ourknowledgebackend.model.entities.Technology;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-// the first technology is always null
-public class TechnologyTree {
+public class TechnologyTree extends Tree<Technology> {
 
-    Technology parentTechnology;
-
-    ArrayList<TechnologyTree> childrenTechnology;
-
-    public TechnologyTree() {
-
+    public TechnologyTree(Technology parent, List<TechnologyTree> children) {
+        super(parent, children);
     }
 
-    public TechnologyTree(Technology parentTechnology, ArrayList<TechnologyTree> childrenTechnology) {
-        this.parentTechnology = parentTechnology;
-        this.childrenTechnology = childrenTechnology;
-    }
-
-    public Technology getParentTechnology() {
-        return parentTechnology;
-    }
-
-    public void setParentTechnology(Technology parentTechnology) {
-        this.parentTechnology = parentTechnology;
-    }
-
-    public ArrayList<TechnologyTree> getChildrenTechnology() {
-        return childrenTechnology;
-    }
-
-    public void setChildrenTechnology(ArrayList<TechnologyTree> childrenTechnology) {
-        this.childrenTechnology = childrenTechnology;
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<TechnologyTree> getChildren() {
+        return (List<TechnologyTree>) super.getChildren();
     }
 }

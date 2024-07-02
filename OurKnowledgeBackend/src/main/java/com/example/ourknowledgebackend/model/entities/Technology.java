@@ -22,6 +22,13 @@ public class Technology {
         this.relevant = relevant;
     }
 
+    public Technology(Long id, String name, Long parentId, boolean relevant) {
+        this.id = id;
+        this.name = name;
+        this.parentId = parentId;
+        this.relevant = relevant;
+    }
+
     public Long getId() {
         return id;
     }

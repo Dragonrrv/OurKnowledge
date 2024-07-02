@@ -63,10 +63,10 @@ class TechnologyServiceTest {
         assertEquals(expected, result);
          */
 
-        assertEquals(result.get(0).getParentTechnology(), technology1);
-        assertEquals(result.get(1).getParentTechnology(), technology2);
-        assertEquals(result.get(0).getChildrenTechnology().get(0).getParentTechnology(), technology3);
-        assertEquals(result.get(0).getChildrenTechnology().get(1).getParentTechnology(), technology4);
+        assertEquals(result.get(0).getParent(), technology1);
+        assertEquals(result.get(1).getParent(), technology2);
+        assertEquals(result.get(0).getChildren().get(0).getParent(), technology3);
+        assertEquals(result.get(0).getChildren().get(1).getParent(), technology4);
     }
 
     @Test
@@ -80,12 +80,12 @@ class TechnologyServiceTest {
 
         List<TechnologyTree> result = technologyService.listRelevantTechnologies();
 
-        assertEquals(result.get(0).getParentTechnology(), technology1);
-        assertEquals(result.get(1).getParentTechnology(), technology2);
-        assertEquals(result.get(0).getChildrenTechnology().get(0).getParentTechnology(), technology3);
-        assertEquals(result.get(0).getChildrenTechnology().get(1).getParentTechnology(), technology4);
+        assertEquals(result.get(0).getParent(), technology1);
+        assertEquals(result.get(1).getParent(), technology2);
+        assertEquals(result.get(0).getChildren().get(0).getParent(), technology3);
+        assertEquals(result.get(0).getChildren().get(1).getParent(), technology4);
         assertEquals(result.size(), 2);
-        assertEquals(result.get(0).getChildrenTechnology().size(), 2);
+        assertEquals(result.get(0).getChildren().size(), 2);
     }
 
     @Test

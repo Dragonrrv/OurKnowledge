@@ -7,5 +7,5 @@ export const login = (userName, password, onSuccess, onErrors) =>
 export const logout = () => null;
 
 export const getProfile = (userId, profileId, onSuccess, onErrors) =>
-    appFetch(`/user`,
+    appFetch(`/user/profile`,
         config('POST', {userId, profileId}), onSuccess, onErrors);

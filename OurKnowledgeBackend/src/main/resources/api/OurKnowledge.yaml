@@ -108,26 +108,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/profileResponse'
 
-  /user/update:
-    post:
-      summary: returns all information necessary to update a profile and knowledge
-      operationId: showUpdateProfile
-      tags:
-        - user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/updateProfileRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateProfileResponse'
-
   /knowledge/add:
     post:
       summary: add knowledge
@@ -219,27 +199,27 @@ components:
     knowledgeTree:
       type: object
       properties:
-        parentKnowledge:
+        parentTechnology:
           type: object
           properties:
             id:
               type: integer
-            likeIt:
+            name:
+              type: string
+            parentId:
+              type: integer
+            relevant:
               type: boolean
-            mainSkill:
-              type: boolean
-            technology:
+            knowledge:
               type: object
               properties:
                 id:
                   type: integer
-                name:
-                  type: string
-                parentId:
-                  type: integer
-                relevant:
+                likeIt:
                   type: boolean
-        childrenKnowledge:
+                mainSkill:
+                  type: boolean
+        childrenTechnology:
           type: array
           items:
             $ref: '#/components/schemas/knowledgeTree'

@@ -26,22 +26,22 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     private final TechnologyDao technologyDao;
 
     public List<KnowledgeTree> listUserKnowledge(User user) {
-        List<Knowledge> knowledges = knowledgeDao.findAllByUser(user);
+        List<KnownTechnology> knownTechnologyList = technologyDao.findRelevantTechnologiesWithKnowledge(user.getId());
 
-        Map<Long, List<Knowledge>> knowledgesMap = knowledges.stream()
-                .collect(Collectors.groupingBy(know -> know.getTechnology().getParentId() != null ? know.getTechnology().getParentId() : 0L));
+        Map<Long, List<KnownTechnology>> knownTechnologyMap = knownTechnologyList.stream()
+                .collect(Collectors.groupingBy(tech -> tech.getParentId() != null ? tech.getParentId() : 0L));
 
-        KnowledgeTree root = fillKnowledgeTreeList(null, knowledgesMap, 0L);
+        KnowledgeTree root = fillKnowledgeTreeList(null, knownTechnologyMap, 0L);
 
-        return root.getChildrenKnowledge();
+        return root.getChildren();
     }
 
-    private KnowledgeTree fillKnowledgeTreeList(Knowledge parent, Map<Long, List<Knowledge>> knowledgeMap, Long parentId) {
-        List<Knowledge> childKnowledges = knowledgeMap.get(parentId);
+    private KnowledgeTree fillKnowledgeTreeList(KnownTechnology parent, Map<Long, List<KnownTechnology>> knownTechnologyMap, Long parentId) {
+        List<KnownTechnology> childrenKnownTechnology = knownTechnologyMap.get(parentId);
         ArrayList<KnowledgeTree> childTreeList = new ArrayList<>();
-        if (childKnowledges != null) {
-            for (Knowledge knowledge : childKnowledges) {
-                childTreeList.add(fillKnowledgeTreeList(knowledge, knowledgeMap, knowledge.getTechnology().getId()));
+        if (childrenKnownTechnology != null) {
+            for (KnownTechnology knownTechnology : childrenKnownTechnology) {
+                childTreeList.add(fillKnowledgeTreeList(knownTechnology, knownTechnologyMap, knownTechnology.getId()));
             }
         }
         return new KnowledgeTree(parent, childTreeList);
@@ -55,16 +55,16 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         if (knowledge.isPresent()) {
             throw new DuplicateInstanceException("project.entities.knowledge", knowledge.get().getId());
         }
-        return addKnowledgeHieracy(user, technology);
+        return addKnowledgeHierarchy(user, technology);
     }
 
-    public List<Knowledge> addKnowledgeHieracy(User user, Technology technology) {
+    public List<Knowledge> addKnowledgeHierarchy(User user, Technology technology) {
         List<Knowledge> knowledges = new ArrayList<>();
         if (technology.getParentId() != null) {
             List<Knowledge> brotherKnowledges = knowledgeDao.findAllByUserAndTechnologyParentId(user, technology.getParentId());
             if (brotherKnowledges.isEmpty()) {
-                Optional<Technology> parentTecnology = technologyDao.findById(technology.getParentId());
-                parentTecnology.ifPresent(value -> knowledges.addAll(addKnowledgeHieracy(user, value)));
+                Optional<Technology> parentTechnology = technologyDao.findById(technology.getParentId());
+                parentTechnology.ifPresent(value -> knowledges.addAll(addKnowledgeHierarchy(user, value)));
             }
         }
         knowledges.add(knowledgeDao.save(new Knowledge(user, technology, false, false)));

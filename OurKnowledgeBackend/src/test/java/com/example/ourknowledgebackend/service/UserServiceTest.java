@@ -44,7 +44,7 @@ class UserServiceTest {
         Technology technology2 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology3 = technologyDao.save(new Technology("Spring", technology2.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("Maven", technology2.getId(), true));
-        technologyDao.save(new Technology("Other", technology2.getId(), true));
+        Technology technology5 = technologyDao.save(new Technology("Other", technology2.getId(), true));
         Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
         Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, true));
         Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, true, true));
@@ -53,10 +53,19 @@ class UserServiceTest {
         UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
 
         assertEquals(userProfile.getUser(), user);
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParentKnowledge(), knowledge1);
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getParentKnowledge(), knowledge2);
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildrenKnowledge().get(0).getParentKnowledge(), knowledge3);
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildrenKnowledge().get(1).getParentKnowledge(), knowledge4);
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildrenKnowledge().size(), 2);
+        // todos los datos correctos
+        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getId(), technology1.getId());
+        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getName(), technology1.getName());
+        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().isRelevant(), technology1.isRelevant());
+        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getKnowledgeId(), knowledge1.getId());
+        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getMainSkill(), knowledge1.isMainSkill());
+        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getLikeIt(), knowledge1.isLikeIt());
+        // Todas las tecnologías conocidas
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getParent().getKnowledgeId(), knowledge2.getId());
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(0).getParent().getKnowledgeId(), knowledge3.getId());
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(1).getParent().getKnowledgeId(), knowledge4.getId());
+        // No conocida
+        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getId(), technology5.getId());
+        assertNull(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getKnowledgeId());
     }
 }

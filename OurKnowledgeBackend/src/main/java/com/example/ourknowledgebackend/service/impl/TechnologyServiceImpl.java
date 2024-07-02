@@ -36,12 +36,12 @@ public class TechnologyServiceImpl implements TechnologyService {
 
         TechnologyTree root = fillTechnologyTreeList(null, technologiesMap, 0L);
 
-        return root.getChildrenTechnology();
+        return root.getChildren();
     }
 
     private TechnologyTree fillTechnologyTreeList(Technology parent, Map<Long, List<Technology>> technologiesMap, Long parentId) {
         List<Technology> childTechnologies = technologiesMap.get(parentId);
-        ArrayList<TechnologyTree> childTreeList = new ArrayList<>();
+        List<TechnologyTree> childTreeList = new ArrayList<>();
         if (childTechnologies != null) {
             for (Technology technology : childTechnologies) {
                 childTreeList.add(fillTechnologyTreeList(technology, technologiesMap, technology.getId()));

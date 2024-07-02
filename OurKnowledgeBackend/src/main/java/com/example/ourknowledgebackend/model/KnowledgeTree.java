@@ -1,38 +1,20 @@
 package com.example.ourknowledgebackend.model;
 
 import com.example.ourknowledgebackend.model.entities.Knowledge;
+import com.example.ourknowledgebackend.model.entities.Technology;
 
 import java.util.ArrayList;
+import java.util.List;
 
-// the first Knowledge is always null
-public class KnowledgeTree {
+public class KnowledgeTree extends Tree<KnownTechnology>{
 
-    Knowledge parentKnowledge;
-
-    ArrayList<KnowledgeTree> childrenKnowledge;
-
-    public KnowledgeTree() {
-
+    public KnowledgeTree(KnownTechnology parent, List<KnowledgeTree> children) {
+        super(parent, children);
     }
 
-    public KnowledgeTree(Knowledge parentKnowledge, ArrayList<KnowledgeTree> childrenKnowledge) {
-        this.parentKnowledge = parentKnowledge;
-        this.childrenKnowledge = childrenKnowledge;
-    }
-
-    public Knowledge getParentKnowledge() {
-        return parentKnowledge;
-    }
-
-    public void setParentKnowledge(Knowledge parentKnowledge) {
-        this.parentKnowledge = parentKnowledge;
-    }
-
-    public ArrayList<KnowledgeTree> getChildrenKnowledge() {
-        return childrenKnowledge;
-    }
-
-    public void setChildrenKnowledge(ArrayList<KnowledgeTree> childrenKnowledge) {
-        this.childrenKnowledge = childrenKnowledge;
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<KnowledgeTree> getChildren() {
+        return (List<KnowledgeTree>) super.getChildren();
     }
 }

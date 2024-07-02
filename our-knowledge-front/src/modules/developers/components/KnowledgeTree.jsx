@@ -63,28 +63,32 @@ const KnowledgeTree = ({ knowledgeTree }) => {
         </div>
     );
 
+    if(knowledgeTree.parent.knowledgeId==null){
+        return null;
+    }
+
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div onClick={toggleOpen} style={{ cursor: 'pointer' }}>
-                    {!isOpen && knowledgeTree.childrenKnowledge.length>0 && (
+                    {!isOpen && knowledgeTree.children.length>0 && (
                         <span style={{ color: 'darkgrey', fontSize: '20px', display: 'inline-block', transform: 'rotate(180deg)' }}>^</span>
                     )}
-                    {isOpen && knowledgeTree.childrenKnowledge.length>0 && (
+                    {isOpen && knowledgeTree.children.length>0 && (
                         <span style={{ color: 'darkgrey', fontSize: '20px', position: 'relative', top: '5px' }}>^</span>
                     )}
-                    {knowledgeTree.childrenKnowledge.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
-                    {knowledgeTree.parentKnowledge.technology.name}
+                    {knowledgeTree.children.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
+                    {knowledgeTree.parent.name}
                 </div>
                 <div style={{ display: 'flex', gap: '60px' }}>
-                    <Box ok={knowledgeTree.parentKnowledge.mainSkill} />
-                    <Box ok={knowledgeTree.parentKnowledge.likeIt} />
+                    <Box ok={knowledgeTree.parent.mainSkill} />
+                    <Box ok={knowledgeTree.parent.likeIt} />
                 </div>
             </div>
             <div style={{ paddingLeft: '2em' }}>
                 {isOpen && (
                     <KnowledgeTreeList
-                        knowledgeTreeList={knowledgeTree.childrenKnowledge}
+                        knowledgeTreeList={knowledgeTree.children}
                         root={false}
                     />
                 )}
@@ -95,15 +99,15 @@ const KnowledgeTree = ({ knowledgeTree }) => {
 
 KnowledgeTree.propTypes = {
     knowledgeTree: PropTypes.shape({
-        parentKnowledge: PropTypes.shape({
-            technology: PropTypes.shape({
-                id: PropTypes.number.isRequired,
-                name: PropTypes.string.isRequired
-            }).isRequired,
+        parent: PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+            relevant:  PropTypes.bool.isRequired,
+            knowledgeId: PropTypes.number.isRequired,
             likeIt: PropTypes.bool.isRequired,
             mainSkill: PropTypes.bool.isRequired
         }).isRequired,
-        childrenKnowledge: PropTypes.array.isRequired
+        children: PropTypes.array.isRequired
     }).isRequired
 
 };

@@ -21,13 +21,13 @@ const TechnologyTree = ({ technologyTree}) => {
     };
 
     const handleRemove = () => {
-        const hasChildren = technologyTree.childrenTechnology.length > 0;
+        const hasChildren = technologyTree.children.length > 0;
         const confirmMessage = hasChildren
             ? 'project.administration.technology.haveChildren.explanation'
             : 'project.administration.technology.delete.confirmation';
 
         if (window.confirm(intl.formatMessage({ id: confirmMessage }))) {
-            dispatch(actions.removeTechnology(2, technologyTree.parentTechnology.id, hasChildren));
+            dispatch(actions.removeTechnology(2, technologyTree.parent.id, hasChildren));
         }
     };
 
@@ -59,18 +59,18 @@ const TechnologyTree = ({ technologyTree}) => {
         <div>
             <div onContextMenu={handleAddMenu} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div onClick={toggleOpen} style={{ cursor: 'pointer'}}>
-                    {!isOpen && technologyTree.childrenTechnology.length>0 && (
+                    {!isOpen && technologyTree.children.length>0 && (
                         <span style={{ color: 'darkgrey', fontSize: '20px', display: 'inline-block', transform: 'rotate(180deg)' }}>^</span>
                     )}
-                    {isOpen && technologyTree.childrenTechnology.length>0 && (
+                    {isOpen && technologyTree.children.length>0 && (
                         <span style={{ color: 'darkgrey', fontSize: '20px', position: 'relative', top: '5px' }}>^</span>
                     )}
-                    {technologyTree.childrenTechnology.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
-                    {technologyTree.parentTechnology.name}
+                    {technologyTree.children.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
+                    {technologyTree.parent.name}
                 </div>
                 <button
                     onClick={handleRemove}
-                    title={`${intl.formatMessage({ id: 'project.global.buttons.delete' })} ${technologyTree.parentTechnology.name}`}
+                    title={`${intl.formatMessage({ id: 'project.global.buttons.delete' })} ${technologyTree.parent.name}`}
                     style={{
                         color: 'white',
                         marginLeft: '10px',
@@ -95,15 +95,15 @@ const TechnologyTree = ({ technologyTree}) => {
                     }}
                     ref={contextMenuRef}
                 >
-                    <AddTechnology parentTechnologyId={technologyTree.parentTechnology.id}
+                    <AddTechnology parentId={technologyTree.parent.id}
                     onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
                 </div>
             )}
             <div style={{ paddingLeft: '2em' }}>
                 {isOpen && (
                     <TechnologyTreeList
-                        technologyTreeList={technologyTree.childrenTechnology}
-                        parentTechnologyId={technologyTree.parentTechnology.id}
+                        technologyTreeList={technologyTree.children}
+                        parentId={technologyTree.parent.id}
                         root={false}
                     />
                 )}
@@ -114,11 +114,11 @@ const TechnologyTree = ({ technologyTree}) => {
 
 TechnologyTree.propTypes = {
     technologyTree: PropTypes.shape({
-        parentTechnology: PropTypes.shape({
+        parent: PropTypes.shape({
             id: PropTypes.number.isRequired,
             name: PropTypes.string.isRequired
         }).isRequired,
-        childrenTechnology: PropTypes.array.isRequired
+        children: PropTypes.array.isRequired
     }).isRequired
 };
 
