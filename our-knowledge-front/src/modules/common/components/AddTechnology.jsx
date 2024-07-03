@@ -7,25 +7,27 @@ import TechnologyTree from "../../administration/components/TechnologyTree";
 import Technologies from "../../administration/components/Technologies";
 import ErrorDialog from "./ErrorDialog";
 
-const AddTechnology = ({parentTechnologyId, onAdd}) => {
+const AddTechnology = ({parentId, onAdd}) => {
 
     const intl = useIntl()
     const dispatch = useDispatch();
     const [newTechnologyName, setNewTechnologyName] = useState('');
 
+    console.log(parentId)
+
     const handleAddTechnology = (event) => {
         event.preventDefault();
-        dispatch(actions.addTechnology(2, newTechnologyName, parentTechnologyId));
+        dispatch(actions.addTechnology(2, newTechnologyName, parentId));
         setNewTechnologyName('');
         onAdd();
     };
 
     return (
         <div>
-            <div className="context-menu-title">
+            <div style={{marginTop: '4px'}} className="context-menu-title">
                 {intl.formatMessage({id: 'project.administration.technologies.add'})}
             </div>
-            <form onSubmit={handleAddTechnology} className="context-menu-form">
+            <form style={{marginTop: '2px', marginBottom: '0.2px'}} onSubmit={handleAddTechnology} className="context-menu-form">
                 <input
                     type="text"
                     value={newTechnologyName}

@@ -1,7 +1,5 @@
 import * as actionTypes from './actionTypes';
 import backend from '../../backend';
-import * as selectors from "./selectors";
-import {PROFILE_UPDATED} from "./actionTypes";
 
 const profileUpdated = profile => ({
     type: actionTypes.PROFILE_UPDATED,
@@ -33,10 +31,28 @@ export const addTechnology = (userId, technologyName, parentId, onSuccess,
         },
         onErrors);
 
-export const removeTechnology = (userId, technologyId, deleteChildren, onSuccess,
+export const updateKnowledge = (userId, knowledgeId, mainSkill, likeIt, onSuccess,
                                        onErrors) => dispatch =>
-    backend.technologyService.deleteTechnology(userId,
-        technologyId, deleteChildren, profile => {
+    backend.knowledgeService.updateKnowledge(userId,
+        knowledgeId, mainSkill, likeIt, profile => {
+            dispatch(profileUpdated(profile));
+            onSuccess();
+        },
+        onErrors);
+
+export const addKnowledge = (userId, technologyId, onSuccess,
+                                       onErrors) => dispatch =>
+    backend.knowledgeService.addKnowledge(userId,
+        technologyId, profile => {
+            dispatch(profileUpdated(profile));
+            onSuccess();
+        },
+        onErrors);
+
+export const deleteKnowledge = (userId, knowledgeId, onSuccess,
+                                       onErrors) => dispatch =>
+    backend.knowledgeService.deleteKnowledge(userId,
+        knowledgeId, profile => {
             dispatch(profileUpdated(profile));
             onSuccess();
         },

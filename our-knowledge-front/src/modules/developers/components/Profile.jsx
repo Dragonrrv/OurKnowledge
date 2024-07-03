@@ -1,17 +1,18 @@
 import {useDispatch, useSelector} from "react-redux";
-import {FormattedMessage, useIntl} from "react-intl";
+import {FormattedMessage} from "react-intl";
 
 import KnowledgeTreeList from './KnowledgeTreeList';
 import * as selectors from '../selectors';
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import developers from "../index";
 import PropTypes from "prop-types";
+import {useNavigate} from "react-router-dom";
 
 const Profile= () => {
 
     const profile = useSelector(selectors.getProfile);
-    const intl = useIntl();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(developers.actions.findProfile(1, 1));
@@ -20,6 +21,8 @@ const Profile= () => {
     if (!profile) {
         return <div>Loading...</div>
     }
+
+    console.log(profile)
 
     return (
         <div>
@@ -52,7 +55,7 @@ const Profile= () => {
                             fontWeight: 'bold', /* Negrita */
                             transition: 'background-color 0.3s ease, transform 0.3s ease' /* Transiciones suaves */
                         }}
-                        /*onClick={onClick}*/
+                        onClick={() => navigate('/developers/updateProfile')}
                     >
                         <FormattedMessage id="project.developers.button.updateProfile"/>
                     </button>

@@ -29,6 +29,7 @@ export default {
     'project.global.fields.userName': 'Username',
     'project.global.fields.yes': 'yes',
     'project.global.fields.unknown': 'Unknown',
+    'project.global.fields.known': 'Known',
     'project.global.fields.mainSkill': 'Main Skill',
     'project.global.fields.likeIt': 'Like it',
     'project.global.fields.technologyName': 'Technology Name',
@@ -46,6 +47,7 @@ export default {
     'project.administration.technology.delete.confirmation': 'Are you sure you want to delete this technology?',
 
     'project.developers.profile.startDate': 'On the company since: ',
-    'project.developers.button.updateProfile': 'Update Profile'
+    'project.developers.button.updateProfile': 'Update Profile',
+    'project.developers.tittle.updateProfile': 'Update your Profile'
 
 }

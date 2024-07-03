@@ -7,6 +7,7 @@ import * as actions from "../actions";
 import {useDispatch} from "react-redux";
 import {useIntl} from "react-intl";
 import AddTechnology from "../../common/components/AddTechnology";
+import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 
 const TechnologyTree = ({ technologyTree}) => {
     const intl = useIntl();
@@ -58,16 +59,7 @@ const TechnologyTree = ({ technologyTree}) => {
     return (
         <div>
             <div onContextMenu={handleAddMenu} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div onClick={toggleOpen} style={{ cursor: 'pointer'}}>
-                    {!isOpen && technologyTree.children.length>0 && (
-                        <span style={{ color: 'darkgrey', fontSize: '20px', display: 'inline-block', transform: 'rotate(180deg)' }}>^</span>
-                    )}
-                    {isOpen && technologyTree.children.length>0 && (
-                        <span style={{ color: 'darkgrey', fontSize: '20px', position: 'relative', top: '5px' }}>^</span>
-                    )}
-                    {technologyTree.children.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
-                    {technologyTree.parent.name}
-                </div>
+                <TechnologyTreeName name={technologyTree.parent.name} isOpen={isOpen} hasChildren={technologyTree.children.length>0} onClick={toggleOpen}/>
                 <button
                     onClick={handleRemove}
                     title={`${intl.formatMessage({ id: 'project.global.buttons.delete' })} ${technologyTree.parent.name}`}
@@ -103,7 +95,6 @@ const TechnologyTree = ({ technologyTree}) => {
                 {isOpen && (
                     <TechnologyTreeList
                         technologyTreeList={technologyTree.children}
-                        parentId={technologyTree.parent.id}
                         root={false}
                     />
                 )}

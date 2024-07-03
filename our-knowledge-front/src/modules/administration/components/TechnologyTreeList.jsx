@@ -7,17 +7,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 
 import * as actions from '../actions';
 
-const TechnologyTreeList = ({ technologyTreeList, parentTechnologyId, root}) => {
-
-    const intl = useIntl();
-    const dispatch = useDispatch();
-    const [newTechnologyName, setNewTechnologyName] = useState('');
-
-    const handleSubmit = event => {
-        event.preventDefault();
-        dispatch(actions.addTechnology(2, newTechnologyName, parentTechnologyId));
-        setNewTechnologyName('');
-    };
+const TechnologyTreeList = ({ technologyTreeList, root}) => {
 
     const rootStyle = {
         background: 'linear-gradient(to bottom, #F5F3F3 50%, #EDECEC 50%)',

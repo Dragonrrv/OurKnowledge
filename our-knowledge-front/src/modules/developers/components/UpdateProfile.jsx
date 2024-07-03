@@ -6,8 +6,9 @@ import * as selectors from '../selectors';
 import {useEffect, useState} from "react";
 import developers from "../index";
 import PropTypes from "prop-types";
+import UpdateKnowledgeTreeList from "./UpdateKnowledgeTreeList";
 
-const Profile= () => {
+const UpdateProfile= () => {
 
     const profile = useSelector(selectors.getProfile);
     const intl = useIntl();
@@ -23,73 +24,35 @@ const Profile= () => {
 
     return (
         <div>
-            <div style={{display: 'flex'}}>
-                <div style={{flexGrow: 1}}>
-                    <div className="card bg-light border-dark">
-                        <h5 className="card-header">
-                            {profile.user.name}
-                        </h5>
-                    </div>
-                    <div className="card bg-light border-dark">
-                        {profile.user.email}
-                    </div>
-                    <div className="card bg-light border-dark">
-                        <FormattedMessage id="project.developers.profile.startDate"/>
-                        {profile.user.startDate && <div>{profile.user.startDate}</div>}
-                        {!profile.user.startDate && <FormattedMessage id="project.global.fields.unknown"/>}
-                    </div>
+            <div className="card bg-light border-dark">
+                <h5 className="card-header">
+                    <FormattedMessage id="project.developers.tittle.updateProfile"/>
+                </h5>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                    <FormattedMessage id='project.global.fields.name'/>
                 </div>
-                <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
-                    <button
-                        style={{
-                            backgroundColor: 'blue', /* Tono gris */
-                            color: 'white', /* Color del texto */
-                            padding: '20px 40px', /* Relleno interno */
-                            border: 'none', /* Sin borde */
-                            borderRadius: '5px', /* Borde redondeado */
-                            cursor: 'pointer', /* Cursor de mano */
-                            fontSize: '16px', /* Tamaño de fuente */
-                            fontWeight: 'bold', /* Negrita */
-                            transition: 'background-color 0.3s ease, transform 0.3s ease' /* Transiciones suaves */
-                        }}
-                        /*onClick={onClick}*/
-                    >
-                        <FormattedMessage id="project.developers.button.updateProfile"/>
-                    </button>
+                <div style={{ marginLeft: 'auto', display: 'flex' }}>
+                    <div style={{ width: '70px' }}>
+                        <FormattedMessage id='project.global.fields.known'/>
+                    </div>
+                    <div style={{ width: '100px' }}>
+                        <FormattedMessage id='project.global.fields.mainSkill'/>
+                    </div>
+                    <div style={{ width: 'auto' }}>
+                        <FormattedMessage id='project.global.fields.likeIt'/>
+                    </div>
                 </div>
             </div>
-
-            <table className="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">
-                        <FormattedMessage id='project.global.fields.name'/>
-                    </th>
-                    <th scope="col" style={{ width: '100px' }}>
-                        <FormattedMessage id='project.global.fields.mainSkill'/>
-                    </th>
-                    <th scope="col" style={{ width: '70px' }}>
-                        <FormattedMessage id='project.global.fields.likeIt'/>
-                    </th>
-                    <th scope="col">
-                        <FormattedMessage id='project.developers.profile.'/>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td colSpan="3">
-                        <KnowledgeTreeList knowledgeTreeList={profile.knowledgeTreeList} root={true} />
-                    </td>
-                    <td> X </td>
-                </tr>
-                </tbody>
-            </table>
+            <div>
+                <UpdateKnowledgeTreeList knowledgeTreeList={profile.knowledgeTreeList} root={true} />
+            </div>
         </div>
     )
 }
 
-Profile.protoTypes = {
+UpdateProfile.protoTypes = {
     user: PropTypes.shape( {
         name: PropTypes.string.isRequired,
         email: PropTypes.string.isRequired,
@@ -99,4 +62,4 @@ Profile.protoTypes = {
     knowledgeTreeList: PropTypes.array.isRequired
 }
 
-export default Profile;
+export default UpdateProfile;

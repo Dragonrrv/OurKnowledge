@@ -7,6 +7,8 @@ import * as actions from "../actions";
 import {useDispatch} from "react-redux";
 import {FormattedMessage, useIntl} from "react-intl";
 import AddTechnology from "../../common/components/AddTechnology";
+import TechnologyTreeName from "../../common/components/TechnologyTreeName";
+import TickBox from "../../common/components/TickBox";
 
 const KnowledgeTree = ({ knowledgeTree }) => {
     const [isOpen, setIsOpen] = useState(true);
@@ -15,54 +17,6 @@ const KnowledgeTree = ({ knowledgeTree }) => {
         setIsOpen(!isOpen);
     };
 
-    function box(ok) {
-        if(ok){
-            return <OkBox/>
-        }
-        return <EmptyBox/>
-    }
-
-    const OkBox = (
-        <div className="ok-box">
-                                <span style = {{ display: 'flex', justifyContent: 'center', alignItems: 'center',
-                                    width: '100px',height: '100px', border: '2px solid #4CAF50', borderRadius: '8px',
-                                    backgroundColor: '#e8f5e9', position: 'relative'}}>
-                                    &#10004;</span>
-        </div>
-    )
-
-    const EmptyBox = (
-        <div className="ok-box">
-                                <span style = {{ display: 'flex', justifyContent: 'center', alignItems: 'center',
-                                    width: '100px',height: '100px', border: '2px solid #4CAF50', borderRadius: '8px',
-                                    backgroundColor: '#e8f5e9', position: 'relative'}}>
-                                    X</span>
-        </div>
-    )
-
-    const Box = ({ ok }) => (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '20px',
-            height: '20px',
-            border: '2px solid #4CAF50',
-            borderRadius: '8px',
-            backgroundColor: '#e8f5e9',
-            position: 'relative'
-        }}>
-            {ok && (
-                <span style={{
-                    fontSize: '16px',
-                    color: '#4CAF50'
-                }}>
-                &#10004;
-            </span>
-            )}
-        </div>
-    );
-
     if(knowledgeTree.parent.knowledgeId==null){
         return null;
     }
@@ -70,19 +24,10 @@ const KnowledgeTree = ({ knowledgeTree }) => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div onClick={toggleOpen} style={{ cursor: 'pointer' }}>
-                    {!isOpen && knowledgeTree.children.length>0 && (
-                        <span style={{ color: 'darkgrey', fontSize: '20px', display: 'inline-block', transform: 'rotate(180deg)' }}>^</span>
-                    )}
-                    {isOpen && knowledgeTree.children.length>0 && (
-                        <span style={{ color: 'darkgrey', fontSize: '20px', position: 'relative', top: '5px' }}>^</span>
-                    )}
-                    {knowledgeTree.children.length<1 && (<span style={{fontSize: '20px'}}> </span>)}
-                    {knowledgeTree.parent.name}
-                </div>
+                <TechnologyTreeName name={knowledgeTree.parent.name} isOpen={isOpen} hasChildren={knowledgeTree.children.length>0} onClick={toggleOpen}/>
                 <div style={{ display: 'flex', gap: '60px' }}>
-                    <Box ok={knowledgeTree.parent.mainSkill} />
-                    <Box ok={knowledgeTree.parent.likeIt} />
+                    <TickBox ok={knowledgeTree.parent.mainSkill} clickable={false} />
+                    <TickBox ok={knowledgeTree.parent.likeIt} clickable={false} />
                 </div>
             </div>
             <div style={{ paddingLeft: '2em' }}>
