@@ -9,7 +9,7 @@ public interface TechnologyService {
 
     List<TechnologyTree> listRelevantTechnologies();
 
-    List<TechnologyTree> addTechnology(String name, Long parentId, Long userId) throws InstanceNotFoundException, DuplicateInstanceException;
+    List<TechnologyTree> addTechnology( Long userId, String name, Long parentId, boolean relevant) throws InstanceNotFoundException, DuplicateInstanceException, PermissionException;
 
     List<TechnologyTree> deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException;
 }

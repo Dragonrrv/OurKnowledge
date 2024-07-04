@@ -10,15 +10,6 @@ import UpdateKnowledgeTree from "./UpdateKnowledgeTree";
 
 const UpdateKnowledgeTreeList = ({ knowledgeTreeList, root}) => {
 
-    const dispatch = useDispatch();
-    const [newTechnologyName, setNewTechnologyName] = useState('');
-
-    const handleSubmit = event => {
-        event.preventDefault();
-        dispatch(actions.addTechnology(1, newTechnologyName, parentTechnologyId));
-        setNewTechnologyName('');
-    };
-
     const rootStyle = {
         background: 'linear-gradient(to bottom, #F5F3F3 50%, #EDECEC 50%)',
         backgroundSize: '100% 60px'

@@ -12,8 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.example.ourknowledgebackend.service.TechnologyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import javax.naming.directory.InvalidAttributesException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +25,14 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     private final PermissionChecker permissionChecker;
 
+    private final TechnologyService technologyService;
+
     private final KnowledgeDao knowledgeDao;
 
     private final TechnologyDao technologyDao;
 
     public List<KnowledgeTree> listUserKnowledge(User user) {
-        List<KnownTechnology> knownTechnologyList = technologyDao.findRelevantTechnologiesWithKnowledge(user.getId());
+        List<KnownTechnology> knownTechnologyList = technologyDao.findTechnologiesWithKnowledge(user.getId());
 
         Map<Long, List<KnownTechnology>> knownTechnologyMap = knownTechnologyList.stream()
                 .collect(Collectors.groupingBy(tech -> tech.getParentId() != null ? tech.getParentId() : 0L));
@@ -48,15 +54,29 @@ public class KnowledgeServiceImpl implements KnowledgeService {
     }
 
     @Override
-    public List<Knowledge> addKnowledge(Long userId, Long technologyId) throws InstanceNotFoundException, DuplicateInstanceException {
+    public List<Knowledge> addKnowledge(Long userId, Long technologyId, String technologyName, Long parentTechnologyId) throws InstanceNotFoundException, DuplicateInstanceException, InvalidAttributesException {
         User user = permissionChecker.checkUser(userId);
-        Technology technology = permissionChecker.checkTechnology(technologyId);
-        Optional<Knowledge> knowledge = knowledgeDao.findByUserAndTechnology(user, technology);
-        if (knowledge.isPresent()) {
-            throw new DuplicateInstanceException("project.entities.knowledge", knowledge.get().getId());
+        Technology technology;
+        if(technologyId==null){
+            if(technologyName!=null){
+                try {
+                    technologyService.addTechnology(userId, technologyName, parentTechnologyId, false);
+                } catch (PermissionException | DuplicateInstanceException ignored) {}
+                technology = technologyDao.findByNameAndParentId(technologyName, parentTechnologyId).get();
+            } else {
+                throw new InvalidAttributesException();
+            }
+        } else {
+            technology = permissionChecker.checkTechnology(technologyId);
+            Optional<Knowledge> knowledge = knowledgeDao.findByUserAndTechnology(user, technology);
+            if (knowledge.isPresent()) {
+                throw new DuplicateInstanceException("project.entities.knowledge", knowledge.get().getId());
+            }
         }
         return addKnowledgeHierarchy(user, technology);
     }
+
+
 
     public List<Knowledge> addKnowledgeHierarchy(User user, Technology technology) {
         List<Knowledge> knowledges = new ArrayList<>();
@@ -67,7 +87,9 @@ public class KnowledgeServiceImpl implements KnowledgeService {
                 parentTechnology.ifPresent(value -> knowledges.addAll(addKnowledgeHierarchy(user, value)));
             }
         }
-        knowledges.add(knowledgeDao.save(new Knowledge(user, technology, false, false)));
+        if(!knowledgeDao.existsByUserAndTechnology(user, technology)){
+            knowledges.add(knowledgeDao.save(new Knowledge(user, technology, false, false)));
+        }
         return knowledges;
     }
 

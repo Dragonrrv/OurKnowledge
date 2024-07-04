@@ -13,12 +13,12 @@ const TickBox = ({ok, clickable, onClick}) => {
             borderRadius: '8px',
             backgroundColor: '#e8f5e9',
             position: 'relative',
-            cursor: clickable ? 'pointer' : '',
+            cursor: clickable ? 'pointer' : 'default',
         }}>
             {ok && (
                 <span style={{
                     fontSize: '16px',
-                    cursor: clickable ? 'pointer' : '',
+                    cursor: clickable ? 'pointer' : 'default',
                     color: '#4CAF50'
                 }}>
                 &#10004;

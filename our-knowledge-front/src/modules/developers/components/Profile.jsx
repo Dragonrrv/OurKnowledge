@@ -22,8 +22,6 @@ const Profile= () => {
         return <div>Loading...</div>
     }
 
-    console.log(profile)
-
     return (
         <div>
             <div style={{display: 'flex'}}>

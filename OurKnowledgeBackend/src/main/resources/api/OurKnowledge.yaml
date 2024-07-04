@@ -123,6 +123,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profileResponse'
 
   /knowledge/delete:
     post:
@@ -139,6 +143,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profileResponse'
 
   /knowledge/update:
     post:
@@ -155,6 +163,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profileResponse'
 
 components:
   schemas:
@@ -310,6 +322,10 @@ components:
         userId:
           type: integer
         technologyId:
+          type: integer
+        technologyName:
+          type: string
+        parentTechnologyId:
           type: integer
 
     deleteKnowledgeRequest:

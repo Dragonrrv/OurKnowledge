@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,12 +40,41 @@ class KnowledgeServiceTest {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
-            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology.getId());
+            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology.getId(), null, null);
             Optional<Knowledge> result = knowledgeDao.findById(knowledges.get(0).getId());
 
             assertEquals(knowledges.get(0), result.get());
 
-        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+        } catch (InstanceNotFoundException | DuplicateInstanceException | InvalidAttributesException  e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void addTechnologyAndKnowledge() {
+        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        Technology technology = technologyDao.save(new Technology("Backend", null, true));
+        try {
+            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), null, "Spring", technology.getId());
+            Optional<Knowledge> result = knowledgeDao.findById(knowledges.get(1).getId());
+
+            assertEquals(knowledges.get(1), result.get());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException | InvalidAttributesException  e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void addTechnologyWhitParentAndKnowledge() {
+        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        try {
+            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), null, "Java", null);
+            Optional<Knowledge> result = knowledgeDao.findById(knowledges.get(0).getId());
+
+            assertEquals(knowledges.get(0), result.get());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException | InvalidAttributesException  e) {
             assert false;
         }
     }
@@ -57,7 +87,7 @@ class KnowledgeServiceTest {
         Technology technology3 = technologyDao.save(new Technology("Maven", technology2.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology1.getId(), true));
         try {
-            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology2.getId());
+            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology2.getId(), null, null);
             Optional<Knowledge> result1 = knowledgeDao.findById(knowledges.get(0).getId());
             Optional<Knowledge> result2 = knowledgeDao.findById(knowledges.get(1).getId());
 
@@ -65,7 +95,7 @@ class KnowledgeServiceTest {
             assertEquals(knowledges.get(1), result2.get());
             assertEquals(knowledges.size(), 2);
 
-        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+        } catch (InstanceNotFoundException | DuplicateInstanceException | InvalidAttributesException  e) {
             assert false;
         }
     }
@@ -75,13 +105,13 @@ class KnowledgeServiceTest {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
-            List<Knowledge> knowledges = knowledgeService.addKnowledge(NON_EXISTENT_ID, technology.getId());
+            List<Knowledge> knowledges = knowledgeService.addKnowledge(NON_EXISTENT_ID, technology.getId(), null, null);
             assert false;
         } catch (InstanceNotFoundException e) {
 
             assert true;
 
-        } catch (DuplicateInstanceException e) {
+        } catch (DuplicateInstanceException | InvalidAttributesException  e) {
             assert false;
         }
     }
@@ -91,13 +121,13 @@ class KnowledgeServiceTest {
         User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
-            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), NON_EXISTENT_ID);
+            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), NON_EXISTENT_ID, null, null);
             assert false;
         } catch (InstanceNotFoundException e) {
 
             assert true;
 
-        } catch (DuplicateInstanceException e) {
+        } catch (DuplicateInstanceException | InvalidAttributesException  e) {
             assert false;
         }
     }
@@ -108,13 +138,29 @@ class KnowledgeServiceTest {
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         knowledgeDao.save(new Knowledge(user, technology, false, false));
         try {
-            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology.getId());
+            List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology.getId(), null, null);
             assert false;
         } catch (DuplicateInstanceException e) {
 
             assert true;
 
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | InvalidAttributesException  e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void addKnowledgeInvalidAttributesException() {
+        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        Technology technology = technologyDao.save(new Technology("Java", null, true));
+        try {
+            knowledgeService.addKnowledge(user.getId(), null, null, technology.getId());
+            assert false;
+        } catch (InvalidAttributesException e) {
+
+            assert true;
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException  e) {
             assert false;
         }
     }

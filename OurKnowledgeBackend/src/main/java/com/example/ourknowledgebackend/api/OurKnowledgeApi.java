@@ -3,16 +3,15 @@ package com.example.ourknowledgebackend.api;
 import com.example.ourKnowledge.api.TechnologyApi;
 import com.example.ourKnowledge.api.UserApi;
 import com.example.ourKnowledge.api.model.*;
-import com.example.ourknowledgebackend.api.mappers.ApiTechnologyMapper;
 import com.example.ourknowledgebackend.exceptions.*;
-import com.example.ourknowledgebackend.model.entities.Technology;
 import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.impl.TechnologyServiceImpl;
 import com.example.ourknowledgebackend.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.naming.directory.InvalidAttributesException;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,15 +33,20 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
         return ResponseEntity.status(200).body(technologyServiceImpl.listRelevantTechnologies());
     }
 
+
+
     @Override
     public ResponseEntity addTechnology(AddTechnologyRequestDTO addTechnologyRequestDTO) {
         Long parentId = addTechnologyRequestDTO.getParentId() != null ? addTechnologyRequestDTO.getParentId().longValue() : null;
         try {
-            return ResponseEntity.status(200).body(technologyServiceImpl.addTechnology(addTechnologyRequestDTO.getName(), parentId, addTechnologyRequestDTO.getUserId().longValue()));
+            return ResponseEntity.status(200).body(technologyServiceImpl.addTechnology( addTechnologyRequestDTO.getUserId().longValue(),
+                    addTechnologyRequestDTO.getName(), parentId, true));
         } catch (InstanceNotFoundException e) {
             return ResponseEntity.status(404).body(e);
         } catch (DuplicateInstanceException e) {
             return ResponseEntity.status(409).body(e);
+        } catch (PermissionException e) {
+            return ResponseEntity.status(403).body(e);
         }
     }
 
@@ -67,13 +71,18 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
 
     @Override
     public ResponseEntity addKnowledge(AddKnowledgeRequestDTO addKnowledgeRequestDTO) {
+        Long technologyId = addKnowledgeRequestDTO.getTechnologyId()==null ? null : addKnowledgeRequestDTO.getTechnologyId().longValue();
+        Long parentTechnologyId = addKnowledgeRequestDTO.getParentTechnologyId()==null ? null : addKnowledgeRequestDTO.getParentTechnologyId().longValue();
         try {
             knowledgeService.addKnowledge(addKnowledgeRequestDTO.getUserId().longValue(),
-                    addKnowledgeRequestDTO.getTechnologyId().longValue());
-        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+                    technologyId, addKnowledgeRequestDTO.getTechnologyName(),
+                    parentTechnologyId);
+            return ResponseEntity.status(200).body(
+                    userServiceImpl.showProfile(addKnowledgeRequestDTO.getUserId().longValue(),
+                            addKnowledgeRequestDTO.getUserId().longValue()));
+        } catch (InstanceNotFoundException | DuplicateInstanceException | InvalidAttributesException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.status(200).body("Knowledge added");
     }
 
     @Override
@@ -81,10 +90,12 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
         try {
             knowledgeService.deleteKnowledge(deleteKnowledgeRequestDTO.getUserId().longValue(),
                     deleteKnowledgeRequestDTO.getKnowledgeId().longValue());
+            return ResponseEntity.status(200).body(
+                    userServiceImpl.showProfile(deleteKnowledgeRequestDTO.getUserId().longValue(),
+                            deleteKnowledgeRequestDTO.getUserId().longValue()));
         } catch (InstanceNotFoundException | PermissionException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.status(200).body("Knowledge deleted");
     }
 
     @Override
@@ -93,10 +104,12 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
             knowledgeService.updateKnowledge(updateKnowledgeRequestDTO.getUserId().longValue(),
                     updateKnowledgeRequestDTO.getKnowledgeId().longValue(), updateKnowledgeRequestDTO.getMainSkill(),
                     updateKnowledgeRequestDTO.getLikeIt());
+            return ResponseEntity.status(200).body(
+                    userServiceImpl.showProfile(updateKnowledgeRequestDTO.getUserId().longValue(),
+                            updateKnowledgeRequestDTO.getUserId().longValue()));
         } catch (InstanceNotFoundException | PermissionException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.status(200).body("Knowledge updated");
     }
 
 }

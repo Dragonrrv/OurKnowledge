@@ -22,7 +22,6 @@ const Technologies= () => {
         return <div>Loading...</div>
     }
 
-    console.log(technologyTreeList)
     return (
         <div>
             <div className="card bg-light border-dark">

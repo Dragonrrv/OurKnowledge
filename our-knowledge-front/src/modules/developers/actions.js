@@ -40,10 +40,10 @@ export const updateKnowledge = (userId, knowledgeId, mainSkill, likeIt, onSucces
         },
         onErrors);
 
-export const addKnowledge = (userId, technologyId, onSuccess,
+export const addKnowledge = (userId, technologyId, technologyName, parentTechnologyId, onSuccess,
                                        onErrors) => dispatch =>
     backend.knowledgeService.addKnowledge(userId,
-        technologyId, profile => {
+        technologyId, technologyName, parentTechnologyId, profile => {
             dispatch(profileUpdated(profile));
             onSuccess();
         },

@@ -88,7 +88,9 @@ const TechnologyTree = ({ technologyTree}) => {
                     ref={contextMenuRef}
                 >
                     <AddTechnology parentId={technologyTree.parent.id}
-                    onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
+                                   userId={2}
+                                   relevant={true}
+                                   onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
                 </div>
             )}
             <div style={{ paddingLeft: '2em' }}>

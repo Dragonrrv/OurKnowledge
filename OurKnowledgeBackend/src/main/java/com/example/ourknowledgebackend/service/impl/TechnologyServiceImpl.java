@@ -19,11 +19,7 @@ public class TechnologyServiceImpl implements TechnologyService {
 
     private final PermissionChecker permissionChecker;
 
-    private final KnowledgeService knowledgeService;
-
     private final TechnologyDao technologyDao;
-
-    private final UserDao userDao;
 
     private final KnowledgeDao knowledgeDao;
 
@@ -51,32 +47,28 @@ public class TechnologyServiceImpl implements TechnologyService {
     }
 
 
+
+
     @Override
-    public List<TechnologyTree> addTechnology(String name, Long parentId, Long userId) throws InstanceNotFoundException, DuplicateInstanceException {
+    public List<TechnologyTree> addTechnology(Long userId, String name, Long parentId, boolean relevant) throws InstanceNotFoundException, DuplicateInstanceException, PermissionException {
         User user = permissionChecker.checkUser(userId);
         if (parentId != null) {
             permissionChecker.checkTechnology(parentId);
         }
-
+        if (relevant && !user.getRole().equals("Admin")) {
+            throw new PermissionException();
+        }
         Technology technology = permissionChecker.checkTechnology(name, parentId);
 
-        if (user.getRole().equals("Admin")) {
-            if (technology == null) {
-                technology = technologyDao.save(new Technology(name, parentId, true));
-            } else if (technology.isRelevant()) {
-                throw new DuplicateInstanceException("project.entity.technology", technology.getId());
-            } else {
-                technology.setRelevant(true);
-                technologyDao.save(technology);
-            }
-            return listRelevantTechnologies();
+        if (technology == null) {
+            technologyDao.save(new Technology(name, parentId, relevant));
+        } else if (technology.isRelevant() || !relevant) {
+            throw new DuplicateInstanceException("project.entity.technology", technology.getId());
         } else {
-            if (technology == null) {
-                technology = technologyDao.save(new Technology(name, parentId, false));
-            }
-            knowledgeService.addKnowledge(userId, technology.getId());
+            technology.setRelevant(true);
+            technologyDao.save(technology);
         }
-        return listRelevantTechnologies(); //Necesita actualización
+        return listRelevantTechnologies();
     }
 
     @Override

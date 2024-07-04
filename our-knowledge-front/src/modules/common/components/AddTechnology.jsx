@@ -1,23 +1,25 @@
 import {useIntl} from "react-intl";
-import * as actions from "../../administration/actions";
+import * as adminActions from "../../administration/actions";
+import * as developActions from "../../developers/actions";
 import {useState} from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import PropTypes from "prop-types";
-import TechnologyTree from "../../administration/components/TechnologyTree";
-import Technologies from "../../administration/components/Technologies";
-import ErrorDialog from "./ErrorDialog";
+import * as selectors from "../../developers/selectors";
 
-const AddTechnology = ({parentId, onAdd}) => {
+const AddTechnology = ({parentId, userId, relevant, onAdd}) => {
 
     const intl = useIntl()
     const dispatch = useDispatch();
     const [newTechnologyName, setNewTechnologyName] = useState('');
 
-    console.log(parentId)
-
     const handleAddTechnology = (event) => {
         event.preventDefault();
-        dispatch(actions.addTechnology(2, newTechnologyName, parentId));
+        if(relevant){
+            dispatch(adminActions.addTechnology(userId, newTechnologyName, parentId));
+        } else {
+            console.log(parentId);
+            dispatch(developActions.addKnowledge(userId, null, newTechnologyName, parentId))
+        }
         setNewTechnologyName('');
         onAdd();
     };
