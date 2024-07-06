@@ -7,6 +7,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 
 import * as actions from '../actions';
 import UpdateKnowledgeTree from "./UpdateKnowledgeTree";
+import AddTechnology from "../../common/components/AddTechnology";
 
 const UpdateKnowledgeTreeList = ({ knowledgeTreeList, root}) => {
 
@@ -24,6 +25,10 @@ const UpdateKnowledgeTreeList = ({ knowledgeTreeList, root}) => {
                     <UpdateKnowledgeTree knowledgeTree={knowledgeTree}/>
                 </div>
             ))}
+            {root &&
+                <AddTechnology parentId={null}
+                               userId={1}
+                               relevant={false} onAdd={null}/>}
         </div>
 
     )

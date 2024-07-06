@@ -7,7 +7,7 @@ const initialState = {
         id: 1,
         name: "Juan",
         email: "Juan@ejemplo.com",
-        role: "Developer"
+        role: "Admin"
     }
 };
 
