@@ -7,15 +7,17 @@ import {useEffect, useState} from "react";
 import developers from "../index";
 import PropTypes from "prop-types";
 import UpdateKnowledgeTreeList from "./UpdateKnowledgeTreeList";
+import users from "../../users";
 
 const UpdateProfile= () => {
 
     const profile = useSelector(selectors.getProfile);
+    const userId = useSelector(users.selectors.getUserId);
     const intl = useIntl();
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(developers.actions.findProfile(1, 1));
+        dispatch(developers.actions.findProfile(userId, userId));
     }, [dispatch]);
 
     if (!profile) {

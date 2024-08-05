@@ -3,15 +3,18 @@ import PropTypes from 'prop-types';
 
 import {useEffect, useState, useRef } from "react";
 import * as actions from "../actions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import AddTechnology from "../../common/components/AddTechnology";
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 import TickBox from "../../common/components/TickBox";
 import UpdateKnowledgeTreeList from "./UpdateKnowledgeTreeList";
+import users from "../../users";
 
 const UpdateKnowledgeTree = ({ knowledgeTree }) => {
 
     const dispatch = useDispatch();
+
+    const userId = useSelector(users.selectors.getUserId);
 
     const [isOpen, setIsOpen] = useState(true);
     const [showAddMenu, setShowAddMenu] = useState(false);
@@ -48,19 +51,19 @@ const UpdateKnowledgeTree = ({ knowledgeTree }) => {
 
     const changeKnowledge = (known, technologyId, knowledgeId) => {
         if(known){
-            dispatch(actions.deleteKnowledge(1, knowledgeId));
+            dispatch(actions.deleteKnowledge(userId, knowledgeId));
         } else {
-            dispatch(actions.addKnowledge(1, technologyId));
+            dispatch(actions.addKnowledge(userId, technologyId));
         }
     }
 
     const updateMainSkill = (before, id) => {
-        dispatch(actions.updateKnowledge(1, id, !before, null));
+        dispatch(actions.updateKnowledge(userId, id, !before, null));
 
     }
 
     const updateLikeIt = (before, id) => {
-        dispatch(actions.updateKnowledge(1, id, null, !before));
+        dispatch(actions.updateKnowledge(userId, id, null, !before));
     }
 
     return (
@@ -93,7 +96,6 @@ const UpdateKnowledgeTree = ({ knowledgeTree }) => {
                     ref={contextMenuRef}
                 >
                     <AddTechnology parentId={knowledgeTree.parent.id}
-                                   userId={1}
                                    relevant={false}
                                    onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
                 </div>

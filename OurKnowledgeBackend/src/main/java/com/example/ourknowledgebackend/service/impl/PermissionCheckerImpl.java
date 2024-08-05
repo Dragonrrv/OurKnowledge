@@ -41,7 +41,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
         Optional<Technology> technology = technologyDao.findById(technologyId);
 
         if (!technology.isPresent()) {
-            throw new InstanceNotFoundException("project.entities.technology", technology);
+            throw new InstanceNotFoundException("project.entities.technology", technologyId);
         }
 
         return technology.get();

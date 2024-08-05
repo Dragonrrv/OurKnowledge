@@ -5,11 +5,13 @@ import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import PropTypes from "prop-types";
 import * as selectors from "../../developers/selectors";
+import users from "../../users";
 
-const AddTechnology = ({parentId, userId, relevant, onAdd}) => {
+const AddTechnology = ({parentId, relevant, onAdd}) => {
 
     const intl = useIntl()
     const dispatch = useDispatch();
+    const userId = useSelector(users.selectors.getUserId);
     const [newTechnologyName, setNewTechnologyName] = useState('');
 
     const handleAddTechnology = (event) => {

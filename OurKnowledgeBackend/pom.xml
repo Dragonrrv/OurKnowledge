@@ -12,7 +12,7 @@
     <artifactId>OurKnowledgeBackend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>OurKnowledgeBackend</name>
-    <description>OurKnowledgeBackend</description>
+    <description>Web backend for knowledge administration</description>
     <properties>
         <java.version>22</java.version>
 
@@ -25,7 +25,6 @@
         <!-- Package versions -->
         <jjwt.version>0.11.5</jjwt.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <lombok.version>1.18.30</lombok.version>
 
         <!-- Plugin versions -->
         <sqlPlugin.version>1.5</sqlPlugin.version>
@@ -62,7 +61,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -79,6 +77,21 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.14.2</version>
@@ -93,6 +106,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -108,6 +122,7 @@
             <artifactId>mapstruct-spring-extensions</artifactId>
             <version>1.0.1</version>
         </dependency>
+
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>

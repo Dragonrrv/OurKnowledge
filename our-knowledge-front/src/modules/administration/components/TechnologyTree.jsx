@@ -4,14 +4,16 @@ import PropTypes from 'prop-types';
 import TechnologyTreeList from "./TechnologyTreeList";
 import {useEffect, useState, useRef } from "react";
 import * as actions from "../actions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useIntl} from "react-intl";
 import AddTechnology from "../../common/components/AddTechnology";
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
+import users from "../../users";
 
 const TechnologyTree = ({ technologyTree}) => {
     const intl = useIntl();
     const dispatch = useDispatch();
+    const userId = useSelector(users.selectors.getUserId);
     const [isOpen, setIsOpen] = useState(true);
     const [showAddMenu, setShowAddMenu] = useState(false);
     const [addMenuPosition, setAddMenuPosition] = useState({ x: 0, y: 0 });
@@ -28,7 +30,7 @@ const TechnologyTree = ({ technologyTree}) => {
             : 'project.administration.technology.delete.confirmation';
 
         if (window.confirm(intl.formatMessage({ id: confirmMessage }))) {
-            dispatch(actions.removeTechnology(2, technologyTree.parent.id, hasChildren));
+            dispatch(actions.removeTechnology(userId, technologyTree.parent.id, hasChildren));
         }
     };
 
@@ -88,7 +90,6 @@ const TechnologyTree = ({ technologyTree}) => {
                     ref={contextMenuRef}
                 >
                     <AddTechnology parentId={technologyTree.parent.id}
-                                   userId={2}
                                    relevant={true}
                                    onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
                 </div>

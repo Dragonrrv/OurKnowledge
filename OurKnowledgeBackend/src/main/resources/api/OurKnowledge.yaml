@@ -4,7 +4,7 @@ info:
   description: Web application for the search of qualified developers for a development project
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8181
 paths:
 
   /technology/list:
@@ -64,6 +64,80 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/deleteTechnologyResponse'
+
+  /project/list:
+    get:
+      summary: list all projects
+      operationId: listProjects
+      tags:
+        - project
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listProjectsResponse'
+
+  /project:
+    get:
+      summary: show project details
+      operationId: projectDetails
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+
+            schema:
+              $ref: '#/components/schemas/projectDetailsRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/projectDetailsResponse'
+
+  /project/add:
+    post:
+      summary: add project
+      operationId: addProject
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addProjectRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addProjectResponse'
+        '404':
+          description: Not Found - Project not found
+        '409':
+          description: Conflict - Duplicate instance exception
+
+  /project/delete:
+    post:
+      summary: delete project
+      operationId: deleteProject
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/deleteProjectRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
 
   /user/login:
     post:
@@ -176,8 +250,11 @@ components:
       properties:
         userName:
           type: string
-        password:
+        email:
           type: string
+        role:
+          type: string
+
 
     loginResponse:
       type: object
@@ -279,6 +356,84 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/technologyTree'
+
+    listProjectsResponse:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              status:
+                type: string
+              startDate:
+                type: string
+
+    projectDetailsRequest:
+      type: object
+      properties:
+        projectId:
+          type: integer
+
+    projectDetailsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        status:
+          type: string
+        startDate:
+          type: string
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/technologyTree'
+        users:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              email:
+                type: string
+
+    addProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        startDate:
+          type: string
+        size:
+          type: integer
+        technologies:
+          type: array
+          items:
+            type: integer
+
+    addProjectResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+
+    deleteProjectRequest:
+      type: object
+      properties:
+        projectId:
+          type: integer
 
     profileRequest:
       type: object

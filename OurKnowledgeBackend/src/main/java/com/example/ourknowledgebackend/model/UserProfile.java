@@ -15,7 +15,6 @@ public class UserProfile {
     }
 
     public UserProfile(User user, List<KnowledgeTree> knowledgeTreeList) {
-        user.setPassword(null);
         user.setRole(null);
         this.user = user;
         this.knowledgeTreeList = knowledgeTreeList;

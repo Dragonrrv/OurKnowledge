@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import KnowledgeTreeList from "./KnowledgeTreeList";
 import {useEffect, useState, useRef } from "react";
 import * as actions from "../actions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {FormattedMessage, useIntl} from "react-intl";
 import AddTechnology from "../../common/components/AddTechnology";
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 import TickBox from "../../common/components/TickBox";
+import users from "../../users";
 
 const KnowledgeTree = ({ knowledgeTree }) => {
     const [isOpen, setIsOpen] = useState(true);

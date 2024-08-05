@@ -5,6 +5,6 @@ import com.example.ourknowledgebackend.model.entities.User;
 
 public interface UserService {
 
-    User login(String userName, String password);
+    User login(String userName, String email, String role);
     UserProfile showProfile(Long profileId, Long userId);
 }

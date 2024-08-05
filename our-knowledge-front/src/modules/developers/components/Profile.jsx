@@ -6,16 +6,19 @@ import * as selectors from '../selectors';
 import {useEffect} from "react";
 import developers from "../index";
 import PropTypes from "prop-types";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import users from "../../users";
 
 const Profile= () => {
+    const { profileId } = useParams();
 
     const profile = useSelector(selectors.getProfile);
+    const userId = useSelector(users.selectors.getUserId);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(developers.actions.findProfile(1, 1));
+        dispatch(developers.actions.findProfile(userId, profileId));
     }, [dispatch]);
 
     if (!profile) {

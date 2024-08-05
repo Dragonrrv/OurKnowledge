@@ -104,7 +104,7 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnology() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
         try {
             String name = "Java";
             Long parentId = null;
@@ -120,7 +120,7 @@ class TechnologyServiceTest {
 
     @Test
     void addExistedTechnologyAdmin() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
         String name = "Java";
         Long parentId = null;
         technologyDao.save(new Technology(name, parentId, false));
@@ -137,7 +137,7 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyDeveloper() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         String name = "Java";
         Long parentId = null;
         try {
@@ -164,7 +164,7 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyParentTechnologyNotFound() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
         try {
             technologyService.addTechnology(user.getId(), "Java", NON_EXISTENT_ID, true);
         } catch (InstanceNotFoundException e) {
@@ -176,7 +176,7 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyAdminDuplicate() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
         technologyDao.save(new Technology("Java", null, true));
         try {
             technologyService.addTechnology(user.getId(), "Java", null, true);
@@ -189,7 +189,7 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyDeveloperDuplicate() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         technologyDao.save(new Technology("Java", null, true));
         try {
             technologyService.addTechnology(user.getId(), "Java", null, false);
@@ -202,7 +202,7 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyPermissionException() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         String name = "Java";
         Long parentId = null;
         try {
@@ -219,7 +219,7 @@ class TechnologyServiceTest {
 
     @Test
     void deleteTechnology() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
             technologyService.deleteTechnology(user.getId(), technology.getId(), false);
@@ -234,7 +234,7 @@ class TechnologyServiceTest {
 
     @Test
     void deleteChildTechnologies() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
@@ -258,8 +258,8 @@ class TechnologyServiceTest {
 
     @Test
     void deleteKnownTechnology() {
-        User user1 = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "pass", "Developer", null));
+        User user1 = userDao.save(new User("Juan", "example@example.com", "Admin", null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         knowledgeDao.save(new Knowledge(user2, technology, false, false));
         try {
@@ -275,8 +275,8 @@ class TechnologyServiceTest {
 
     @Test
     void deleteKnownTechnologyTree() {
-        User user1 = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "pass", "Developer", null));
+        User user1 = userDao.save(new User("Juan", "example@example.com", "Admin", null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
@@ -302,7 +302,7 @@ class TechnologyServiceTest {
 
     @Test
     void deleteTechnologiesHaveChildrenException() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Admin", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         try {
@@ -319,7 +319,7 @@ class TechnologyServiceTest {
 
     @Test
     void deleteTechnologiesPermissionException() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         try {
             technologyService.deleteTechnology(user.getId(), technology1.getId(), false);
@@ -335,7 +335,7 @@ class TechnologyServiceTest {
 
     @Test
     void deleteTechnologiesInstanceNotFoundException() {
-        User user = userDao.save(new User("Juan", "example@example.com", "pass", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         try {
             technologyService.deleteTechnology(user.getId(), NON_EXISTENT_ID, false);
             assert false;

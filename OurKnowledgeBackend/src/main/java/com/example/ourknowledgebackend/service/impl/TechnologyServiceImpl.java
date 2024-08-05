@@ -3,7 +3,6 @@ package com.example.ourknowledgebackend.service.impl;
 import com.example.ourknowledgebackend.exceptions.*;
 import com.example.ourknowledgebackend.model.*;
 import com.example.ourknowledgebackend.model.entities.*;
-import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.PermissionChecker;
 import com.example.ourknowledgebackend.service.TechnologyService;
 import java.util.ArrayList;
@@ -19,35 +18,18 @@ public class TechnologyServiceImpl implements TechnologyService {
 
     private final PermissionChecker permissionChecker;
 
+    private final Common common;
+
     private final TechnologyDao technologyDao;
 
     private final KnowledgeDao knowledgeDao;
 
     @Override
     public List<TechnologyTree> listRelevantTechnologies() {
-        List<Technology> allTechnologies = technologyDao.findAllByRelevantTrue();
+        List<Technology> relevantTechnologies = technologyDao.findAllByRelevantTrue();
 
-        Map<Long, List<Technology>> technologiesMap = allTechnologies.stream()
-                .collect(Collectors.groupingBy(tech -> tech.getParentId() != null ? tech.getParentId() : 0L));
-
-        TechnologyTree root = fillTechnologyTreeList(null, technologiesMap, 0L);
-
-        return root.getChildren();
+        return common.TechnologyListToTechnologyTreeList(relevantTechnologies);
     }
-
-    private TechnologyTree fillTechnologyTreeList(Technology parent, Map<Long, List<Technology>> technologiesMap, Long parentId) {
-        List<Technology> childTechnologies = technologiesMap.get(parentId);
-        List<TechnologyTree> childTreeList = new ArrayList<>();
-        if (childTechnologies != null) {
-            for (Technology technology : childTechnologies) {
-                childTreeList.add(fillTechnologyTreeList(technology, technologiesMap, technology.getId()));
-            }
-        }
-        return new TechnologyTree(parent, childTreeList);
-    }
-
-
-
 
     @Override
     public List<TechnologyTree> addTechnology(Long userId, String name, Long parentId, boolean relevant) throws InstanceNotFoundException, DuplicateInstanceException, PermissionException {

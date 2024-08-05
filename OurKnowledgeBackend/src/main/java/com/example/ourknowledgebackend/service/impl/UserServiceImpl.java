@@ -20,8 +20,13 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
 
     @Override
-    public User login(String userName, String password){
-        return userDao.findByNameAndPassword(userName, password);
+    public User login(String userName, String email, String role){
+        if(!userDao.existsByEmail(email)){
+            User newUser = new User(userName, email, role, null);
+            userDao.save(newUser);
+        }
+        return userDao.findByEmail(email);
+
     }
 
     @Override

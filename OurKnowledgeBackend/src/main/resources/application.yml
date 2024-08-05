@@ -3,6 +3,8 @@ logging:
     org:
       hibernate:
         SQL: debug
+server:
+  port: 8181
 spring:
   datasource:
     url: @dataSource.url@
@@ -31,3 +33,15 @@ spring:
       ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: "http://localhost:8080/realms/OurKnowledge"
+          jwk-set-uri: " ${spring.security.oauth2.resource-server.jwt.issuer-uri}/protocol/openid-connect/certs"
+
+jwt:
+  auth:
+    converter:
+      resource-id: "ourknowledge-client"
+      principle-attribute: "preferred_username"

@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import backend from '../../backend';
+import {removeServiceToken} from "../../backend/appFetch";
 
 
 const loginCompleted = authenticatedUser => ({
@@ -7,8 +8,8 @@ const loginCompleted = authenticatedUser => ({
     authenticatedUser
 });
 
-export const login = (userName, password, onSuccess, onErrors) => dispatch =>
-    backend.userService.login(userName, password,
+export const login = (userName, email, role, onSuccess, onErrors) => dispatch =>
+    backend.userService.login(userName, email, role,
         authenticatedUser => {
             dispatch(loginCompleted(authenticatedUser));
             onSuccess();
@@ -18,7 +19,7 @@ export const login = (userName, password, onSuccess, onErrors) => dispatch =>
 
 export const logout = () => {
 
-    backend.userService.logout();
+    removeServiceToken();
 
     return {type: actionTypes.LOGOUT};
 

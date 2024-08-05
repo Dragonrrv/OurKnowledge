@@ -1,10 +1,8 @@
 import {config, appFetch} from './appFetch';
 
-export const login = (userName, password, onSuccess, onErrors) =>
+export const login = (userName, email, role, onSuccess, onErrors) =>
     appFetch(`/user/login`,
-        config('POST', {userName, password}), onSuccess, onErrors);
-
-export const logout = () => null;
+        config('POST', {userName, email, role}), onSuccess, onErrors);
 
 export const getProfile = (userId, profileId, onSuccess, onErrors) =>
     appFetch(`/user/profile`,

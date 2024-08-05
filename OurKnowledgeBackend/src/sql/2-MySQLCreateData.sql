@@ -1,7 +1,7 @@
-INSERT INTO user (name, email, password, role, startDate) 
-VALUES ('Juan', 'example@example.com', 'pass', 'Developer', null);
-INSERT INTO user (name, email, password, role, startDate) 
-VALUES ('Roberto Riveira Veiga', 'roberto.riveira@outlook.es', 'pass', 'Admin', null);
+INSERT INTO user (name, email, role, startDate)
+VALUES ('Juan Riveira Veiga', 'example@example.com', 'Developer', null);
+INSERT INTO user (name, email, role, startDate)
+VALUES ('Roberto Riveira Veiga', 'roberto.riveira@outlook.es', 'Admin', null);
 
 
 INSERT INTO technology(relevant, name, parentId) 

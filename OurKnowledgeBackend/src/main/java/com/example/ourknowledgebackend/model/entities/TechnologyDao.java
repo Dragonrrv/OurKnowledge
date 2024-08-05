@@ -10,17 +10,15 @@ import org.springframework.data.repository.query.Param;
 
 public interface TechnologyDao extends CrudRepository<Technology, Long> {
 
-    boolean existsByNameAndParentId(String name, Long parentId);
-
     List<Technology> findAllByParentId(Long parentId);
 
     List<Technology> findAllByRelevantTrue();
 
     Optional<Technology> findByNameAndParentId(String name, Long parentId);
 
-    @Query("SELECT new com.example.ourknowledgebackend.model.KnownTechnology(t.id, t.name, t.parentId, t.relevant, k.id, k.mainSkill, k.likeIt) " +
+    @Query("SELECT DISTINCT new com.example.ourknowledgebackend.model.KnownTechnology(t.id, t.name, t.parentId, t.relevant, k.id, k.mainSkill, k.likeIt) " +
             "FROM Technology t " +
-            "LEFT JOIN Knowledge k ON t.id = k.technology.id " +
+            "LEFT JOIN Knowledge k ON t.id = k.technology.id and k.user.id = :userId " +
             "WHERE t.relevant = true or k.user.id = :userId")
     List<KnownTechnology> findTechnologiesWithKnowledge(@Param("userId") Long userId);
 }

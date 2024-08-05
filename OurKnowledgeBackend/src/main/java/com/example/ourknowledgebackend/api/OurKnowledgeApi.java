@@ -1,34 +1,44 @@
 package com.example.ourknowledgebackend.api;
 
+import com.example.ourKnowledge.api.ProjectApi;
 import com.example.ourKnowledge.api.TechnologyApi;
 import com.example.ourKnowledge.api.UserApi;
 import com.example.ourKnowledge.api.model.*;
 import com.example.ourknowledgebackend.exceptions.*;
 import com.example.ourknowledgebackend.service.KnowledgeService;
+import com.example.ourknowledgebackend.service.impl.ProjectServiceImpl;
 import com.example.ourknowledgebackend.service.impl.TechnologyServiceImpl;
 import com.example.ourknowledgebackend.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.directory.InvalidAttributesException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class OurKnowledgeApi implements TechnologyApi, UserApi {
+public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
 
     private final TechnologyServiceImpl technologyServiceImpl;
+
+    private final ProjectServiceImpl projectServiceImpl;
 
     private final UserServiceImpl userServiceImpl;
 
     private final KnowledgeService knowledgeService;
 
     @Override
+    @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
     public ResponseEntity login(LoginRequestDTO loginRequestDTO) {
-        return ResponseEntity.status(200).body(userServiceImpl.login(loginRequestDTO.getUserName(), loginRequestDTO.getPassword()));
+        return ResponseEntity.status(200).body(userServiceImpl.login(loginRequestDTO.getUserName(),
+                loginRequestDTO.getEmail(), loginRequestDTO.getRole()));
     }
 
     @Override
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity listRelevantTechnologies() {
         return ResponseEntity.status(200).body(technologyServiceImpl.listRelevantTechnologies());
     }
@@ -36,6 +46,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
 
 
     @Override
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity addTechnology(AddTechnologyRequestDTO addTechnologyRequestDTO) {
         Long parentId = addTechnologyRequestDTO.getParentId() != null ? addTechnologyRequestDTO.getParentId().longValue() : null;
         try {
@@ -51,6 +62,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity deleteTechnology(DeleteTechnologyRequestDTO deleteTechnologyRequestDTO) {
         try {
             return ResponseEntity.status(200).body(technologyServiceImpl.deleteTechnology(deleteTechnologyRequestDTO.getUserId().longValue(),
@@ -63,6 +75,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
     public ResponseEntity showProfile(ProfileRequestDTO profileRequestDTO) {
         return ResponseEntity.status(200).body(
                 userServiceImpl.showProfile(profileRequestDTO.getProfileId().longValue(),
@@ -70,6 +83,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('client_developer')")
     public ResponseEntity addKnowledge(AddKnowledgeRequestDTO addKnowledgeRequestDTO) {
         Long technologyId = addKnowledgeRequestDTO.getTechnologyId()==null ? null : addKnowledgeRequestDTO.getTechnologyId().longValue();
         Long parentTechnologyId = addKnowledgeRequestDTO.getParentTechnologyId()==null ? null : addKnowledgeRequestDTO.getParentTechnologyId().longValue();
@@ -86,6 +100,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('client_developer')")
     public ResponseEntity deleteKnowledge(DeleteKnowledgeRequestDTO deleteKnowledgeRequestDTO) {
         try {
             knowledgeService.deleteKnowledge(deleteKnowledgeRequestDTO.getUserId().longValue(),
@@ -99,6 +114,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
     }
 
     @Override
+    @PreAuthorize("hasRole('client_developer')")
     public ResponseEntity updateKnowledge(UpdateKnowledgeRequestDTO updateKnowledgeRequestDTO) {
         try {
             knowledgeService.updateKnowledge(updateKnowledgeRequestDTO.getUserId().longValue(),
@@ -111,5 +127,54 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
+    public ResponseEntity listProjects() {
+        return ResponseEntity.status(200).body(projectServiceImpl.listProjects());
+    }
+
+
+    @Override
+    @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
+    public ResponseEntity projectDetails(ProjectDetailsRequestDTO projectDetailsRequestDTO){
+        Long projectId = projectDetailsRequestDTO.getProjectId()==null ? null : projectDetailsRequestDTO.getProjectId().longValue();
+        try {
+            return ResponseEntity.status(200).body(projectServiceImpl.projectDetails(projectId));
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity addProject(AddProjectRequestDTO addProjectRequestDTO) {
+        try {
+            projectServiceImpl.addProject( addProjectRequestDTO.getName(),
+                    addProjectRequestDTO.getDescription(), addProjectRequestDTO.getStatus(),
+                    addProjectRequestDTO.getStartDate(), addProjectRequestDTO.getSize(),
+                    addProjectRequestDTO.getTechnologies().stream().map(Integer::longValue).collect(Collectors.toList()));
+        return ResponseEntity.status(200).body(null);
+        } catch (DuplicateInstanceException e) {
+            return ResponseEntity.status(409).body(e);
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity deleteProject(DeleteProjectRequestDTO deleteProjectRequestDTO) {
+        try {
+            projectServiceImpl.deleteProject(
+                    deleteProjectRequestDTO.getProjectId().longValue());
+            return ResponseEntity.status(200).body(null);
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
