@@ -164,14 +164,62 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
 
     @Override
     @PreAuthorize("hasRole('client_admin')")
-    public ResponseEntity deleteProject(DeleteProjectRequestDTO deleteProjectRequestDTO) {
+    public ResponseEntity updateProject(UpdateProjectRequestDTO updateProjectRequestDTO) {
+        Long id = updateProjectRequestDTO.getId()==null ? null : updateProjectRequestDTO.getId().longValue();
         try {
-            projectServiceImpl.deleteProject(
-                    deleteProjectRequestDTO.getProjectId().longValue());
+            projectServiceImpl.updateProject( id, updateProjectRequestDTO.getName(),
+                    updateProjectRequestDTO.getDescription(), updateProjectRequestDTO.getStatus(),
+                    updateProjectRequestDTO.getStartDate(), updateProjectRequestDTO.getSize(),
+                    updateProjectRequestDTO.getUpdateTechnologies(),
+                    updateProjectRequestDTO.getTechnologies().stream().map(Integer::longValue).collect(Collectors.toList()));
+        return ResponseEntity.status(200).body(null);
+        } catch (DuplicateInstanceException e) {
+            return ResponseEntity.status(409).body(e);
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity deleteProject(DeleteProjectRequestDTO deleteProjectRequestDTO) {
+        Long id = deleteProjectRequestDTO.getProjectId()==null ? null : deleteProjectRequestDTO.getProjectId().longValue();
+        try {
+            projectServiceImpl.deleteProject(id);
             return ResponseEntity.status(200).body(null);
         } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_developer')")
+    public ResponseEntity participate(ParticipateRequestDTO participateRequestDTO){
+        Long userId = participateRequestDTO.getProjectId()==null ? null : participateRequestDTO.getUserId().longValue();
+        Long projectId = participateRequestDTO.getProjectId()==null ? null : participateRequestDTO.getProjectId().longValue();
+        try {
+            projectServiceImpl.participate(userId, projectId,
+                    participateRequestDTO.getStartDate(), participateRequestDTO.getEndDate());
+            return ResponseEntity.status(200).body(null);
+        } catch (DuplicateInstanceException e) {
+            return ResponseEntity.status(409).body(e);
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_developer')")
+    public ResponseEntity verificate(VerificateRequestDTO verificateRequestDTO){
+        Long userId = verificateRequestDTO.getProjectId()==null ? null : verificateRequestDTO.getUserId().longValue();
+        Long projectId = verificateRequestDTO.getProjectId()==null ? null : verificateRequestDTO.getProjectId().longValue();
+        List<Long> technologiesId = verificateRequestDTO.getTechnologiesId().stream().map(Integer::longValue).collect(Collectors.toList());
+        try {
+            projectServiceImpl.verificate(userId, projectId, technologiesId);
+            return ResponseEntity.status(200).body(null);
+        } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

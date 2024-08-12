@@ -123,6 +123,28 @@ paths:
         '409':
           description: Conflict - Duplicate instance exception
 
+  /project/update:
+    post:
+      summary: update project
+      operationId: updateProject
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateProjectRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateProjectResponse'
+        '404':
+          description: Not Found - Project not found
+
   /project/delete:
     post:
       summary: delete project
@@ -134,6 +156,38 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/deleteProjectRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /project/participation/add:
+    post:
+      summary: participate in a project
+      operationId: participate
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/participateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /project/verification/add:
+    post:
+      summary: mark a technology used in a project by the developer
+      operationId: verificate
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verificateRequest'
         required: true
       responses:
         '200':
@@ -429,11 +483,60 @@ components:
         id:
           type: integer
 
+    updateProjectRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        startDate:
+          type: string
+        size:
+          type: integer
+        technologies:
+          type: array
+          items:
+            type: integer
+        updateTechnologies:
+          type: boolean
+
+    updateProjectResponse:
+      $ref: '#/components/schemas/projectDetailsResponse'
+
     deleteProjectRequest:
       type: object
       properties:
         projectId:
           type: integer
+
+    participateRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        projectId:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+
+    verificateRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        projectId:
+          type: integer
+        technologiesId:
+          type: array
+          items:
+            type: integer
 
     profileRequest:
       type: object

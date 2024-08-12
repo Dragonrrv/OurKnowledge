@@ -15,5 +15,11 @@ public interface ProjectService {
 
     void addProject(String name, String description, String status, String startDate, int size, List<Long> technologiesId) throws DuplicateInstanceException, InstanceNotFoundException;
 
+    void updateProject(Long id, String name, String description, String status, String startDate, int size, Boolean updateTechnologies, List<Long> technologiesId) throws InstanceNotFoundException, DuplicateInstanceException;
+
     void deleteProject(Long projectId) throws InstanceNotFoundException;
+
+    void participate(Long userId, Long projectId, String startDate, String endDate) throws InstanceNotFoundException, DuplicateInstanceException;
+
+    void verificate(Long userId, Long projectId, List<Long> technologiesId) throws InstanceNotFoundException;
 }

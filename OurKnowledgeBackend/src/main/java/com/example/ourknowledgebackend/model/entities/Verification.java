@@ -21,8 +21,7 @@ public class Verification {
     public Verification() {
     }
 
-    public Verification(Long id, Knowledge knowledge, Project project) {
-        this.id = id;
+    public Verification(Knowledge knowledge, Project project) {
         this.knowledge = knowledge;
         this.project = project;
     }
