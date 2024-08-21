@@ -47,7 +47,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectDao.findById(id).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", id));
         List<TechnologyTree> technologyTreeList = common.TechnologyListToTechnologyTreeList(
                 usesDao.findAllByProject(project).stream().map(Uses::getTechnology).collect(Collectors.toList()));
-        List<User> users = verificationDao.findAllByProject(project).stream().map(verification -> verification.getKnowledge().getUser()).collect(Collectors.toList());
+        List<User> users = participationDao.findAllByProject(project).stream().map(Participation::getUser).collect(Collectors.toList());
         return new ProjectDetails(project, technologyTreeList, users);
     }
 
