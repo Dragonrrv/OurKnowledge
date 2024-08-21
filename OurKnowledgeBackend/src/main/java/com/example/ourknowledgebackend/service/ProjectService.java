@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ProjectService {
 
-    List<Project> listProjects();
+    Block<Project> listProjects(int page, String keywords, int size);
 
     ProjectDetails projectDetails(Long id) throws InstanceNotFoundException;
 
@@ -20,6 +20,8 @@ public interface ProjectService {
     void deleteProject(Long projectId) throws InstanceNotFoundException;
 
     void participate(Long userId, Long projectId, String startDate, String endDate) throws InstanceNotFoundException, DuplicateInstanceException;
+
+    void updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException;
 
     void verificate(Long userId, Long projectId, List<Long> technologiesId) throws InstanceNotFoundException;
 }

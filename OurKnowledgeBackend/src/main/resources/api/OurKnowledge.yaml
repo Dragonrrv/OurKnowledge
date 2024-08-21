@@ -71,6 +71,11 @@ paths:
       operationId: listProjects
       tags:
         - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listProjectsRequest'
       responses:
         '200':
           description: OK
@@ -172,6 +177,22 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/participateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /project/participation/update:
+    post:
+      summary: update the participation
+      operationId: updateParticipate
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateParticipateRequest'
         required: true
       responses:
         '200':
@@ -411,6 +432,15 @@ components:
           items:
             $ref: '#/components/schemas/technologyTree'
 
+    listProjectsRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          default: 1
+        keywords:
+          type: string
+
     listProjectsResponse:
       type: object
       properties:
@@ -520,6 +550,16 @@ components:
         userId:
           type: integer
         projectId:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+
+    updateParticipateRequest:
+      type: object
+      properties:
+        participationId:
           type: integer
         startDate:
           type: string

@@ -5,9 +5,11 @@ import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
 import com.example.ourknowledgebackend.model.TechnologyTree;
 import com.example.ourknowledgebackend.model.entities.*;
+import com.example.ourknowledgebackend.service.Block;
 import com.example.ourknowledgebackend.service.ProjectService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -34,9 +36,10 @@ public class ProjectServiceImpl implements ProjectService {
     private final Common common;
 
     @Override
-    public List<Project> listProjects() {
+    public Block<Project> listProjects(int page, String keywords, int size) {
+        Slice<Project> slice = projectDao.find(page, keywords, size);
 
-        return (List<Project>) projectDao.findAll();
+        return new Block<>(slice.getContent(), slice.hasNext());
     }
 
     @Override
@@ -137,6 +140,18 @@ public class ProjectServiceImpl implements ProjectService {
             throw new DuplicateInstanceException("project.entity.participation", participation.get().getId());
         }
         participationDao.save(new Participation(project, user, startDate, endDate));
+    }
+
+    @Override
+    public void updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException {
+        Participation participation = participationDao.findById(participationId).orElseThrow(() -> new InstanceNotFoundException("project.entity.participation", participationId));
+        if(startDate != null) {
+            participation.setStartDate(startDate);
+        }
+        if(endDate != null) {
+            participation.setEndDate(endDate);
+        }
+        participationDao.save(participation);
     }
 
     @Override
