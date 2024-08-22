@@ -112,7 +112,9 @@ public class ProjectServiceImpl implements ProjectService {
 
         for (Long technologyId : missingTechnologies) {
             Uses use = usesDao.findByProjectAndTechnologyId(project, technologyId);
+            List<Verification> verificationList = verificationDao.findAllByProjectAndKnowledge_Technology_Id(project, technologyId);
             usesDao.delete(use);
+            verificationDao.deleteAll(verificationList);
         }
 
         for (Long technologyId : newTechnologies) {
@@ -128,6 +130,7 @@ public class ProjectServiceImpl implements ProjectService {
         if(!project.isPresent()){
             throw new InstanceNotFoundException("project.entities.technology", projectId);
         }
+        updateProjectTechnologies(projectId, new ArrayList<>());
         projectDao.delete(project.get());
     }
 

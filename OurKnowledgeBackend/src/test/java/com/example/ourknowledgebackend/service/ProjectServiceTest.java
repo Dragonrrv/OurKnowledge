@@ -41,6 +41,12 @@ class ProjectServiceTest {
     @Autowired
     private ParticipationDao participationDao;
 
+    @Autowired
+    private KnowledgeDao knowledgeDao;
+
+    @Autowired
+    private VerificationDao verificationDao;
+
     @Test
     void listProjects() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
@@ -329,21 +335,349 @@ class ProjectServiceTest {
 
     @Test
     void updateProject() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project, technology1));
+        usesDao.save(new Uses(project, technology2));
+        usesDao.save(new Uses(project, technology3));
+
+        Technology technology4 = technologyDao.save(new Technology("Languages", null, true));
+        Technology technology5 = technologyDao.save(new Technology("Database", null, true));
+        Technology technology6 = technologyDao.save(new Technology("Java", technology4.getId(), true));
+        List<Long> technologiesId = new ArrayList<>();
+        technologiesId.add(technology1.getId());
+        technologiesId.add(technology4.getId());
+        technologiesId.add(technology5.getId());
+        technologiesId.add(technology6.getId());
+        Project expected = new Project("newName", "newDescription", "done", "2024-05-01", 3);
+
+        try {
+            projectService.updateProject(project.getId(), expected.getName(), expected.getDescription(), expected.getStatus(), expected.getStartDate(), expected.getSize(), true, technologiesId);
+            Project result = projectDao.findById(project.getId()).orElse(new Project());
+
+            List<Uses> usesResult = usesDao.findAllByProject(project);
+
+            assertEquals(expected.getName(), result.getName());
+            assertEquals(expected.getDescription(), result.getDescription());
+            assertEquals(expected.getStatus(), result.getStatus());
+            assertEquals(expected.getStartDate(), result.getStartDate());
+            assertEquals(expected.getSize(), result.getSize());
+
+            assertEquals(technology1, usesResult.get(0).getTechnology());
+            assertEquals(technology4, usesResult.get(1).getTechnology());
+            assertEquals(technology5, usesResult.get(2).getTechnology());
+            assertEquals(technology6, usesResult.get(3).getTechnology());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    // Use a negative number in size for no changes
+    void updateProjectNoChanges() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        usesDao.save(new Uses(project, technology1));
+        try {
+            projectService.updateProject(project.getId(), null, null, null, null, -1, false, new ArrayList<>());
+            Project result = projectDao.findAll().iterator().next();
+            assertEquals(project, result);
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    // When you delete uses from the project that an user mark as verification,
+    // the verification should be removed but not the knowledge
+    void updateProjectDeleteParticipation() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project, technology1));
+        usesDao.save(new Uses(project, technology2));
+        usesDao.save(new Uses(project, technology3));
+
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        participationDao.save(new Participation(project, user, "2024-08-21", null));
+        Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
+        Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
+        Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
+
+        verificationDao.save(new Verification(knowledge1, project));
+        verificationDao.save(new Verification(knowledge2, project));
+        verificationDao.save(new Verification(knowledge3, project));
+
+        List<Long> technologiesId = new ArrayList<>();
+        technologiesId.add(technology1.getId());
+
+        try {
+            projectService.updateProject(project.getId(), null, null, null, null, -1, true, technologiesId);
+            List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
+            List<Verification> verificationList = verificationDao.findAllByProject(project);
+
+            assertEquals(3, knowledgeList.size());
+            assertEquals(1, verificationList.size());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void updateProjectInstanceNotFound() {
+        projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+
+        try {
+            projectService.updateProject(NON_EXISTENT_ID, null, null, null, null, -1, false, new ArrayList<>());
+            assert false;
+        } catch (InstanceNotFoundException e) {
+
+            assert true;
+
+        } catch (DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    // Cant update a project to have the same name to another
+    void updateProjectDuplicateInstance() {
+        projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Project project = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 1));
+
+        try {
+            projectService.updateProject(project.getId(), "name1", null, null, null, -1, false, new ArrayList<>());
+            assert false;
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        } catch (DuplicateInstanceException e) {
+
+            assert true;
+
+        }
     }
 
     @Test
     void deleteProject() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        try {
+            projectService.deleteProject(project.getId());
+
+            assertFalse(projectDao.findAll().iterator().hasNext());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    // Should remove uses and verifications, but not knowledge
+    void deleteProjectConsecuences() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project, technology1));
+        usesDao.save(new Uses(project, technology2));
+        usesDao.save(new Uses(project, technology3));
+
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        participationDao.save(new Participation(project, user, "2024-08-21", null));
+        Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
+        Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
+        Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
+
+        verificationDao.save(new Verification(knowledge1, project));
+        verificationDao.save(new Verification(knowledge2, project));
+        verificationDao.save(new Verification(knowledge3, project));
+        try {
+            projectService.deleteProject(project.getId());
+
+            List<Uses> usesList = usesDao.findAllByProject(project);
+            List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
+            List<Verification> verificationList = verificationDao.findAllByProject(project);
+
+            assertEquals(0, usesList.size());
+            assertEquals(3, knowledgeList.size());
+            assertEquals(0, verificationList.size());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void deleteProjectInstanceNotFound() {
+        projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        try {
+            projectService.deleteProject(NON_EXISTENT_ID);
+            assert false;
+        } catch (InstanceNotFoundException e) {
+
+            assert true;
+
+        }
     }
 
     @Test
     void participate() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        Participation expected = new Participation(project, user, "2024-08-02", null);
+        try {
+            projectService.participate(user.getId(), project.getId(), expected.getStartDate(), expected.getEndDate());
+            Participation result = participationDao.findAll().iterator().next();
+
+            assertEquals(expected.getProject(), result.getProject());
+            assertEquals(expected.getUser(), result.getUser());
+            assertEquals(expected.getStartDate(), result.getStartDate());
+            assertEquals(expected.getEndDate(), result.getEndDate());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void participateWithEndDate() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        Participation expected = new Participation(project, user, "2024-08-02", "2024-08-06");
+        try {
+            projectService.participate(user.getId(), project.getId(), expected.getStartDate(), expected.getEndDate());
+            Participation result = participationDao.findAll().iterator().next();
+
+            assertEquals(expected.getProject(), result.getProject());
+            assertEquals(expected.getUser(), result.getUser());
+            assertEquals(expected.getStartDate(), result.getStartDate());
+            assertEquals(expected.getEndDate(), result.getEndDate());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void participateInstanceNotFoundProject() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        try {
+            projectService.participate(user.getId(), NON_EXISTENT_ID, "2024-08-02", "2024-08-06");
+            assert false;
+        } catch (InstanceNotFoundException e) {
+
+            assert true;
+
+        } catch (DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void participateInstanceNotFoundUser() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        try {
+            projectService.participate(NON_EXISTENT_ID, project.getId(), "2024-08-02", "2024-08-06");
+            assert false;
+        } catch (InstanceNotFoundException e) {
+
+            assert true;
+
+        } catch (DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void participateDuplicateInstance() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        participationDao.save(new Participation(project, user, "2024-08-21", null));
+        try {
+            projectService.participate(user.getId(), project.getId(), "2024-08-02", "2024-08-06");
+            assert false;
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        } catch (DuplicateInstanceException e) {
+
+            assert true;
+
+        }
     }
 
     @Test
     void updateParticipate() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        Participation participation = participationDao.save(new Participation(project, user, "2024-08-21", null));
+        Participation expected = new Participation(project, user, "2024-08-22", "2024-08-24");
+        try {
+            projectService.updateParticipate(participation.getId(), expected.getStartDate(), expected.getEndDate());
+            Participation result = participationDao.findAll().iterator().next();
+
+            assertEquals(expected.getStartDate(), result.getStartDate());
+            assertEquals(expected.getEndDate(), result.getEndDate());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void updateParticipateInstanceNotFound() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        Participation participation = participationDao.save(new Participation(project, user, "2024-08-21", null));
+        Participation expected = new Participation(project, user, "2024-08-22", "2024-08-24");
+        try {
+            projectService.updateParticipate(NON_EXISTENT_ID, expected.getStartDate(), expected.getEndDate());
+            assert false;
+        } catch (InstanceNotFoundException e) {
+            assert true;
+        }
     }
 
     @Test
     void verificate() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project, technology1));
+        usesDao.save(new Uses(project, technology2));
+        usesDao.save(new Uses(project, technology3));
+
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        participationDao.save(new Participation(project, user, "2024-08-21", null));
+
+        List<Long> technologiesId = new ArrayList<>();
+        technologiesId.add(technology1.getId());
+        technologiesId.add(technology2.getId());
+        technologiesId.add(technology3.getId());
+
+        try {
+            projectService.verificate(user.getId(), project.getId(), technologiesId);
+
+            List<Verification> verificationList = verificationDao.findAllByProject(project);
+
+            assertEquals(project, verificationList.get(0).getProject());
+            assertEquals(project, verificationList.get(1).getProject());
+            assertEquals(project, verificationList.get(2).getProject());
+            assertEquals(technology1, verificationList.get(0).getKnowledge().getTechnology());
+            assertEquals(technology2, verificationList.get(1).getKnowledge().getTechnology());
+            assertEquals(technology3, verificationList.get(2).getKnowledge().getTechnology());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 }
