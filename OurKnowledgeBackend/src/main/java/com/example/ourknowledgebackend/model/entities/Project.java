@@ -19,6 +19,15 @@ public class Project {
     public Project() {
     }
 
+    public Project(Long id, String name, String description, String status, String startDate, int size) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.startDate = startDate;
+        this.size = size;
+    }
+
     public Project(String name, String description, String status, String startDate, int size) {
         this.name = name;
         this.description = description;

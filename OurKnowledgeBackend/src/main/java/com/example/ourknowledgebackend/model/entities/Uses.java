@@ -21,6 +21,12 @@ public class Uses {
     public Uses() {
     }
 
+    public Uses(Long id, Project project, Technology technology) {
+        this.id = id;
+        this.project = project;
+        this.technology = technology;
+    }
+
     public Uses(Project project, Technology technology) {
         this.project = project;
         this.technology = technology;

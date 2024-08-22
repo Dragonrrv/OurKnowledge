@@ -1,5 +1,6 @@
 package com.example.ourknowledgebackend.service;
 
+import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
 import com.example.ourknowledgebackend.model.TechnologyTree;
@@ -210,11 +211,13 @@ class ProjectServiceTest {
 
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        technologyDao.save(new Technology("Spring", technology1.getId(), true));
         usesDao.save(new Uses(project1, technology1));
         usesDao.save(new Uses(project1, technology2));
 
         User user1 = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
+        userDao.save(new User("Juan3", "example3@example.com", "Developer", null));
         participationDao.save(new Participation(project1, user1, "2024-08-21", null));
         participationDao.save(new Participation(project1, user2, "2024-08-21", null));
         List<User> userList = new ArrayList<>();
@@ -249,6 +252,79 @@ class ProjectServiceTest {
 
     @Test
     void addProject() {
+        try{
+            projectService.addProject("name", "description", "doing", "2024-08-01", 1, new ArrayList<>());
+            Project result = projectDao.findAll().iterator().next();
+            Project expected = new Project("name", "description", "doing", "2024-08-01", 1);
+
+            assertEquals(expected.getName(), result.getName());
+            assertEquals(expected.getDescription(), result.getDescription());
+            assertEquals(expected.getStatus(), result.getStatus());
+            assertEquals(expected.getStartDate(), result.getStartDate());
+            assertEquals(expected.getSize(), result.getSize());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void addProjectWithTechnologies() {
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        List<Long> technologiesId = new ArrayList<>();
+        technologiesId.add(technology1.getId());
+        technologiesId.add(technology2.getId());
+        technologiesId.add(technology3.getId());
+
+        try{
+            projectService.addProject("name", "description", "doing", "2024-08-01", 1, technologiesId);
+            Project project = projectDao.findAll().iterator().next();
+            List<Uses> result = usesDao.findAllByProject(project);
+
+            assertEquals(technology1, result.get(0).getTechnology());
+            assertEquals(technology2, result.get(1).getTechnology());
+            assertEquals(technology3, result.get(2).getTechnology());
+            assertEquals(project, result.get(0).getProject());
+            assertEquals(project, result.get(1).getProject());
+            assertEquals(project, result.get(2).getProject());
+
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void addProjectInstanceNotFound() {
+        List<Long> technologiesId = new ArrayList<>();
+        technologiesId.add(NON_EXISTENT_ID);
+        try{
+            projectService.addProject("name", "description", "doing", "2024-08-01", 1, technologiesId);
+            assert false;
+        } catch (InstanceNotFoundException e) {
+
+            assert true;
+
+        } catch (DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    // two projects cant have the same name
+    void addProjectDuplicateInstance() {
+        try{
+            projectService.addProject("name", "description1", "doing", "2024-08-01", 1, new ArrayList<>());
+            projectService.addProject("name", "description2", "doing", "2024-08-02", 2, new ArrayList<>());
+            assert false;
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        } catch (DuplicateInstanceException e) {
+
+            assert true;
+
+        }
     }
 
     @Test
