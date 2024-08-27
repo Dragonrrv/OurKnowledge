@@ -26,8 +26,8 @@ const TechnologyTree = ({ technologyTree}) => {
     const handleRemove = () => {
         const hasChildren = technologyTree.children.length > 0;
         const confirmMessage = hasChildren
-            ? 'project.administration.technology.haveChildren.explanation'
-            : 'project.administration.technology.delete.confirmation';
+            ? 'project.technologies.technology.haveChildren.explanation'
+            : 'project.technologies.technology.delete.confirmation';
 
         if (window.confirm(intl.formatMessage({ id: confirmMessage }))) {
             dispatch(actions.removeTechnology(userId, technologyTree.parent.id, hasChildren));

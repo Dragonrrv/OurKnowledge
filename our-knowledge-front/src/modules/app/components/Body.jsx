@@ -4,9 +4,10 @@ import {Route, Routes} from 'react-router-dom';
 import AppGlobalComponents from './AppGlobalComponents';
 import Home from './Home';
 import users from '../../users';
-import {Technologies} from "../../administration";
-import Profile from "../../developers/components/Profile";
-import UpdateProfile from "../../developers/components/UpdateProfile";
+import {Technologies} from "../../technologies";
+import Profile from "../../profiles/components/Profile";
+import UpdateProfile from "../../profiles/components/UpdateProfile";
+import {FindProjectsDeveloper, ProjectDetails} from "../../projects";
 
 const Body = () => {
 
@@ -19,9 +20,11 @@ const Body = () => {
             <AppGlobalComponents/>
             <Routes>
                 <Route path="/*" element={<Home/>}/>
-                {loggedIn && <Route path="/administration/technologies" element={<Technologies/>}/>}
-                {loggedIn && <Route path="/developers/profile/:profileId" element={<Profile/>}/>}
-                {loggedIn && <Route path="/developers/updateProfile" element={<UpdateProfile/>}/>}
+                {loggedIn && <Route path="/technologies/technologies" element={<Technologies/>}/>}
+                {loggedIn && <Route path="/profiles/profile/:profileId" element={<Profile/>}/>}
+                {loggedIn && <Route path="/profiles/updateProfile" element={<UpdateProfile/>}/>}
+                {loggedIn && <Route path="/projects/findProjectsDeveloper" element={<FindProjectsDeveloper/>}/>}
+                {loggedIn && <Route path="/projects/projectDetails/:id" element={<ProjectDetails/>}/>}
             </Routes>
         </div>
 

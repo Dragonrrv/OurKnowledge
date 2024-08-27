@@ -4,6 +4,7 @@ export default {
     'project.app.Header.home': 'Home',
     'project.app.Header.technologies': 'Technologies',
     'project.app.Header.profile': 'My Profile',
+    'project.app.Header.projects': 'Projects',
     'project.app.Header.logout': 'Logout',
     'project.app.Home.welcome': 'Welcome to Our Knowledge',
 
@@ -21,6 +22,9 @@ export default {
     'project.global.buttons.delete': 'delete',
     'project.global.exceptions.NetworkError': 'Network error',
     'project.global.fields.date': 'Date',
+    'project.global.fields.startDate': 'Start date',
+    'project.global.fields.endDate': 'End date',
+    'project.global.fields.status': 'Status',
     'project.global.fields.email': 'Email address',
     'project.global.fields.firstName': 'First name',
     'project.global.fields.lastName': 'Last name',
@@ -38,16 +42,20 @@ export default {
 
     'project.users.Login.title': 'Login',
 
-    'project.administration.technologies.title': 'Relevant Technologies',
-    'project.administration.technologies.statistics': 'Statistics',
-    'project.administration.technologies.add': 'Add a new Technology',
-    'project.administration.technologies.empty': 'There is still no technologies ¡start to add now!',
-    'project.administration.technology.haveChildren': 'This technology have children technologies',
-    'project.administration.technology.haveChildren.explanation': 'Are you sure you want to delete this technology and all his children?',
-    'project.administration.technology.delete.confirmation': 'Are you sure you want to delete this technology?',
+    'project.technologies.technologies.title': 'Relevant Technologies',
+    'project.technologies.technologies.statistics': 'Statistics',
+    'project.technologies.technologies.add': 'Add a new Technology',
+    'project.technologies.technologies.empty': 'There is still no technologies ¡start to add now!',
+    'project.technologies.technology.haveChildren': 'This technology have children technologies',
+    'project.technologies.technology.haveChildren.explanation': 'Are you sure you want to delete this technology and all his children?',
+    'project.technologies.technology.delete.confirmation': 'Are you sure you want to delete this technology?',
 
-    'project.developers.profile.startDate': 'On the company since: ',
-    'project.developers.button.updateProfile': 'Update Profile',
-    'project.developers.tittle.updateProfile': 'Update your Profile'
+    'project.profiles.profile.startDate': 'On the company since: ',
+    'project.profiles.button.updateProfile': 'Update Profile',
+    'project.profiles.tittle.updateProfile': 'Update your Profile',
+
+    'project.projects.FindProjectsResult.noProjectsFound': 'Not Projects Found',
+    'project.projects.button.updateProject': 'Update Project',
+    'project.projectDetails.usedTechnologies': 'Used Technologies',
 
 }

@@ -1,21 +1,18 @@
 import {useDispatch, useSelector} from "react-redux";
-import {FormattedMessage, useIntl} from "react-intl";
+import {FormattedMessage} from "react-intl";
 
 import TechnologyTreeList from './TechnologyTreeList';
 import * as selectors from '../selectors';
-import * as actions from '../actions';
-import {useEffect, useState} from "react";
-import administration from "../index";
-import TechnologyTree from "./TechnologyTree";
+import {useEffect} from "react";
+import technologies from "../index";
 
 const Technologies= () => {
 
     const technologyTreeList = useSelector(selectors.getTechnologies);
-    const intl = useIntl();
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(administration.actions.findTechnologies());
+        dispatch(technologies.actions.findTechnologies());
     }, [dispatch]);
 
     if (!technologyTreeList) {
@@ -26,7 +23,7 @@ const Technologies= () => {
         <div>
             <div className="card bg-light border-dark">
                 <h5 className="card-header">
-                    <FormattedMessage id="project.administration.technologies.title"/>
+                    <FormattedMessage id="project.technologies.technologies.title"/>
                 </h5>
             </div>
             <table className="table table-striped table-hover">
@@ -36,7 +33,7 @@ const Technologies= () => {
                         <FormattedMessage id='project.global.fields.name'/>
                     </th>
                     <th scope="col">
-                        <FormattedMessage id='project.administration.technologies.statistics'/>
+                        <FormattedMessage id='project.technologies.technologies.statistics'/>
                     </th>
                 </tr>
                 </thead>

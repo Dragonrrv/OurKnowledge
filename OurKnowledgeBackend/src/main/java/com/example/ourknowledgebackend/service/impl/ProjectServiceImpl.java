@@ -6,18 +6,22 @@ import com.example.ourknowledgebackend.model.ProjectDetails;
 import com.example.ourknowledgebackend.model.TechnologyTree;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.Block;
+import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.ProjectService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
+
+    private final KnowledgeService knowledgeService;
 
     private final ProjectDao projectDao;
 
@@ -38,8 +42,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Block<Project> listProjects(int page, String keywords, int size) {
         Slice<Project> slice = projectDao.find(page, keywords, size);
-
-        return new Block<>(slice.getContent(), slice.hasNext());
+        return new Block<>(slice.getContent(), slice.hasNext(), page, size);
     }
 
     @Override
@@ -158,26 +161,64 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void verificate(Long userId, Long projectId, List<Long> technologiesId) throws InstanceNotFoundException {
+    public void addVerification(Long userId, Long projectId, Long technologyId) throws InstanceNotFoundException {
         User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", userId));
         Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
-        //comprobar que el proyecto usa esas tecnologías
+        //comprobar que el proyecto usa esa tecnología
         if(!new HashSet<>(usesDao.findAllByProject(project).stream().map(use -> use.getTechnology().getId()).collect(Collectors.toList()))
-                .containsAll(technologiesId)){
+                .contains(technologyId)){
             throw new InstanceNotFoundException("project.entity.uses", null);
         }
-        //crear todas las filas de verification y de knowledge si es necesario
-        for (Long technologyId : technologiesId) {
-            Technology technology = technologyDao.findById(technologyId).get();
-            Optional<Knowledge> knowledge = knowledgeDao.findByUserAndTechnology(user, technology);
-            if(knowledge.isPresent()){
-                verificationDao.save(new Verification(knowledge.get(), project));
-            }else{
-                Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology, false, false));
-                verificationDao.save(new Verification(knowledge1, project));
+        //crear la fila de verification y de knowledge si es necesario
+        Technology technology = technologyDao.findById(technologyId).orElseThrow(() -> new InstanceNotFoundException("project.entity.technology", technologyId));
+        Knowledge knowledge = knowledgeDao.findByUserAndTechnology(user, technology).orElse(null);
+        if(knowledge == null) {
+            try {
+                knowledgeService.addKnowledge(userId, technologyId, null, null);
+                knowledge = knowledgeDao.findByUserAndTechnology(user, technology).orElse(null);
+            } catch (InvalidAttributesException | DuplicateInstanceException ignored) {}
+        }
+
+        addVerificationHierarchy(project, knowledge);
+    }
+    private void addVerificationHierarchy(Project project, Knowledge knowledge) {
+        if (knowledge.getTechnology().getParentId() != null) {
+            List<Verification> brotherVerifications = verificationDao.findAllByProjectAndKnowledge_UserAndKnowledge_Technology_ParentId(project, knowledge.getUser(), knowledge.getTechnology().getParentId());
+            if (brotherVerifications.isEmpty()) {
+                addVerificationHierarchy(project,
+                        knowledgeDao.findByUserAndTechnology(knowledge.getUser(),
+                                technologyDao.findById(knowledge.getTechnology().getParentId()).get()).get());
             }
+        }
+        if(!verificationDao.existsByProjectAndKnowledge(project, knowledge)){
+            verificationDao.save(new Verification(knowledge, project));
         }
     }
 
+    @Override
+    public void deleteVerification(Long userId, Long projectId, Long technologyId, Boolean deleteKnowledge) throws InstanceNotFoundException {
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", userId));
+        Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
+        Verification verification = verificationDao.findByProjectAndKnowledge(project,
+                knowledgeDao.findByUserAndTechnology(user,
+                        technologyDao.findById(technologyId).get()).get()).orElseThrow(() -> new InstanceNotFoundException("project.entity.verification", null));
+
+        deleteVerificationHierarchy(verification, deleteKnowledge);
+    }
+
+    private void deleteVerificationHierarchy(Verification verification, Boolean deleteKnowledge) {
+        List<Verification> childrenVerifications = verificationDao.findAllByProjectAndKnowledge_UserAndKnowledge_Technology_ParentId(verification.getProject(), verification.getKnowledge().getUser(), verification.getKnowledge().getTechnology().getId());
+        verificationDao.delete(verification);
+
+        if(deleteKnowledge && !verificationDao.existsByKnowledge_UserAndKnowledge_Technology_Id(verification.getKnowledge().getUser(), verification.getKnowledge().getTechnology().getId())){
+            knowledgeDao.delete(verification.getKnowledge());
+        }
+
+        if (!childrenVerifications.isEmpty()) {
+            for(Verification childVerification : childrenVerifications){
+                deleteVerificationHierarchy(childVerification, deleteKnowledge);
+            }
+        }
+    }
 
 }

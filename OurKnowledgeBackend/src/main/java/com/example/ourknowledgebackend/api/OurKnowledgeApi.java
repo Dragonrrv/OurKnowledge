@@ -130,7 +130,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
     public ResponseEntity listProjects(ListProjectsRequestDTO listProjectsRequestDTO) {
         return ResponseEntity.status(200).body(projectService.listProjects(listProjectsRequestDTO.getPage(),
                 listProjectsRequestDTO.getKeywords() != null ? listProjectsRequestDTO.getKeywords().trim() : null,
-                10));
+                listProjectsRequestDTO.getSize()));
     }
 
 
@@ -138,7 +138,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
     @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
     public ResponseEntity projectDetails(ProjectDetailsRequestDTO projectDetailsRequestDTO){
         try {
-            return ResponseEntity.status(200).body(projectService.projectDetails(longId(projectDetailsRequestDTO.getProjectId())));
+            return ResponseEntity.status(200).body(projectService.projectDetails(longId(projectDetailsRequestDTO.getId())));
         } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -219,11 +219,25 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
 
     @Override
     @PreAuthorize("hasRole('client_developer')")
-    public ResponseEntity verificate(VerificateRequestDTO verificateRequestDTO){
-        List<Long> technologiesId = verificateRequestDTO.getTechnologiesId().stream().map(Integer::longValue).collect(Collectors.toList());
+    public ResponseEntity addVerification(AddVerificationRequestDTO addVerificationRequestDTO){
         try {
-            projectService.verificate(longId(verificateRequestDTO.getProjectId()),
-                    longId(verificateRequestDTO.getProjectId()), technologiesId);
+            projectService.addVerification(longId(addVerificationRequestDTO.getProjectId()),
+                    longId(addVerificationRequestDTO.getProjectId()),
+                    longId(addVerificationRequestDTO.getTechnologyId()));
+            return ResponseEntity.status(200).body(null);
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_developer')")
+    public ResponseEntity deleteVerification(DeleteVerificationRequestDTO deleteVerificationRequestDTO){
+        try {
+            projectService.deleteVerification(longId(deleteVerificationRequestDTO.getProjectId()),
+                    longId(deleteVerificationRequestDTO.getProjectId()),
+                    longId(deleteVerificationRequestDTO.getTechnologyId()),
+                    deleteVerificationRequestDTO.getDeleteKnowledge());
             return ResponseEntity.status(200).body(null);
         } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);

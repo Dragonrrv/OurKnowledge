@@ -4,7 +4,7 @@ import {FormattedMessage} from "react-intl";
 import KnowledgeTreeList from './KnowledgeTreeList';
 import * as selectors from '../selectors';
 import {useEffect} from "react";
-import developers from "../index";
+import profiles from "../index";
 import PropTypes from "prop-types";
 import {useNavigate, useParams} from "react-router-dom";
 import users from "../../users";
@@ -18,7 +18,7 @@ const Profile= () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(developers.actions.findProfile(userId, profileId));
+        dispatch(profiles.actions.findProfile(userId, profileId));
     }, [dispatch]);
 
     if (!profile) {
@@ -28,37 +28,24 @@ const Profile= () => {
     return (
         <div>
             <div style={{display: 'flex'}}>
-                <div style={{flexGrow: 1}}>
-                    <div className="card bg-light border-dark">
-                        <h5 className="card-header">
-                            {profile.user.name}
-                        </h5>
-                    </div>
-                    <div className="card bg-light border-dark">
-                        {profile.user.email}
-                    </div>
-                    <div className="card bg-light border-dark">
-                        <FormattedMessage id="project.developers.profile.startDate"/>
-                        {profile.user.startDate && <div>{profile.user.startDate}</div>}
-                        {!profile.user.startDate && <FormattedMessage id="project.global.fields.unknown"/>}
+                <div  style={{flexGrow: 1}} className="card text-left">
+                    <div className="card-body">
+                        <h3>{profile.user.name}</h3>
+                        <p>{profile.user.email}</p>
+                        <p><span style={{fontWeight:'bold'}}><FormattedMessage id="project.profiles.profile.startDate"/></span>
+                            {profile.user.startDate && <div>{profile.user.startDate}</div>}
+                            {!profile.user.startDate && <FormattedMessage id="project.global.fields.unknown"/>}</p>
                     </div>
                 </div>
                 <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
-                    <button
+                    <button className="btn btn-primary my-2 my-sm-0"
                         style={{
-                            backgroundColor: 'blue', /* Tono gris */
-                            color: 'white', /* Color del texto */
                             padding: '20px 40px', /* Relleno interno */
-                            border: 'none', /* Sin borde */
                             borderRadius: '5px', /* Borde redondeado */
-                            cursor: 'pointer', /* Cursor de mano */
-                            fontSize: '16px', /* Tamaño de fuente */
-                            fontWeight: 'bold', /* Negrita */
-                            transition: 'background-color 0.3s ease, transform 0.3s ease' /* Transiciones suaves */
                         }}
-                        onClick={() => navigate('/developers/updateProfile')}
+                        onClick={() => navigate('/profiles/updateProfile')}
                     >
-                        <FormattedMessage id="project.developers.button.updateProfile"/>
+                        <FormattedMessage id="project.profiles.button.updateProfile"/>
                     </button>
                 </div>
             </div>
@@ -76,7 +63,7 @@ const Profile= () => {
                         <FormattedMessage id='project.global.fields.likeIt'/>
                     </th>
                     <th scope="col">
-                        <FormattedMessage id='project.developers.profile.'/>
+                        <FormattedMessage id='project.profiles.profile.'/>
                     </th>
                 </tr>
                 </thead>

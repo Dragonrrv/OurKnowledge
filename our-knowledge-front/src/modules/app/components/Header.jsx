@@ -25,7 +25,7 @@ return (
                     if (userRole === "Admin") {
                         return (
                             <li className="nav-item">
-                                <Link className="nav-link" to="/administration/technologies">
+                                <Link className="nav-link" to="/technologies/technologies">
                                     <FormattedMessage id="project.app.Header.technologies"/>
                                 </Link>
                             </li>
@@ -33,13 +33,18 @@ return (
                     } else if (userRole === "Developer") {
                         return (
                             <li className="nav-item">
-                                <Link className="nav-link" to={`/developers/profile/${userId}`}>
+                                <Link className="nav-link" to={`/profiles/profile/${userId}`}>
                                     <FormattedMessage id="project.app.Header.profile"/>
                                 </Link>
                             </li>
                         );
                     }
                 })()}
+                <li className="nav-item">
+                    <Link className="nav-link" to="/projects/findProjectsDeveloper">
+                        <FormattedMessage id="project.app.Header.projects"/>
+                    </Link>
+                </li>
             </ul>
             <ul className="navbar-nav">
                 <button onClick={handleLogout} style={{background: 'none',

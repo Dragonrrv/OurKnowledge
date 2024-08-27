@@ -1,6 +1,5 @@
 import * as actionTypes from './actionTypes';
 import backend from '../../backend';
-import * as selectors from "./selectors";
 
 const technologiesUpdated = technologies => ({
     type: actionTypes.TECHNOLOGIES_UPDATED,

@@ -4,7 +4,7 @@ import {FormattedMessage, useIntl} from "react-intl";
 import KnowledgeTreeList from './KnowledgeTreeList';
 import * as selectors from '../selectors';
 import {useEffect, useState} from "react";
-import developers from "../index";
+import profiles from "../index";
 import PropTypes from "prop-types";
 import UpdateKnowledgeTreeList from "./UpdateKnowledgeTreeList";
 import users from "../../users";
@@ -17,7 +17,7 @@ const UpdateProfile= () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(developers.actions.findProfile(userId, userId));
+        dispatch(profiles.actions.findProfile(userId, userId));
     }, [dispatch]);
 
     if (!profile) {
@@ -28,7 +28,7 @@ const UpdateProfile= () => {
         <div>
             <div className="card bg-light border-dark">
                 <h5 className="card-header">
-                    <FormattedMessage id="project.developers.tittle.updateProfile"/>
+                    <FormattedMessage id="project.profiles.tittle.updateProfile"/>
                 </h5>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

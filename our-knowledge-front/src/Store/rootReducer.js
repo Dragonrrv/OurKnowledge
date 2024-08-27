@@ -2,13 +2,15 @@ import {combineReducers} from 'redux';
 
 import app from '../modules/app';
 import users from '../modules/users';
-import developers from '../modules/developers';
-import administration from "../modules/administration";
+import profiles from '../modules/profiles';
+import technologies from "../modules/technologies";
+import projects from "../modules/projects";
 
 const rootReducer = combineReducers({
     app: app.reducer,
-    administration: administration.reducer,
-    developers: developers.reducer,
+    technologies: technologies.reducer,
+    profiles: profiles.reducer,
+    projects: projects.reducer,
     users: users.reducer,
 });
 

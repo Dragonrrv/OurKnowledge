@@ -23,5 +23,7 @@ public interface ProjectService {
 
     void updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException;
 
-    void verificate(Long userId, Long projectId, List<Long> technologiesId) throws InstanceNotFoundException;
+    void addVerification(Long userId, Long projectId, Long technologyId) throws InstanceNotFoundException;
+
+    void deleteVerification(Long userId, Long projectId, Long technologyId, Boolean deleteKnowledge) throws InstanceNotFoundException;
 }

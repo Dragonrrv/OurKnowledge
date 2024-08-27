@@ -1,12 +1,6 @@
 import PropTypes from 'prop-types';
 
 import TechnologyTree from "./TechnologyTree";
-import {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
-import {FormattedMessage, useIntl} from 'react-intl';
-
-import * as actions from '../actions';
-import AddTechnology from "../../common/components/AddTechnology";
 
 const TechnologyTreeList = ({ technologyTreeList, root}) => {
 
@@ -24,10 +18,6 @@ const TechnologyTreeList = ({ technologyTreeList, root}) => {
                     <TechnologyTree technologyTree={technologyTree}/>
                 </div>
             ))}
-            {root &&
-                <AddTechnology parentId={null}
-                               userId={2}
-                               relevant={true} onAdd={null}/>}
         </div>
     );
 }

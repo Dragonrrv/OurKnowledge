@@ -84,8 +84,8 @@ class KnowledgeServiceTest {
         User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
-        Technology technology3 = technologyDao.save(new Technology("Maven", technology2.getId(), true));
-        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology1.getId(), true));
+        Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
+        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
         try {
             List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology2.getId(), null, null);
             Optional<Knowledge> result1 = knowledgeDao.findById(knowledges.get(0).getId());
@@ -188,8 +188,8 @@ class KnowledgeServiceTest {
         User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
-        Technology technology3 = technologyDao.save(new Technology("Maven", technology2.getId(), true));
-        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology1.getId(), true));
+        Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
+        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
         Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
         Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
         Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));

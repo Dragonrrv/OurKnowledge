@@ -1,10 +1,10 @@
 import {useIntl} from "react-intl";
-import * as adminActions from "../../administration/actions";
-import * as developActions from "../../developers/actions";
+import * as adminActions from "../../technologies/actions";
+import * as developActions from "../../profiles/actions";
 import {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import PropTypes from "prop-types";
-import * as selectors from "../../developers/selectors";
+import * as selectors from "../../profiles/selectors";
 import users from "../../users";
 
 const AddTechnology = ({parentId, relevant, onAdd}) => {
@@ -29,7 +29,7 @@ const AddTechnology = ({parentId, relevant, onAdd}) => {
     return (
         <div>
             <div style={{marginTop: '4px'}} className="context-menu-title">
-                {intl.formatMessage({id: 'project.administration.technologies.add'})}
+                {intl.formatMessage({id: 'project.technologies.technologies.add'})}
             </div>
             <form style={{marginTop: '2px', marginBottom: '0.2px'}} onSubmit={handleAddTechnology} className="context-menu-form">
                 <input

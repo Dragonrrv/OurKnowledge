@@ -66,8 +66,8 @@ paths:
                 $ref: '#/components/schemas/deleteTechnologyResponse'
 
   /project/list:
-    get:
-      summary: list all projects
+    post:
+      summary: list all projects filter by keywords
       operationId: listProjects
       tags:
         - project
@@ -85,7 +85,7 @@ paths:
                 $ref: '#/components/schemas/listProjectsResponse'
 
   /project:
-    get:
+    post:
       summary: show project details
       operationId: projectDetails
       tags:
@@ -201,14 +201,30 @@ paths:
   /project/verification/add:
     post:
       summary: mark a technology used in a project by the developer
-      operationId: verificate
+      operationId: addVerification
       tags:
         - project
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/verificateRequest'
+              $ref: '#/components/schemas/addVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /project/verification/delete:
+    post:
+      summary: delete the technology used in a project by the developer
+      operationId: deleteVerification
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/deleteVerificationRequest'
         required: true
       responses:
         '200':
@@ -438,13 +454,22 @@ components:
         page:
           type: integer
           default: 1
+        size:
+          type: integer
+          default: 5
         keywords:
           type: string
 
     listProjectsResponse:
       type: object
       properties:
-        projects:
+        page:
+          type: integer
+        size:
+          type: integer
+        existMoreItems:
+          type: boolean
+        items:
           type: array
           items:
             properties:
@@ -460,7 +485,7 @@ components:
     projectDetailsRequest:
       type: object
       properties:
-        projectId:
+        id:
           type: integer
 
     projectDetailsResponse:
@@ -566,17 +591,27 @@ components:
         endDate:
           type: string
 
-    verificateRequest:
+    addVerificationRequest:
       type: object
       properties:
         userId:
           type: integer
         projectId:
           type: integer
-        technologiesId:
-          type: array
-          items:
-            type: integer
+        technologyId:
+          type: integer
+
+    deleteVerificationRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        projectId:
+          type: integer
+        technologyId:
+          type: integer
+        deleteKnowledge:
+          type: boolean
 
     profileRequest:
       type: object

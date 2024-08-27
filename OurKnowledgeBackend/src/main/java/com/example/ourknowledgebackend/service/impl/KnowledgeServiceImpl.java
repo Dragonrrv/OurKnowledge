@@ -76,9 +76,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         return addKnowledgeHierarchy(user, technology);
     }
 
-
-
-    public List<Knowledge> addKnowledgeHierarchy(User user, Technology technology) {
+    private List<Knowledge> addKnowledgeHierarchy(User user, Technology technology) {
         List<Knowledge> knowledges = new ArrayList<>();
         if (technology.getParentId() != null) {
             List<Knowledge> brotherKnowledges = knowledgeDao.findAllByUserAndTechnologyParentId(user, technology.getParentId());

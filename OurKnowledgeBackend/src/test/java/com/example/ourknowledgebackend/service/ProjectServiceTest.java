@@ -3,7 +3,6 @@ package com.example.ourknowledgebackend.service;
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
-import com.example.ourknowledgebackend.model.TechnologyTree;
 import com.example.ourknowledgebackend.model.entities.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +59,9 @@ class ProjectServiceTest {
         projectList.add(project3);
         projectList.add(project4);
 
-        Block<Project> expected = new Block<>(projectList, false);
+        Block<Project> expected = new Block<>(projectList, false, 1, 5);
 
-        Block<Project> result = projectService.listProjects(1, null, 5);
+        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -81,9 +80,9 @@ class ProjectServiceTest {
         projectList.add(project3);
         projectList.add(project2);
 
-        Block<Project> expected = new Block<>(projectList, false);
+        Block<Project> expected = new Block<>(projectList, false, 1, 5);
 
-        Block<Project> result = projectService.listProjects(1, null, 5);
+        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -101,9 +100,9 @@ class ProjectServiceTest {
         projectList.add(project2);
         projectList.add(project3);
 
-        Block<Project> expected = new Block<>(projectList, true);
+        Block<Project> expected = new Block<>(projectList, true, 1, 3);
 
-        Block<Project> result = projectService.listProjects(1, null, 3);
+        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -121,9 +120,9 @@ class ProjectServiceTest {
         projectList.add(project3);
         projectList.add(project4);
 
-        Block<Project> expected = new Block<>(projectList, false);
+        Block<Project> expected = new Block<>(projectList, false, 1, 4);
 
-        Block<Project> result = projectService.listProjects(1, null, 4);
+        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -139,9 +138,9 @@ class ProjectServiceTest {
         projectList.add(project1);
         projectList.add(project3);
 
-        Block<Project> expected = new Block<>(projectList, false);
+        Block<Project> expected = new Block<>(projectList, false, 1, 5);
 
-        Block<Project> result = projectService.listProjects(1, "KeY", 5);
+        Block<Project> result = projectService.listProjects(expected.getPage(), "KeY", expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -155,9 +154,9 @@ class ProjectServiceTest {
 
         List<Project> projectList = new ArrayList<>();
 
-        Block<Project> expected = new Block<>(projectList, false);
+        Block<Project> expected = new Block<>(projectList, false, 1, 5);
 
-        Block<Project> result = projectService.listProjects(1, "key", 5);
+        Block<Project> result = projectService.listProjects(expected.getPage(), "key", expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -173,9 +172,9 @@ class ProjectServiceTest {
         projectList.add(project3);
         projectList.add(project4);
 
-        Block<Project> expected = new Block<>(projectList, false);
+        Block<Project> expected = new Block<>(projectList, false, 2, 2);
 
-        Block<Project> result = projectService.listProjects(2, null, 2);
+        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -191,9 +190,9 @@ class ProjectServiceTest {
         List<Project> projectList = new ArrayList<>();
         projectList.add(project5);
 
-        Block<Project> expected = new Block<>(projectList, false);
+        Block<Project> expected = new Block<>(projectList, false, 3, 3);
 
-        Block<Project> result = projectService.listProjects(3, null, 2);
+        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
         assertEquals(result, expected);
     }
@@ -646,35 +645,128 @@ class ProjectServiceTest {
     }
 
     @Test
-    void verificate() {
+    void addVerification() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
 
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
-        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
-        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
+        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
+        Technology technology5 = technologyDao.save(new Technology("Frontend", null, true));
         usesDao.save(new Uses(project, technology1));
         usesDao.save(new Uses(project, technology2));
         usesDao.save(new Uses(project, technology3));
+        usesDao.save(new Uses(project, technology4));
+        usesDao.save(new Uses(project, technology5));
 
         User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         participationDao.save(new Participation(project, user, "2024-08-21", null));
 
-        List<Long> technologiesId = new ArrayList<>();
-        technologiesId.add(technology1.getId());
-        technologiesId.add(technology2.getId());
-        technologiesId.add(technology3.getId());
-
         try {
-            projectService.verificate(user.getId(), project.getId(), technologiesId);
+            projectService.addVerification(user.getId(), project.getId(), technology2.getId());
 
             List<Verification> verificationList = verificationDao.findAllByProject(project);
 
             assertEquals(project, verificationList.get(0).getProject());
             assertEquals(project, verificationList.get(1).getProject());
-            assertEquals(project, verificationList.get(2).getProject());
             assertEquals(technology1, verificationList.get(0).getKnowledge().getTechnology());
             assertEquals(technology2, verificationList.get(1).getKnowledge().getTechnology());
-            assertEquals(technology3, verificationList.get(2).getKnowledge().getTechnology());
+            assertEquals(2, verificationList.size());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void deleteVerification() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
+        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
+        Technology technology5 = technologyDao.save(new Technology("Frontend", null, true));
+        usesDao.save(new Uses(project, technology1));
+        usesDao.save(new Uses(project, technology2));
+        usesDao.save(new Uses(project, technology3));
+        usesDao.save(new Uses(project, technology4));
+        usesDao.save(new Uses(project, technology5));
+
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        participationDao.save(new Participation(project, user, "2024-08-21", null));
+        Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
+        Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
+        Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
+        Knowledge knowledge4 = knowledgeDao.save(new Knowledge(user, technology4, false, false));
+        Knowledge knowledge5 = knowledgeDao.save(new Knowledge(user, technology5, false, false));
+        Verification verification1 = verificationDao.save(new Verification(knowledge1, project));
+        Verification verification2 = verificationDao.save(new Verification(knowledge2, project));
+        Verification verification3 = verificationDao.save(new Verification(knowledge3, project));
+        Verification verification4 = verificationDao.save(new Verification(knowledge4, project));
+        Verification verification5 = verificationDao.save(new Verification(knowledge5, project));
+
+        try {
+            projectService.deleteVerification(user.getId(), project.getId(), technology2.getId(), false);
+
+            List<Verification> verificationList = verificationDao.findAllByProject(project);
+            List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
+
+            assertEquals(verification1, verificationList.get(0));
+            assertEquals(verification3, verificationList.get(1));
+            assertEquals(verification5, verificationList.get(2));
+            assertEquals(3, verificationList.size());
+
+            assertEquals(5, knowledgeList.size());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void deleteVerificationDeleteKnowledgeTrue() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
+        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
+        Technology technology5 = technologyDao.save(new Technology("Frontend", null, true));
+        usesDao.save(new Uses(project, technology1));
+        usesDao.save(new Uses(project, technology2));
+        usesDao.save(new Uses(project, technology3));
+        usesDao.save(new Uses(project, technology4));
+        usesDao.save(new Uses(project, technology5));
+
+        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        participationDao.save(new Participation(project, user, "2024-08-21", null));
+        Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
+        Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
+        Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
+        Knowledge knowledge4 = knowledgeDao.save(new Knowledge(user, technology4, false, false));
+        Knowledge knowledge5 = knowledgeDao.save(new Knowledge(user, technology5, false, false));
+        Verification verification1 = verificationDao.save(new Verification(knowledge1, project));
+        Verification verification2 = verificationDao.save(new Verification(knowledge2, project));
+        Verification verification3 = verificationDao.save(new Verification(knowledge3, project));
+        Verification verification4 = verificationDao.save(new Verification(knowledge4, project));
+        Verification verification5 = verificationDao.save(new Verification(knowledge5, project));
+
+        try {
+            projectService.deleteVerification(user.getId(), project.getId(), technology2.getId(), true);
+
+            List<Verification> verificationList = verificationDao.findAllByProject(project);
+            List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
+
+            assertEquals(verification1, verificationList.get(0));
+            assertEquals(verification3, verificationList.get(1));
+            assertEquals(verification5, verificationList.get(2));
+            assertEquals(3, verificationList.size());
+
+            assertEquals(knowledge1, knowledgeList.get(0));
+            assertEquals(knowledge3, knowledgeList.get(1));
+            assertEquals(knowledge5, knowledgeList.get(2));
+            assertEquals(3, knowledgeList.size());
 
         } catch (InstanceNotFoundException e) {
             assert false;
