@@ -1,7 +1,7 @@
 package com.example.ourknowledgebackend.model;
 
+import com.example.ourknowledgebackend.model.entities.Participation;
 import com.example.ourknowledgebackend.model.entities.Project;
-import com.example.ourknowledgebackend.model.entities.User;
 
 import java.util.List;
 
@@ -11,15 +11,15 @@ public class ProjectDetails {
 
     List<TechnologyTree> TechnologyTreeList;
 
-    List<User> UserList;
+    List<Participation> participationList;
 
     public ProjectDetails() {
     }
 
-    public ProjectDetails(Project project, List<TechnologyTree> technologyTreeList, List<User> userList) {
+    public ProjectDetails(Project project, List<TechnologyTree> technologyTreeList, List<Participation> participationList) {
         this.project = project;
         TechnologyTreeList = technologyTreeList;
-        UserList = userList;
+        this.participationList = participationList;
     }
 
     public Project getProject() {
@@ -38,11 +38,11 @@ public class ProjectDetails {
         TechnologyTreeList = technologyTreeList;
     }
 
-    public List<User> getUserList() {
-        return UserList;
+    public List<Participation> getParticipationList() {
+        return participationList;
     }
 
-    public void setUserList(List<User> userList) {
-        UserList = userList;
+    public void setParticipationList(List<Participation> participationList) {
+        this.participationList = participationList;
     }
 }

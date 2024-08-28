@@ -21,10 +21,7 @@ const Projects = ({projects}) => (
             </tr>
         </thead>
 
-        <tbody style={{
-            background: 'linear-gradient(to bottom, #F5F3F3 50%, #EDECEC 50%)',
-            backgroundSize: '100% 100px' // Ajusta este valor según el grosor de las rayas
-        }}>
+        <tbody>
             {projects.map(project =>
                 <tr key={project.id}>
                     <td><ProjectLink id={project.id} name={project.name}/></td>

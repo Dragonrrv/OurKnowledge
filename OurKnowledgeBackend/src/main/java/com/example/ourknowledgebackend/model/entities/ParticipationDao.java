@@ -11,5 +11,6 @@ public interface ParticipationDao extends CrudRepository<Participation, Long> {
 
     Optional<Participation> findByUserAndProjectAndEndDateIsNull(User user, Project project);
 
-    List<Participation> findAllByProject(Project project);
+    List<Participation> findAllByProjectOrderByStartDate(Project project);
+
 }

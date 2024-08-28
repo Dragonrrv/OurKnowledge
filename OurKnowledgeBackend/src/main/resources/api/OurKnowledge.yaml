@@ -499,19 +499,21 @@ components:
           type: string
         startDate:
           type: string
-        technologies:
+        technologyTreeList:
           type: array
           items:
             $ref: '#/components/schemas/technologyTree'
-        users:
+        participationList:
           type: array
           items:
             properties:
               id:
                 type: integer
-              name:
-                type: string
-              email:
+              user:
+                type: object
+              project:
+                type: object
+              startDate:
                 type: string
 
     addProjectRequest:

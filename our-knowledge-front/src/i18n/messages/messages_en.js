@@ -51,11 +51,13 @@ export default {
     'project.technologies.technology.delete.confirmation': 'Are you sure you want to delete this technology?',
 
     'project.profiles.profile.startDate': 'On the company since: ',
+    'project.profiles.profile.workOn': 'Work on: ',
     'project.profiles.button.updateProfile': 'Update Profile',
     'project.profiles.tittle.updateProfile': 'Update your Profile',
 
     'project.projects.FindProjectsResult.noProjectsFound': 'Not Projects Found',
     'project.projects.button.updateProject': 'Update Project',
     'project.projectDetails.usedTechnologies': 'Used Technologies',
+    'project.projectDetails.participatedDevelopers': 'Developers that work on this project',
 
 }

@@ -1,6 +1,6 @@
 import {config, appFetch} from './appFetch';
 
-export const size = 2;
+export const size = 4;
 
 export const findProjects = (page, keywords, onSuccess) =>
     appFetch(`/project/list`,

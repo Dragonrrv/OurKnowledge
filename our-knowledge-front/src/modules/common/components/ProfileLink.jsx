@@ -2,18 +2,18 @@ import PropTypes from 'prop-types';
 
 import {Link} from 'react-router-dom';
 
-const ProjectLink = ({id, name}) => {
+const ProfileLink = ({id, name}) => {
     return (
-        <Link to={`/projects/projectDetails/${id}`}>
+        <Link to={`/profiles/profile/${id}`}>
             {name}
         </Link>
     );
 
 }
 
-ProjectLink.propTypes = {
+ProfileLink.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
 };
 
-export default ProjectLink;
+export default ProfileLink;

@@ -223,13 +223,13 @@ class ProjectServiceTest {
         User user1 = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
         userDao.save(new User("Juan3", "example3@example.com", "Developer", null));
-        participationDao.save(new Participation(project1, user1, "2024-08-21", null));
-        participationDao.save(new Participation(project1, user2, "2024-08-21", null));
-        List<User> userList = new ArrayList<>();
-        userList.add(user1);
-        userList.add(user2);
+        Participation participation1 = participationDao.save(new Participation(project1, user1, "2024-08-22", null));
+        Participation participation2 = participationDao.save(new Participation(project1, user2, "2024-08-21", null));
+        List<Participation> participationList = new ArrayList<>();
+        participationList.add(participation2);
+        participationList.add(participation1);
 
-        ProjectDetails expected = new ProjectDetails(project1, null, userList);
+        ProjectDetails expected = new ProjectDetails(project1, null, participationList);
 
         try{
             ProjectDetails result = projectService.projectDetails(project1.getId());
@@ -237,7 +237,7 @@ class ProjectServiceTest {
             assertEquals(result.getTechnologyTreeList().get(0).getParent(), technology1);
             assertEquals(result.getTechnologyTreeList().get(1).getParent(), technology2);
             assertEquals(result.getTechnologyTreeList().size(), 2);
-            assertEquals(result.getUserList(), userList);
+            assertEquals(result.getParticipationList(), participationList);
         } catch (InstanceNotFoundException e) {
             assert false;
         }

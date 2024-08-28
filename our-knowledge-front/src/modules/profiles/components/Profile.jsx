@@ -8,6 +8,7 @@ import profiles from "../index";
 import PropTypes from "prop-types";
 import {useNavigate, useParams} from "react-router-dom";
 import users from "../../users";
+import {ProjectLink} from "../../common";
 
 const Profile= () => {
     const { profileId } = useParams();
@@ -37,19 +38,24 @@ const Profile= () => {
                             {!profile.user.startDate && <FormattedMessage id="project.global.fields.unknown"/>}</p>
                     </div>
                 </div>
-                <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
-                    <button className="btn btn-primary my-2 my-sm-0"
-                        style={{
-                            padding: '20px 40px', /* Relleno interno */
-                            borderRadius: '5px', /* Borde redondeado */
-                        }}
-                        onClick={() => navigate('/profiles/updateProfile')}
-                    >
-                        <FormattedMessage id="project.profiles.button.updateProfile"/>
-                    </button>
-                </div>
+                {userId === profile.user.id && (
+                    <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
+                        <button className="btn btn-primary my-2 my-sm-0"
+                                style={{
+                                    padding: '20px 40px', /* Relleno interno */
+                                    borderRadius: '5px', /* Borde redondeado */
+                                }}
+                                onClick={() => navigate('/profiles/updateProfile')}
+                        >
+                            <FormattedMessage id="project.profiles.button.updateProfile"/>
+                        </button>
+                    </div>
+                )}
             </div>
-
+            <h5><FormattedMessage id="project.profiles.profile.workOn"/></h5>
+                {profile.projects.map(project => (
+                    <ProjectLink name={project.name} id={project.id}/>
+                ))}
             <table className="table table-striped table-hover">
                 <thead>
                 <tr>

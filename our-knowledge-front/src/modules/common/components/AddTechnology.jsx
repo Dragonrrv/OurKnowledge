@@ -19,7 +19,6 @@ const AddTechnology = ({parentId, relevant, onAdd}) => {
         if(relevant){
             dispatch(adminActions.addTechnology(userId, newTechnologyName, parentId));
         } else {
-            console.log(parentId);
             dispatch(developActions.addKnowledge(userId, null, newTechnologyName, parentId))
         }
         setNewTechnologyName('');
