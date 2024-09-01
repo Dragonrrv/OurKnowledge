@@ -166,6 +166,38 @@ paths:
         '200':
           description: OK
 
+  /project/uses/add:
+    post:
+      summary: add an used technology in a project
+      operationId: addUses
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addUsesRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
+  /project/uses/delete:
+    post:
+      summary: delete an used technology in a project
+      operationId: deleteUses
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/deleteUsesRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
   /project/participation/add:
     post:
       summary: participate in a project
@@ -529,16 +561,13 @@ components:
           type: string
         size:
           type: integer
-        technologies:
+        technologyIdList:
           type: array
           items:
             type: integer
 
     addProjectResponse:
-      type: object
-      properties:
-        id:
-          type: integer
+      $ref: '#/components/schemas/technologyTree'
 
     updateProjectRequest:
       type: object
@@ -555,7 +584,7 @@ components:
           type: string
         size:
           type: integer
-        technologies:
+        technologyIdList:
           type: array
           items:
             type: integer
@@ -569,6 +598,20 @@ components:
       type: object
       properties:
         projectId:
+          type: integer
+
+    addUsesRequest:
+      type: object
+      properties:
+        projectId:
+          type: integer
+        technologyId:
+          type: integer
+
+    deleteUsesRequest:
+      type: object
+      properties:
+        usesId:
           type: integer
 
     participateRequest:
@@ -598,9 +641,7 @@ components:
       properties:
         userId:
           type: integer
-        projectId:
-          type: integer
-        technologyId:
+        usesId:
           type: integer
 
     deleteVerificationRequest:
@@ -608,9 +649,7 @@ components:
       properties:
         userId:
           type: integer
-        projectId:
-          type: integer
-        technologyId:
+        usesId:
           type: integer
         deleteKnowledge:
           type: boolean

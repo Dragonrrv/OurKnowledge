@@ -2,8 +2,7 @@ package com.example.ourknowledgebackend.service.impl;
 
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
-import com.example.ourknowledgebackend.model.ProjectDetails;
-import com.example.ourknowledgebackend.model.TechnologyTree;
+import com.example.ourknowledgebackend.model.*;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.Block;
 import com.example.ourknowledgebackend.service.KnowledgeService;
@@ -37,8 +36,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final KnowledgeDao knowledgeDao;
 
-    private final Common common;
-
     @Override
     public Block<Project> listProjects(int page, String keywords, int size) {
         Slice<Project> slice = projectDao.find(page, keywords, size);
@@ -48,26 +45,48 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDetails projectDetails(Long id) throws InstanceNotFoundException {
         Project project = projectDao.findById(id).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", id));
-        List<TechnologyTree> technologyTreeList = common.TechnologyListToTechnologyTreeList(
-                usesDao.findAllByProject(project).stream().map(Uses::getTechnology).collect(Collectors.toList()));
-        List<Participation> participations = participationDao.findAllByProjectOrderByStartDate(project);
-        return new ProjectDetails(project, technologyTreeList, participations);
+        List<UsesTree> usesTreeList = listProjectUses(project);
+        List<Participation> participationList = participationDao.findAllByProjectOrderByStartDate(project);
+        return new ProjectDetails(project, usesTreeList, participationList);
+    }
+
+    public List<UsesTree> listProjectUses(Project project) {
+        List<UsesTechnology> usesTechnologyList = technologyDao.findTechnologiesWithUses(project.getId());
+
+        Map<Long, List<UsesTechnology>> usesTechnologyMap = usesTechnologyList.stream()
+                .collect(Collectors.groupingBy(tech -> tech.getParentId() != null ? tech.getParentId() : 0L));
+
+        UsesTree root = fillUsesTreeList(null, usesTechnologyMap, 0L);
+
+        return root.getChildren();
+    }
+
+    private UsesTree fillUsesTreeList(UsesTechnology parent, Map<Long, List<UsesTechnology>> usesTechnologyMap, Long parentId) {
+        List<UsesTechnology> childrenUsesTechnology = usesTechnologyMap.get(parentId);
+        ArrayList<UsesTree> childTreeList = new ArrayList<>();
+        if (childrenUsesTechnology != null) {
+            for (UsesTechnology usesTechnology : childrenUsesTechnology) {
+                childTreeList.add(fillUsesTreeList(usesTechnology, usesTechnologyMap, usesTechnology.getId()));
+            }
+        }
+        return new UsesTree(parent, childTreeList);
     }
 
     @Override
     @Transactional
-    public void addProject(String name, String description, String status, String startDate, int size, List<Long> technologiesId) throws DuplicateInstanceException, InstanceNotFoundException {
+    public Project addProject(String name, String description, String status, String startDate, int size, List<Long> technologiesId) throws DuplicateInstanceException, InstanceNotFoundException {
         if(projectDao.existsByName(name)){
             throw new DuplicateInstanceException("project.entity.project", projectDao.findByName(name).get().getId());
         }
         Project project = new Project(name, description, status, startDate, size);
         projectDao.save(project);
         try{
-            updateProjectTechnologies(project.getId(), technologiesId);
+            updateProjectTechnologies(project, technologiesId);
         } catch (InstanceNotFoundException e) {
             projectDao.delete(project);
             throw e;
         }
+        return project;
     }
 
     @Override
@@ -93,13 +112,12 @@ public class ProjectServiceImpl implements ProjectService {
             project.setSize(size);
         }
         if(updateTechnologies){
-            updateProjectTechnologies(id, technologiesId);
+            updateProjectTechnologies(project, technologiesId);
         }
         projectDao.save(project);
     }
 
-    public void updateProjectTechnologies(Long projectId, List<Long> technologiesId) throws InstanceNotFoundException {
-        Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
+    public void updateProjectTechnologies(Project project, List<Long> technologiesId) throws InstanceNotFoundException {
 
         List<Long> actualTechnologiesId = usesDao.findAllByProject(project).stream()
                 .map(use -> use.getTechnology().getId())
@@ -115,9 +133,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         for (Long technologyId : missingTechnologies) {
             Uses use = usesDao.findByProjectAndTechnologyId(project, technologyId);
-            List<Verification> verificationList = verificationDao.findAllByProjectAndKnowledge_Technology_Id(project, technologyId);
             usesDao.delete(use);
-            verificationDao.deleteAll(verificationList);
         }
 
         for (Long technologyId : newTechnologies) {
@@ -133,8 +149,50 @@ public class ProjectServiceImpl implements ProjectService {
         if(!project.isPresent()){
             throw new InstanceNotFoundException("project.entities.technology", projectId);
         }
-        updateProjectTechnologies(projectId, new ArrayList<>());
         projectDao.delete(project.get());
+    }
+
+    @Override
+    public void addUses(Long projectId, Long technologyId) throws InstanceNotFoundException, DuplicateInstanceException {
+        Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
+        Technology technology = technologyDao.findById(technologyId).orElseThrow(() -> new InstanceNotFoundException("project.entity.technology", technologyId));
+        Optional<Uses> uses = usesDao.findByProjectAndTechnology(project, technology);
+        if (uses.isPresent()) {
+            throw new DuplicateInstanceException("project.entities.uses", uses.get().getId());
+        }
+        addUsesHierarchy(project, technology);
+    }
+
+    private List<Uses> addUsesHierarchy(Project project, Technology technology) {
+        List<Uses> usesList = new ArrayList<>();
+        if (technology.getParentId() != null) {
+            List<Uses> brotherUses = usesDao.findAllByProjectAndTechnologyParentId(project, technology.getParentId());
+            if (brotherUses.isEmpty()) {
+                Optional<Technology> parentTechnology = technologyDao.findById(technology.getParentId());
+                parentTechnology.ifPresent(value -> usesList.addAll(addUsesHierarchy(project, value)));
+            }
+        }
+        if(!usesDao.existsByProjectAndTechnology(project, technology)){
+            usesList.add(usesDao.save(new Uses(project, technology)));
+        }
+        return usesList;
+    }
+
+    @Override
+    public Uses deleteUses(Long usesId) throws InstanceNotFoundException {
+        Uses uses = usesDao.findById(usesId).orElseThrow(() -> new InstanceNotFoundException("project.entity.uses", usesId));
+        deleteUsesHierarchy(uses);
+        return uses;
+    }
+
+    private void deleteUsesHierarchy(Uses uses) {
+        List<Uses> childrenUses = usesDao.findAllByProjectAndTechnologyParentId(uses.getProject(), uses.getTechnology().getId());
+        usesDao.delete(uses);
+        if (!childrenUses.isEmpty()) {
+            for(Uses childUses : childrenUses){
+                deleteUsesHierarchy(childUses);
+            }
+        }
     }
 
     @Override
@@ -161,56 +219,46 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void addVerification(Long userId, Long projectId, Long technologyId) throws InstanceNotFoundException {
+    public void addVerification(Long userId, Long usesId) throws InstanceNotFoundException {
         User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", userId));
-        Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
-        //comprobar que el proyecto usa esa tecnología
-        if(!new HashSet<>(usesDao.findAllByProject(project).stream().map(use -> use.getTechnology().getId()).collect(Collectors.toList()))
-                .contains(technologyId)){
-            throw new InstanceNotFoundException("project.entity.uses", null);
-        }
+        Uses uses = usesDao.findById(usesId).orElseThrow(() -> new InstanceNotFoundException("project.entity.uses", usesId));
         //crear la fila de verification y de knowledge si es necesario
-        Technology technology = technologyDao.findById(technologyId).orElseThrow(() -> new InstanceNotFoundException("project.entity.technology", technologyId));
-        Knowledge knowledge = knowledgeDao.findByUserAndTechnology(user, technology).orElse(null);
+        Knowledge knowledge = knowledgeDao.findByUserAndTechnology(user, uses.getTechnology()).orElse(null);
         if(knowledge == null) {
             try {
-                knowledgeService.addKnowledge(userId, technologyId, null, null);
-                knowledge = knowledgeDao.findByUserAndTechnology(user, technology).orElse(null);
+                knowledgeService.addKnowledge(userId, uses.getTechnology().getId(), null, null);
+                knowledge = knowledgeDao.findByUserAndTechnology(user, uses.getTechnology()).orElse(null);
             } catch (InvalidAttributesException | DuplicateInstanceException ignored) {}
         }
 
-        addVerificationHierarchy(project, knowledge);
+        assert knowledge != null;
+        addVerificationHierarchy(uses, knowledge);
     }
-    private void addVerificationHierarchy(Project project, Knowledge knowledge) {
+    private void addVerificationHierarchy(Uses uses, Knowledge knowledge) {
         if (knowledge.getTechnology().getParentId() != null) {
-            List<Verification> brotherVerifications = verificationDao.findAllByProjectAndKnowledge_UserAndKnowledge_Technology_ParentId(project, knowledge.getUser(), knowledge.getTechnology().getParentId());
-            if (brotherVerifications.isEmpty()) {
-                addVerificationHierarchy(project,
-                        knowledgeDao.findByUserAndTechnology(knowledge.getUser(),
-                                technologyDao.findById(knowledge.getTechnology().getParentId()).get()).get());
+            Optional<Verification> parentVerification = verificationDao.findByKnowledgeUserAndKnowledgeTechnologyId(knowledge.getUser(), knowledge.getTechnology().getParentId());
+            if (!parentVerification.isPresent()) {
+                addVerificationHierarchy(usesDao.findByProjectAndTechnologyId(uses.getProject(), uses.getTechnology().getParentId()),
+                        knowledgeDao.findByUserAndTechnologyId(knowledge.getUser(),knowledge.getTechnology().getParentId()));
             }
         }
-        if(!verificationDao.existsByProjectAndKnowledge(project, knowledge)){
-            verificationDao.save(new Verification(knowledge, project));
-        }
+        verificationDao.save(new Verification(knowledge, uses));
     }
 
     @Override
-    public void deleteVerification(Long userId, Long projectId, Long technologyId, Boolean deleteKnowledge) throws InstanceNotFoundException {
-        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", userId));
-        Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
-        Verification verification = verificationDao.findByProjectAndKnowledge(project,
-                knowledgeDao.findByUserAndTechnology(user,
-                        technologyDao.findById(technologyId).get()).get()).orElseThrow(() -> new InstanceNotFoundException("project.entity.verification", null));
+    public void deleteVerification(Long userId, Long usesId, Boolean deleteKnowledge) throws InstanceNotFoundException {
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
+        Uses uses = usesDao.findById(usesId).orElseThrow(() -> new InstanceNotFoundException("project.entity.uses", usesId));
+        Verification verification = verificationDao.findByKnowledgeUserAndUses(user, uses).orElseThrow(() -> new InstanceNotFoundException("project.entity.verification", null));;
 
         deleteVerificationHierarchy(verification, deleteKnowledge);
     }
 
     private void deleteVerificationHierarchy(Verification verification, Boolean deleteKnowledge) {
-        List<Verification> childrenVerifications = verificationDao.findAllByProjectAndKnowledge_UserAndKnowledge_Technology_ParentId(verification.getProject(), verification.getKnowledge().getUser(), verification.getKnowledge().getTechnology().getId());
+        List<Verification> childrenVerifications = verificationDao.findAllByUsesProjectAndKnowledgeUserAndKnowledgeTechnologyParentId(verification.getUses().getProject(), verification.getKnowledge().getUser(), verification.getKnowledge().getTechnology().getId());
         verificationDao.delete(verification);
 
-        if(deleteKnowledge && !verificationDao.existsByKnowledge_UserAndKnowledge_Technology_Id(verification.getKnowledge().getUser(), verification.getKnowledge().getTechnology().getId())){
+        if(deleteKnowledge && !verificationDao.existsByKnowledgeUserAndKnowledgeTechnologyId(verification.getKnowledge().getUser(), verification.getKnowledge().getTechnology().getId())){
             knowledgeDao.delete(verification.getKnowledge());
         }
 

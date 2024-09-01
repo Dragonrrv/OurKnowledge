@@ -5,8 +5,6 @@ import ProfileLink from "../../common/components/ProfileLink";
 
 const ParticipationList = ({participationList}) => {
 
-    console.log(participationList)
-
     return (
         <table className="table table-striped table-hover">
             <thead><tr>

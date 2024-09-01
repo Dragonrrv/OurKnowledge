@@ -44,7 +44,7 @@ public class CustomizedProjectDaoImpl implements CustomizedProjectDao {
 
         }
 
-        queryString += " ORDER BY p.startDate";
+        queryString += " ORDER BY p.startDate DESC";
 
         Query query = entityManager.createQuery(queryString).setFirstResult((page-1)*size).setMaxResults(size+1);
 

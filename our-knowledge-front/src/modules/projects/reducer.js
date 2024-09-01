@@ -32,6 +32,12 @@ const project = (state = initialState.project, action) => {
         case actionTypes.FIND_PROJECT_BY_ID_COMPLETED:
             return action.project;
 
+        case actionTypes.ADD_PROJECT_COMPLETED:
+            return action.project;
+
+        case actionTypes.UPDATE_PROJECT_COMPLETED:
+            return action.project;
+
         case actionTypes.CLEAR_PROJECT:
             return initialState.project;
 

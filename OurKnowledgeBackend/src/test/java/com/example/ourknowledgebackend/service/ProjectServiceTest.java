@@ -49,9 +49,9 @@ class ProjectServiceTest {
     @Test
     void listProjects() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
-        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-04", 4));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
         List<Project> projectList = new ArrayList<>();
         projectList.add(project1);
@@ -69,10 +69,10 @@ class ProjectServiceTest {
     @Test
     // they are order by startDate
     void listProjectsOrder() {
-        Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-04", 2));
-        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-02", 4));
+        Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-04", 1));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-02", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-03", 4));
 
         List<Project> projectList = new ArrayList<>();
         projectList.add(project1);
@@ -91,9 +91,9 @@ class ProjectServiceTest {
     // they are order by startDate
     void listProjectsExistMoreTrue() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
-        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-04", 4));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
         List<Project> projectList = new ArrayList<>();
         projectList.add(project1);
@@ -110,9 +110,9 @@ class ProjectServiceTest {
     @Test
     void listProjectsFullButExistMoreFalse() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
-        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-04", 4));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
         List<Project> projectList = new ArrayList<>();
         projectList.add(project1);
@@ -130,9 +130,9 @@ class ProjectServiceTest {
     @Test
     void listProjectsKeyWordsFilter() {
         Project project1 = projectDao.save(new Project("name1Key", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
-        Project project3 = projectDao.save(new Project("name3key", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-04", 4));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3key", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
         List<Project> projectList = new ArrayList<>();
         projectList.add(project1);
@@ -148,9 +148,9 @@ class ProjectServiceTest {
     @Test
     void listProjectsEmpty() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
-        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-04", 4));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
         List<Project> projectList = new ArrayList<>();
 
@@ -164,9 +164,9 @@ class ProjectServiceTest {
     @Test
     void listProjectsPage2() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
-        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-04", 4));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
         List<Project> projectList = new ArrayList<>();
         projectList.add(project3);
@@ -182,15 +182,15 @@ class ProjectServiceTest {
     @Test
     void listProjectsPage3() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
-        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-03", 3));
-        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-04", 4));
-        Project project5 = projectDao.save(new Project("name5", "description5", "doing", "2024-08-05", 4));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
+        Project project5 = projectDao.save(new Project("name5", "description5", "doing", "2024-08-01", 4));
 
         List<Project> projectList = new ArrayList<>();
         projectList.add(project5);
 
-        Block<Project> expected = new Block<>(projectList, false, 3, 3);
+        Block<Project> expected = new Block<>(projectList, false, 3, 2);
 
         Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
@@ -200,7 +200,7 @@ class ProjectServiceTest {
     @Test
     void projectDetails() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-02", 2));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
 
         try{
             ProjectDetails result = projectService.projectDetails(project1.getId());
@@ -215,10 +215,10 @@ class ProjectServiceTest {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
 
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
-        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
-        technologyDao.save(new Technology("Spring", technology1.getId(), true));
-        usesDao.save(new Uses(project1, technology1));
-        usesDao.save(new Uses(project1, technology2));
+        Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology3 = technologyDao.save(new Technology("Frontend", null, true));
+        Uses uses1 = usesDao.save(new Uses(project1, technology1));
+        Uses uses2 = usesDao.save(new Uses(project1, technology3));
 
         User user1 = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
@@ -234,9 +234,10 @@ class ProjectServiceTest {
         try{
             ProjectDetails result = projectService.projectDetails(project1.getId());
             assertEquals(result.getProject(), expected.getProject());
-            assertEquals(result.getTechnologyTreeList().get(0).getParent(), technology1);
-            assertEquals(result.getTechnologyTreeList().get(1).getParent(), technology2);
-            assertEquals(result.getTechnologyTreeList().size(), 2);
+            assertEquals(result.getUsesTreeList().get(0).getParent().getUsesId(), uses1.getId());
+            assertNull(result.getUsesTreeList().get(0).getChildren().get(0).getParent().getUsesId());
+            assertEquals(result.getUsesTreeList().get(1).getParent().getUsesId(), uses2.getId());
+            assertEquals(result.getUsesTreeList().size(), 2);
             assertEquals(result.getParticipationList(), participationList);
         } catch (InstanceNotFoundException e) {
             assert false;
@@ -390,45 +391,6 @@ class ProjectServiceTest {
     }
 
     @Test
-    // When you delete uses from the project that an user mark as verification,
-    // the verification should be removed but not the knowledge
-    void updateProjectDeleteParticipation() {
-        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-
-        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
-        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
-        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
-        usesDao.save(new Uses(project, technology1));
-        usesDao.save(new Uses(project, technology2));
-        usesDao.save(new Uses(project, technology3));
-
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
-        participationDao.save(new Participation(project, user, "2024-08-21", null));
-        Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
-        Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
-        Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
-
-        verificationDao.save(new Verification(knowledge1, project));
-        verificationDao.save(new Verification(knowledge2, project));
-        verificationDao.save(new Verification(knowledge3, project));
-
-        List<Long> technologiesId = new ArrayList<>();
-        technologiesId.add(technology1.getId());
-
-        try {
-            projectService.updateProject(project.getId(), null, null, null, null, -1, true, technologiesId);
-            List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
-            List<Verification> verificationList = verificationDao.findAllByProject(project);
-
-            assertEquals(3, knowledgeList.size());
-            assertEquals(1, verificationList.size());
-
-        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
-            assert false;
-        }
-    }
-
-    @Test
     void updateProjectInstanceNotFound() {
         projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
 
@@ -469,43 +431,6 @@ class ProjectServiceTest {
             projectService.deleteProject(project.getId());
 
             assertFalse(projectDao.findAll().iterator().hasNext());
-
-        } catch (InstanceNotFoundException e) {
-            assert false;
-        }
-    }
-
-    @Test
-    // Should remove uses and verifications, but not knowledge
-    void deleteProjectConsecuences() {
-        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-
-        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
-        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
-        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
-        usesDao.save(new Uses(project, technology1));
-        usesDao.save(new Uses(project, technology2));
-        usesDao.save(new Uses(project, technology3));
-
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
-        participationDao.save(new Participation(project, user, "2024-08-21", null));
-        Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
-        Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
-        Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
-
-        verificationDao.save(new Verification(knowledge1, project));
-        verificationDao.save(new Verification(knowledge2, project));
-        verificationDao.save(new Verification(knowledge3, project));
-        try {
-            projectService.deleteProject(project.getId());
-
-            List<Uses> usesList = usesDao.findAllByProject(project);
-            List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
-            List<Verification> verificationList = verificationDao.findAllByProject(project);
-
-            assertEquals(0, usesList.size());
-            assertEquals(3, knowledgeList.size());
-            assertEquals(0, verificationList.size());
 
         } catch (InstanceNotFoundException e) {
             assert false;
@@ -653,8 +578,8 @@ class ProjectServiceTest {
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
         Technology technology5 = technologyDao.save(new Technology("Frontend", null, true));
-        usesDao.save(new Uses(project, technology1));
-        usesDao.save(new Uses(project, technology2));
+        Uses uses1 = usesDao.save(new Uses(project, technology1));
+        Uses uses2 = usesDao.save(new Uses(project, technology2));
         usesDao.save(new Uses(project, technology3));
         usesDao.save(new Uses(project, technology4));
         usesDao.save(new Uses(project, technology5));
@@ -663,12 +588,12 @@ class ProjectServiceTest {
         participationDao.save(new Participation(project, user, "2024-08-21", null));
 
         try {
-            projectService.addVerification(user.getId(), project.getId(), technology2.getId());
+            projectService.addVerification(user.getId(), uses2.getId());
 
-            List<Verification> verificationList = verificationDao.findAllByProject(project);
+            List<Verification> verificationList = verificationDao.findAllByKnowledgeUser(user);
 
-            assertEquals(project, verificationList.get(0).getProject());
-            assertEquals(project, verificationList.get(1).getProject());
+            assertEquals(uses1, verificationList.get(0).getUses());
+            assertEquals(uses2, verificationList.get(1).getUses());
             assertEquals(technology1, verificationList.get(0).getKnowledge().getTechnology());
             assertEquals(technology2, verificationList.get(1).getKnowledge().getTechnology());
             assertEquals(2, verificationList.size());
@@ -687,11 +612,11 @@ class ProjectServiceTest {
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
         Technology technology5 = technologyDao.save(new Technology("Frontend", null, true));
-        usesDao.save(new Uses(project, technology1));
-        usesDao.save(new Uses(project, technology2));
-        usesDao.save(new Uses(project, technology3));
-        usesDao.save(new Uses(project, technology4));
-        usesDao.save(new Uses(project, technology5));
+        Uses uses1 = usesDao.save(new Uses(project, technology1));
+        Uses uses2 = usesDao.save(new Uses(project, technology2));
+        Uses uses3 = usesDao.save(new Uses(project, technology3));
+        Uses uses4 = usesDao.save(new Uses(project, technology4));
+        Uses uses5 = usesDao.save(new Uses(project, technology5));
 
         User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         participationDao.save(new Participation(project, user, "2024-08-21", null));
@@ -700,16 +625,16 @@ class ProjectServiceTest {
         Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
         Knowledge knowledge4 = knowledgeDao.save(new Knowledge(user, technology4, false, false));
         Knowledge knowledge5 = knowledgeDao.save(new Knowledge(user, technology5, false, false));
-        Verification verification1 = verificationDao.save(new Verification(knowledge1, project));
-        Verification verification2 = verificationDao.save(new Verification(knowledge2, project));
-        Verification verification3 = verificationDao.save(new Verification(knowledge3, project));
-        Verification verification4 = verificationDao.save(new Verification(knowledge4, project));
-        Verification verification5 = verificationDao.save(new Verification(knowledge5, project));
+        Verification verification1 = verificationDao.save(new Verification(knowledge1, uses1));
+        Verification verification2 = verificationDao.save(new Verification(knowledge2, uses2));
+        Verification verification3 = verificationDao.save(new Verification(knowledge3, uses3));
+        Verification verification4 = verificationDao.save(new Verification(knowledge4, uses4));
+        Verification verification5 = verificationDao.save(new Verification(knowledge5, uses5));
 
         try {
-            projectService.deleteVerification(user.getId(), project.getId(), technology2.getId(), false);
+            projectService.deleteVerification(user.getId(), uses2.getId(), false);
 
-            List<Verification> verificationList = verificationDao.findAllByProject(project);
+            List<Verification> verificationList = verificationDao.findAllByKnowledgeUser(user);
             List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
 
             assertEquals(verification1, verificationList.get(0));
@@ -733,11 +658,11 @@ class ProjectServiceTest {
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
         Technology technology5 = technologyDao.save(new Technology("Frontend", null, true));
-        usesDao.save(new Uses(project, technology1));
-        usesDao.save(new Uses(project, technology2));
-        usesDao.save(new Uses(project, technology3));
-        usesDao.save(new Uses(project, technology4));
-        usesDao.save(new Uses(project, technology5));
+        Uses uses1 = usesDao.save(new Uses(project, technology1));
+        Uses uses2 = usesDao.save(new Uses(project, technology2));
+        Uses uses3 = usesDao.save(new Uses(project, technology3));
+        Uses uses4 = usesDao.save(new Uses(project, technology4));
+        Uses uses5 = usesDao.save(new Uses(project, technology5));
 
         User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
         participationDao.save(new Participation(project, user, "2024-08-21", null));
@@ -746,16 +671,16 @@ class ProjectServiceTest {
         Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, false, false));
         Knowledge knowledge4 = knowledgeDao.save(new Knowledge(user, technology4, false, false));
         Knowledge knowledge5 = knowledgeDao.save(new Knowledge(user, technology5, false, false));
-        Verification verification1 = verificationDao.save(new Verification(knowledge1, project));
-        Verification verification2 = verificationDao.save(new Verification(knowledge2, project));
-        Verification verification3 = verificationDao.save(new Verification(knowledge3, project));
-        Verification verification4 = verificationDao.save(new Verification(knowledge4, project));
-        Verification verification5 = verificationDao.save(new Verification(knowledge5, project));
+        Verification verification1 = verificationDao.save(new Verification(knowledge1, uses1));
+        Verification verification2 = verificationDao.save(new Verification(knowledge2, uses2));
+        Verification verification3 = verificationDao.save(new Verification(knowledge3, uses3));
+        Verification verification4 = verificationDao.save(new Verification(knowledge4, uses4));
+        Verification verification5 = verificationDao.save(new Verification(knowledge5, uses5));
 
         try {
-            projectService.deleteVerification(user.getId(), project.getId(), technology2.getId(), true);
+            projectService.deleteVerification(user.getId(), uses2.getId(), true);
 
-            List<Verification> verificationList = verificationDao.findAllByProject(project);
+            List<Verification> verificationList = verificationDao.findAllByKnowledgeUser(user);
             List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
 
             assertEquals(verification1, verificationList.get(0));

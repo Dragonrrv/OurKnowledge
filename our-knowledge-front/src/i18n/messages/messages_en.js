@@ -19,7 +19,9 @@ export default {
     'project.global.buttons.back': 'Back',
     'project.global.buttons.save': 'Save',
     'project.global.buttons.search': 'Search',
-    'project.global.buttons.delete': 'delete',
+    'project.global.buttons.create': 'Create',
+    'project.global.buttons.update': 'Update',
+    'project.global.buttons.delete': 'Delete',
     'project.global.exceptions.NetworkError': 'Network error',
     'project.global.fields.date': 'Date',
     'project.global.fields.startDate': 'Start date',
@@ -57,7 +59,14 @@ export default {
 
     'project.projects.FindProjectsResult.noProjectsFound': 'Not Projects Found',
     'project.projects.button.updateProject': 'Update Project',
+    'project.projects.button.addProject': 'New Project',
     'project.projectDetails.usedTechnologies': 'Used Technologies',
     'project.projectDetails.participatedDevelopers': 'Developers that work on this project',
+    'project.projects.addProject.name': 'Project name: ',
+    'project.projects.addProject.description': 'Description: ',
+    'project.projects.addProject.startDate': 'Start Date: ',
+    'project.projects.addProject.status': 'Status: ',
+    'project.projects.addProject.size': 'Expected size: ',
+    'project.projects.addProject.TechnologiesUsed': 'Mark technologies used: ',
 
 }

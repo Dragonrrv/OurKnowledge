@@ -15,15 +15,15 @@ public class Verification {
     private Knowledge knowledge;
 
     @ManyToOne
-    @JoinColumn(name = "projectId")
-    private Project project;
+    @JoinColumn(name = "usesId")
+    private Uses uses;
 
     public Verification() {
     }
 
-    public Verification(Knowledge knowledge, Project project) {
+    public Verification(Knowledge knowledge, Uses uses) {
         this.knowledge = knowledge;
-        this.project = project;
+        this.uses = uses;
     }
 
     public Long getId() {
@@ -42,11 +42,11 @@ public class Verification {
         this.knowledge = knowledge;
     }
 
-    public Project getProject() {
-        return project;
+    public Uses getUses() {
+        return uses;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setUses(Uses uses) {
+        this.uses = uses;
     }
 }

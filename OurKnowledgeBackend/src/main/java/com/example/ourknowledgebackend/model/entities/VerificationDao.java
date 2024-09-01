@@ -7,15 +7,14 @@ import java.util.Optional;
 
 public interface VerificationDao extends CrudRepository<Verification, Long> {
 
-    List<Verification> findAllByProject(Project project);
+    List<Verification> findAllByUsesProjectAndKnowledgeUserAndKnowledgeTechnologyParentId(Project project, User user, Long parentId);
 
-    List<Verification> findAllByProjectAndKnowledge_Technology_Id(Project project, Long technologyId);
+    boolean existsByKnowledgeUserAndKnowledgeTechnologyId(User user, Long technologyId);
 
-    boolean existsByProjectAndKnowledge(Project project, Knowledge knowledge);
 
-    List<Verification> findAllByProjectAndKnowledge_UserAndKnowledge_Technology_ParentId(Project project, User user, Long parentId);
+    Optional<Verification> findByKnowledgeUserAndUses(User user, Uses uses);
 
-    Optional<Verification> findByProjectAndKnowledge(Project project, Knowledge knowledge);
+    Optional<Verification> findByKnowledgeUserAndKnowledgeTechnologyId(User user, Long parentId);
 
-    boolean existsByKnowledge_UserAndKnowledge_Technology_Id(User user, Long technologyId);
+    List<Verification> findAllByKnowledgeUser(User user);
 }

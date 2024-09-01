@@ -1,19 +1,18 @@
 import {useDispatch, useSelector} from "react-redux";
-import {FormattedMessage, useIntl} from "react-intl";
+import {FormattedMessage} from "react-intl";
 
-import KnowledgeTreeList from './KnowledgeTreeList';
 import * as selectors from '../selectors';
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import profiles from "../index";
 import PropTypes from "prop-types";
-import UpdateKnowledgeTreeList from "./UpdateKnowledgeTreeList";
 import users from "../../users";
+import TreeList from "../../common/components/TreeList";
+import UpdateKnowledgeTree from "./UpdateKnowledgeTree";
 
 const UpdateProfile= () => {
 
     const profile = useSelector(selectors.getProfile);
     const userId = useSelector(users.selectors.getUserId);
-    const intl = useIntl();
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -48,7 +47,7 @@ const UpdateProfile= () => {
                 </div>
             </div>
             <div>
-                <UpdateKnowledgeTreeList knowledgeTreeList={profile.knowledgeTreeList} root={true} />
+                <TreeList treeType={UpdateKnowledgeTree} treeList={profile.knowledgeTreeList} root={true} />
             </div>
         </div>
     )

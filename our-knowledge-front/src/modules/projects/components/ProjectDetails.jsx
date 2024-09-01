@@ -4,11 +4,11 @@ import {useNavigate, useParams} from 'react-router-dom';
 
 import * as selectors from '../selectors';
 import * as actions from '../actions';
-import {BackLink} from '../../common';
 import {FormattedMessage} from "react-intl";
-import TechnologyTreeList from "./TechnologyTreeList";
 import ParticipationList from "./ParticipationList";
 import users from "../../users";
+import UsesTree from "./UsesTree";
+import TreeList from "../../common/components/TreeList";
 
 const ProjectDetails = () => {
     const {id} = useParams();
@@ -18,10 +18,10 @@ const ProjectDetails = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    console.log(project)
-
     useEffect(() => {
-        dispatch(actions.findProjectById(id));
+        if(id!=='0'){
+            dispatch(actions.findProjectById(id));
+        }
     }, [dispatch]);
 
     if (!project) {
@@ -57,7 +57,7 @@ const ProjectDetails = () => {
             <div style={{display: 'flex'}}>
                 <div  style={{flexGrow: 1}}>
                     <h5><FormattedMessage id="project.projectDetails.usedTechnologies"/>:</h5>
-                    <TechnologyTreeList technologyTreeList={project.technologyTreeList} root={true}/>
+                    <TreeList treeType={UsesTree} treeList={project.usesTreeList} root={true} />
                 </div>
                 <div  style={{flexGrow: 2}}>
                     <h5><FormattedMessage id="project.projectDetails.participatedDevelopers"/>:</h5>

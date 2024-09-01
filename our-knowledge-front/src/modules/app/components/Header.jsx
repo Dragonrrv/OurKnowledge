@@ -20,32 +20,40 @@ const Header = () => {
 return (
 
         <nav className="navbar navbar-expand-lg navbar-light bg-light border">
-            <ul className="navbar-nav mr-auto">
-                {(() => {
-                    if (userRole === "Admin") {
-                        return (
+            {(() => {
+                if (userRole === "Admin") {
+                    return (
+                        <ul className="navbar-nav mr-auto">
                             <li className="nav-item">
                                 <Link className="nav-link" to="/technologies/technologies">
                                     <FormattedMessage id="project.app.Header.technologies"/>
                                 </Link>
                             </li>
-                        );
-                    } else if (userRole === "Developer") {
-                        return (
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/projects/findProjectsAdmin">
+                                    <FormattedMessage id="project.app.Header.projects"/>
+                                </Link>
+                            </li>
+                        </ul>
+                    );
+                } else if (userRole === "Developer") {
+                    return (
+                        <ul className="navbar-nav mr-auto">
                             <li className="nav-item">
                                 <Link className="nav-link" to={`/profiles/profile/${userId}`}>
                                     <FormattedMessage id="project.app.Header.profile"/>
                                 </Link>
                             </li>
-                        );
-                    }
-                })()}
-                <li className="nav-item">
-                    <Link className="nav-link" to="/projects/findProjectsDeveloper">
-                        <FormattedMessage id="project.app.Header.projects"/>
-                    </Link>
-                </li>
-            </ul>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/projects/findProjectsDeveloper">
+                                    <FormattedMessage id="project.app.Header.projects"/>
+                                </Link>
+                            </li>
+
+                        </ul>
+                    );
+                }
+            })()}
             <ul className="navbar-nav">
                 <button onClick={handleLogout} style={{background: 'none',
                     border: 'none',

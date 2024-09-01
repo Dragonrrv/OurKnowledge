@@ -17,4 +17,6 @@ public interface KnowledgeDao extends CrudRepository<Knowledge, Long> {
     boolean existsByUserAndTechnology(User user, Technology technology);
 
     Optional<Knowledge> findByUserAndTechnology(User user, Technology technology);
+
+    Knowledge findByUserAndTechnologyId(User user, Long parentId);
 }

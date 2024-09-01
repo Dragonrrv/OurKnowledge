@@ -6,5 +6,8 @@ export const getProjectsResult = state =>
 export const getProject = state =>
     getModuleState(state).project;
 
+export const getProjectId = state =>
+    getModuleState(state).project.project.id
+
 
 

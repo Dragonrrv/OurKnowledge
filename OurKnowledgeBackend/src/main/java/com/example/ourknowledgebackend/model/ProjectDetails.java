@@ -9,16 +9,16 @@ public class ProjectDetails {
 
     Project project;
 
-    List<TechnologyTree> TechnologyTreeList;
+    List<UsesTree> usesTreeList;
 
     List<Participation> participationList;
 
     public ProjectDetails() {
     }
 
-    public ProjectDetails(Project project, List<TechnologyTree> technologyTreeList, List<Participation> participationList) {
+    public ProjectDetails(Project project, List<UsesTree> usesTreeList, List<Participation> participationList) {
         this.project = project;
-        TechnologyTreeList = technologyTreeList;
+        this.usesTreeList = usesTreeList;
         this.participationList = participationList;
     }
 
@@ -30,12 +30,12 @@ public class ProjectDetails {
         this.project = project;
     }
 
-    public List<TechnologyTree> getTechnologyTreeList() {
-        return TechnologyTreeList;
+    public List<UsesTree> getUsesTreeList() {
+        return usesTreeList;
     }
 
-    public void setTechnologyTreeList(List<TechnologyTree> technologyTreeList) {
-        TechnologyTreeList = technologyTreeList;
+    public void setUsesTreeList(List<UsesTree> usesTreeList) {
+        this.usesTreeList = usesTreeList;
     }
 
     public List<Participation> getParticipationList() {

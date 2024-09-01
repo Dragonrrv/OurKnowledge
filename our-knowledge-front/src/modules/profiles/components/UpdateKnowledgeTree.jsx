@@ -7,10 +7,10 @@ import {useDispatch, useSelector} from "react-redux";
 import AddTechnology from "../../common/components/AddTechnology";
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 import TickBox from "../../common/components/TickBox";
-import UpdateKnowledgeTreeList from "./UpdateKnowledgeTreeList";
 import users from "../../users";
+import TreeList from "../../common/components/TreeList";
 
-const UpdateKnowledgeTree = ({ knowledgeTree }) => {
+const UpdateKnowledgeTree = ({ tree }) => {
 
     const dispatch = useDispatch();
 
@@ -69,19 +69,19 @@ const UpdateKnowledgeTree = ({ knowledgeTree }) => {
     return (
         <div>
             <div onContextMenu={handleAddMenu}  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TechnologyTreeName name={knowledgeTree.parent.name} isOpen={isOpen} hasChildren={knowledgeTree.children.length>0} onClick={toggleOpen}/>
+                <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
                 <div style={{ display: 'flex', gap: '60px' }}>
-                    <div style={{marginRight : knowledgeTree.parent.knowledgeId==null ? '160px' : '0px'}}>
-                        <TickBox ok={knowledgeTree.parent.knowledgeId!=null} clickable={true}
-                                 onClick={() => changeKnowledge(knowledgeTree.parent.knowledgeId!=null, knowledgeTree.parent.id, knowledgeTree.parent.knowledgeId)}/>
+                    <div style={{marginRight : tree.parent.knowledgeId==null ? '160px' : '0px'}}>
+                        <TickBox ok={tree.parent.knowledgeId!=null} clickable={true}
+                                 onClick={() => changeKnowledge(tree.parent.knowledgeId!=null, tree.parent.id, tree.parent.knowledgeId)}/>
                     </div>
-                    {knowledgeTree.parent.knowledgeId!=null &&
-                        <TickBox ok={knowledgeTree.parent.mainSkill} clickable={true}
-                                 onClick={() => updateMainSkill(knowledgeTree.parent.mainSkill, knowledgeTree.parent.knowledgeId)}/>
+                    {tree.parent.knowledgeId!=null &&
+                        <TickBox ok={tree.parent.mainSkill} clickable={true}
+                                 onClick={() => updateMainSkill(tree.parent.mainSkill, tree.parent.knowledgeId)}/>
                     }
-                    {knowledgeTree.parent.knowledgeId != null &&
-                    <TickBox ok={knowledgeTree.parent.likeIt} clickable={true}
-                             onClick={() => updateLikeIt(knowledgeTree.parent.likeIt, knowledgeTree.parent.knowledgeId)}/>
+                    {tree.parent.knowledgeId != null &&
+                    <TickBox ok={tree.parent.likeIt} clickable={true}
+                             onClick={() => updateLikeIt(tree.parent.likeIt, tree.parent.knowledgeId)}/>
                     }
                 </div>
             </div>
@@ -95,25 +95,22 @@ const UpdateKnowledgeTree = ({ knowledgeTree }) => {
                     }}
                     ref={contextMenuRef}
                 >
-                    <AddTechnology parentId={knowledgeTree.parent.id}
+                    <AddTechnology parentId={tree.parent.id}
                                    relevant={false}
                                    onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
                 </div>
             )}
             <div style={{ paddingLeft: '2em' }}>
                 {isOpen && (
-                    <UpdateKnowledgeTreeList
-                        knowledgeTreeList={knowledgeTree.children}
-                        root={false}
-                    />
-                )}
+                    <TreeList treeType={UpdateKnowledgeTree} treeList={tree.children} root={false} />
+                    )}
             </div>
         </div>
     );
 }
 
 UpdateKnowledgeTree.propTypes = {
-    knowledgeTree: PropTypes.shape({
+    tree: PropTypes.shape({
         parent: PropTypes.shape({
             id: PropTypes.number.isRequired,
             name: PropTypes.string.isRequired,

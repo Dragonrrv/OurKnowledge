@@ -1,7 +1,6 @@
 import {useDispatch, useSelector} from "react-redux";
 import {FormattedMessage} from "react-intl";
 
-import KnowledgeTreeList from './KnowledgeTreeList';
 import * as selectors from '../selectors';
 import {useEffect} from "react";
 import profiles from "../index";
@@ -9,6 +8,8 @@ import PropTypes from "prop-types";
 import {useNavigate, useParams} from "react-router-dom";
 import users from "../../users";
 import {ProjectLink} from "../../common";
+import TreeList from "../../common/components/TreeList";
+import KnowledgeTree from "./KnowledgeTree";
 
 const Profile= () => {
     const { profileId } = useParams();
@@ -76,7 +77,7 @@ const Profile= () => {
                 <tbody>
                 <tr>
                     <td colSpan="3">
-                        <KnowledgeTreeList knowledgeTreeList={profile.knowledgeTreeList} root={true} />
+                        <TreeList treeType={KnowledgeTree} treeList={profile.knowledgeTreeList} root={true} />
                     </td>
                     <td> X </td>
                 </tr>

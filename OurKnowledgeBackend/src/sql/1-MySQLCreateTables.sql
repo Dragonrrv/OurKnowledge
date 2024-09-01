@@ -91,11 +91,11 @@ create table verification
     id bigint auto_increment
         primary key,
     knowledgeId bigint not null,
-    projectId bigint not null,
+    usesId bigint not null,
     constraint knowledge_pk
-        unique (knowledgeId, projectId),
+        unique (knowledgeId, usesId),
     constraint foreign_key_name7
-        foreign key (knowledgeId) references knowledge (id),
+        foreign key (knowledgeId) references knowledge (id) on delete cascade,
     constraint foreign_key_name8
-        foreign key (projectId) references project (id) on delete cascade
+        foreign key (usesId) references uses (id) on delete cascade
 ) ENGINE = InnoDB;
