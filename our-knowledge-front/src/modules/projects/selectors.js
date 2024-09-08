@@ -3,11 +3,11 @@ const getModuleState = state => state.projects;
 export const getProjectsResult = state =>
     getModuleState(state).projectsResult;
 
-export const getProject = state =>
-    getModuleState(state).project;
+export const getProjectDetails = state =>
+    getModuleState(state).projectDetails;
 
 export const getProjectId = state =>
-    getModuleState(state).project.project.id
+    getModuleState(state).projectDetails.project.id
 
 
 

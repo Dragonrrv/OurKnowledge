@@ -4,7 +4,7 @@ import * as actionTypes from './actionTypes';
 
 const initialState = {
     projectsResult: null,
-    project: null,
+    projectDetails: null,
 };
 
 
@@ -25,21 +25,21 @@ const projectsResult = (state = initialState.projectsResult, action) => {
 
 }
 
-const project = (state = initialState.project, action) => {
+const projectDetails = (state = initialState.projectDetails, action) => {
 
     switch (action.type) {
 
         case actionTypes.FIND_PROJECT_BY_ID_COMPLETED:
-            return action.project;
+            return action.projectDetails;
 
         case actionTypes.ADD_PROJECT_COMPLETED:
-            return action.project;
+            return action.projectDetails;
 
         case actionTypes.UPDATE_PROJECT_COMPLETED:
-            return action.project;
+            return action.projectDetails;
 
         case actionTypes.CLEAR_PROJECT:
-            return initialState.project;
+            return initialState.projectDetails;
 
         default:
             return state;
@@ -50,7 +50,7 @@ const project = (state = initialState.project, action) => {
 
 const reducer = combineReducers({
     projectsResult,
-    project
+    projectDetails
 });
 
 export default reducer;

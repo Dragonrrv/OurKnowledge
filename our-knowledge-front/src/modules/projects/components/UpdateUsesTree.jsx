@@ -6,7 +6,7 @@ import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 import TickBox from "../../common/components/TickBox";
 import TreeList from "../../common/components/TreeList";
 
-const UpdateUsesTree = ({tree}) => {
+const UpdateUsesTree = ({tree, dept}) => {
 
     const dispatch = useDispatch();
 
@@ -29,16 +29,16 @@ const UpdateUsesTree = ({tree}) => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
+                <div style={{paddingLeft: 2*dept+'em'}}>
+                    <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
+                </div>
                 <TickBox ok={tree.parent.usesId!=null} clickable={true}
                          onClick={() => changeUses(tree.parent.usesId!=null, tree.parent.id)}/>
 
             </div>
-            <div style={{ paddingLeft: '2em' }}>
-                {isOpen && (
-                    <TreeList treeType={UpdateUsesTree} treeList={tree.children} root={false} />
-                )}
-            </div>
+            {isOpen && (
+                <TreeList treeType={UpdateUsesTree} treeList={tree.children} dept={dept+1} />
+            )}
         </div>
     )
 }

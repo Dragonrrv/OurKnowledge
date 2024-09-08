@@ -15,7 +15,7 @@ const Body = () => {
     
    return (
 
-        <div className="container">
+        <div style={{width: '90%', margin: '0 auto'}}>
             <br/>
             <AppGlobalComponents/>
             <Routes>

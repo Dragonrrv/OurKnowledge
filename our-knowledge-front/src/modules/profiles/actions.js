@@ -23,15 +23,6 @@ const clearProfile = () => ({
     type: actionTypes.CLEAR_PROFILE
 });
 
-export const addTechnology = (userId, technologyName, parentId, onSuccess,
-                                       onErrors) => dispatch =>
-    backend.technologyService.addTechnology(userId,
-        technologyName, parentId, profile => {
-            dispatch(profileUpdated(profile));
-            onSuccess();
-        },
-        onErrors);
-
 export const updateKnowledge = (userId, knowledgeId, mainSkill, likeIt, onSuccess,
                                        onErrors) => dispatch =>
     backend.knowledgeService.updateKnowledge(userId,

@@ -38,8 +38,8 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException();
         }
         List<Project> projects = participationDao.findAllByUser(user.get()).stream()
-                .map(participation -> participation.getProject()).collect(Collectors.toList());
-        List<KnowledgeTree> knowledgeTreeList = knowledgeService.listUserKnowledge(user.get());
+                .map(Participation::getProject).collect(Collectors.toList());
+                List<KnowledgeTree> knowledgeTreeList = knowledgeService.listUserKnowledge(user.get());
 
         return new UserProfile(user.get(), projects, knowledgeTreeList);
     }

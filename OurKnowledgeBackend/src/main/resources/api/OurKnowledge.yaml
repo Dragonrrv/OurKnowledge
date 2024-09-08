@@ -230,6 +230,22 @@ paths:
         '200':
           description: OK
 
+  /project/verification/list:
+    post:
+      summary: return all verifications filter by User, Project or both
+      operationId: listVerification
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listVerificationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+
   /project/verification/add:
     post:
       summary: mark a technology used in a project by the developer
@@ -636,6 +652,14 @@ components:
         endDate:
           type: string
 
+    listVerificationRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        projectId:
+          type: integer
+
     addVerificationRequest:
       type: object
       properties:
@@ -647,9 +671,7 @@ components:
     deleteVerificationRequest:
       type: object
       properties:
-        userId:
-          type: integer
-        usesId:
+        verificationId:
           type: integer
         deleteKnowledge:
           type: boolean

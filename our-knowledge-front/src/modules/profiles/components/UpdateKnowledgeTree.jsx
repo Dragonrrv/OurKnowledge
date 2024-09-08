@@ -9,10 +9,12 @@ import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 import TickBox from "../../common/components/TickBox";
 import users from "../../users";
 import TreeList from "../../common/components/TreeList";
+import {useIntl} from "react-intl";
 
-const UpdateKnowledgeTree = ({ tree }) => {
+const UpdateKnowledgeTree = ({tree, dept}) => {
 
     const dispatch = useDispatch();
+    const intl = useIntl();
 
     const userId = useSelector(users.selectors.getUserId);
 
@@ -51,7 +53,9 @@ const UpdateKnowledgeTree = ({ tree }) => {
 
     const changeKnowledge = (known, technologyId, knowledgeId) => {
         if(known){
-            dispatch(actions.deleteKnowledge(userId, knowledgeId));
+            if (window.confirm(intl.formatMessage({ id:'project.profile.updateProfile.deleteKnowledge.explanation'}))) {
+                dispatch(actions.deleteKnowledge(userId, knowledgeId));
+            }
         } else {
             dispatch(actions.addKnowledge(userId, technologyId));
         }
@@ -69,7 +73,9 @@ const UpdateKnowledgeTree = ({ tree }) => {
     return (
         <div>
             <div onContextMenu={handleAddMenu}  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
+                <div style={{paddingLeft: 2*dept+'em'}}>
+                    <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
+                </div>
                 <div style={{ display: 'flex', gap: '60px' }}>
                     <div style={{marginRight : tree.parent.knowledgeId==null ? '160px' : '0px'}}>
                         <TickBox ok={tree.parent.knowledgeId!=null} clickable={true}
@@ -91,7 +97,7 @@ const UpdateKnowledgeTree = ({ tree }) => {
                     style={{
                         top: addMenuPosition.y,
                         left: addMenuPosition.x,
-                        paddingLeft: '2em'
+                        paddingLeft: 2*(dept+1)+'em'
                     }}
                     ref={contextMenuRef}
                 >
@@ -100,9 +106,9 @@ const UpdateKnowledgeTree = ({ tree }) => {
                                    onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
                 </div>
             )}
-            <div style={{ paddingLeft: '2em' }}>
+            <div>
                 {isOpen && (
-                    <TreeList treeType={UpdateKnowledgeTree} treeList={tree.children} root={false} />
+                    <TreeList treeType={UpdateKnowledgeTree} treeList={tree.children} dept={dept+1}/>
                     )}
             </div>
         </div>

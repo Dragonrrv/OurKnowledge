@@ -54,13 +54,20 @@ export default {
 
     'project.profiles.profile.startDate': 'On the company since: ',
     'project.profiles.profile.workOn': 'Work on: ',
+    'project.profiles.profile.useInProjects': 'Use in projects like:',
     'project.profiles.button.updateProfile': 'Update Profile',
     'project.profiles.tittle.updateProfile': 'Update your Profile',
+    'project.profile.updateProfile.deleteKnowledge.explanation': 'Are you sure you want to delete this knowledge an all verifications in projects?',
+
+    'project.projects.button.updateParticipation': 'Update Participation',
+    'project.projects.participationList.alreadyParticipate': 'Remember you already have a participation',
 
     'project.projects.FindProjectsResult.noProjectsFound': 'Not Projects Found',
     'project.projects.button.updateProject': 'Update Project',
     'project.projects.button.addProject': 'New Project',
+    'project.projects.button.addParticipation': 'Add Participation',
     'project.projectDetails.usedTechnologies': 'Used Technologies',
+    'project.projectDetails.deleteValidation.knowledgeDelete': 'Do you want to delete the knowledge in your profile too?',
     'project.projectDetails.participatedDevelopers': 'Developers that work on this project',
     'project.projects.addProject.name': 'Project name: ',
     'project.projects.addProject.description': 'Description: ',

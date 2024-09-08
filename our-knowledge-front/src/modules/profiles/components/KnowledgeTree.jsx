@@ -5,8 +5,9 @@ import {useState} from "react";
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 import TickBox from "../../common/components/TickBox";
 import TreeList from "../../common/components/TreeList";
+import {ProjectLink} from "../../common";
 
-const KnowledgeTree = ({ tree }) => {
+const KnowledgeTree = ({tree, dept}) => {
     const [isOpen, setIsOpen] = useState(true);
 
     const toggleOpen = () => {
@@ -19,16 +20,28 @@ const KnowledgeTree = ({ tree }) => {
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
-                <div style={{ display: 'flex', gap: '60px' }}>
-                    <TickBox ok={tree.parent.mainSkill} clickable={false} />
-                    <TickBox ok={tree.parent.likeIt} clickable={false} />
+            <div style={{ display: 'flex'}}>
+                <div style={{flexBasis: '40%', paddingLeft: 2*dept+'em'}}>
+                    <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
+                </div>
+                <div style={{flexBasis: '10%'}}>
+                    <TickBox ok={tree.parent.mainSkill} clickable={false}/>
+                </div>
+                <div style={{flexBasis: '10%'}}>
+                    <TickBox ok={tree.parent.likeIt} clickable={false}/>
+                </div>
+
+                <div style={{flexBasis: '40%', display: 'flex', gap: '20px', overflow: 'auto'}}>
+                    {tree.parent.verificationList.map(verification => (
+                        <div key={verification.projectId} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
+                            <ProjectLink name={verification.projectName} id={verification.projectId} />
+                        </div>
+                    ))}
                 </div>
             </div>
-            <div style={{ paddingLeft: '2em' }}>
+            <div>
                 {isOpen && (
-                    <TreeList treeType={KnowledgeTree} treeList={tree.children} root={false} />
+                    <TreeList treeType={KnowledgeTree} treeList={tree.children} dept={dept+1} />
                     )}
             </div>
         </div>
@@ -43,7 +56,8 @@ KnowledgeTree.propTypes = {
             relevant:  PropTypes.bool.isRequired,
             knowledgeId: PropTypes.number.isRequired,
             likeIt: PropTypes.bool.isRequired,
-            mainSkill: PropTypes.bool.isRequired
+            mainSkill: PropTypes.bool.isRequired,
+            verificationList: PropTypes.array.isRequired
         }).isRequired,
         children: PropTypes.array.isRequired
     }).isRequired

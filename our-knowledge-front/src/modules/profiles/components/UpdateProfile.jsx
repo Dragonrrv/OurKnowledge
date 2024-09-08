@@ -47,7 +47,7 @@ const UpdateProfile= () => {
                 </div>
             </div>
             <div>
-                <TreeList treeType={UpdateKnowledgeTree} treeList={profile.knowledgeTreeList} root={true} />
+                <TreeList treeType={UpdateKnowledgeTree} treeList={profile.knowledgeTreeList} dept={0} />
             </div>
         </div>
     )

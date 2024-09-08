@@ -3,9 +3,12 @@ package com.example.ourknowledgebackend.service;
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
+import com.example.ourknowledgebackend.model.entities.Participation;
 import com.example.ourknowledgebackend.model.entities.Project;
 import com.example.ourknowledgebackend.model.entities.Uses;
+import com.example.ourknowledgebackend.model.entities.Verification;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.util.List;
 
 public interface ProjectService {
@@ -24,11 +27,13 @@ public interface ProjectService {
 
     Uses deleteUses(Long usesId) throws InstanceNotFoundException;
 
-    void participate(Long userId, Long projectId, String startDate, String endDate) throws InstanceNotFoundException, DuplicateInstanceException;
+    Participation participate(Long userId, Long projectId, String startDate, String endDate) throws InstanceNotFoundException, DuplicateInstanceException;
 
-    void updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException;
+    Participation updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException;
 
-    void addVerification(Long userId, Long usesId) throws InstanceNotFoundException;
+    List<Verification> listVerification(Long userId, Long project) throws InstanceNotFoundException, InvalidAttributesException;
 
-    void deleteVerification(Long userId, Long usesId, Boolean deleteKnowledge) throws InstanceNotFoundException;
+    Verification addVerification(Long userId, Long usesId) throws InstanceNotFoundException;
+
+    Verification deleteVerification(Long verificationId, Boolean deleteKnowledge) throws InstanceNotFoundException;
 }

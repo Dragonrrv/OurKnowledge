@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
+    private final Common common;
+
     private final KnowledgeService knowledgeService;
 
     private final ProjectDao projectDao;
@@ -53,23 +55,14 @@ public class ProjectServiceImpl implements ProjectService {
     public List<UsesTree> listProjectUses(Project project) {
         List<UsesTechnology> usesTechnologyList = technologyDao.findTechnologiesWithUses(project.getId());
 
-        Map<Long, List<UsesTechnology>> usesTechnologyMap = usesTechnologyList.stream()
-                .collect(Collectors.groupingBy(tech -> tech.getParentId() != null ? tech.getParentId() : 0L));
-
-        UsesTree root = fillUsesTreeList(null, usesTechnologyMap, 0L);
-
-        return root.getChildren();
-    }
-
-    private UsesTree fillUsesTreeList(UsesTechnology parent, Map<Long, List<UsesTechnology>> usesTechnologyMap, Long parentId) {
-        List<UsesTechnology> childrenUsesTechnology = usesTechnologyMap.get(parentId);
-        ArrayList<UsesTree> childTreeList = new ArrayList<>();
-        if (childrenUsesTechnology != null) {
-            for (UsesTechnology usesTechnology : childrenUsesTechnology) {
-                childTreeList.add(fillUsesTreeList(usesTechnology, usesTechnologyMap, usesTechnology.getId()));
-            }
+        for (UsesTechnology uses : usesTechnologyList) {
+            List<Verification> verificationList = verificationDao.findAllByUsesId(uses.getUsesId());
+            uses.setVerificationList(verificationList.stream()
+                    .map(SimpleVerification::new)
+                    .collect(Collectors.toList()));
         }
-        return new UsesTree(parent, childTreeList);
+
+        return (List<UsesTree>) common.ListToTreeList(usesTechnologyList);
     }
 
     @Override
@@ -196,18 +189,18 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void participate(Long userId, Long projectId, String startDate, String endDate) throws InstanceNotFoundException, DuplicateInstanceException {
+    public Participation participate(Long userId, Long projectId, String startDate, String endDate) throws InstanceNotFoundException, DuplicateInstanceException {
         User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", userId));
         Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
         Optional<Participation> participation = participationDao.findByUserAndProjectAndEndDateIsNull(user, project);
         if(participation.isPresent()){
             throw new DuplicateInstanceException("project.entity.participation", participation.get().getId());
         }
-        participationDao.save(new Participation(project, user, startDate, endDate));
+        return participationDao.save(new Participation(project, user, startDate, endDate));
     }
 
     @Override
-    public void updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException {
+    public Participation updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException {
         Participation participation = participationDao.findById(participationId).orElseThrow(() -> new InstanceNotFoundException("project.entity.participation", participationId));
         if(startDate != null) {
             participation.setStartDate(startDate);
@@ -215,11 +208,28 @@ public class ProjectServiceImpl implements ProjectService {
         if(endDate != null) {
             participation.setEndDate(endDate);
         }
-        participationDao.save(participation);
+        return participationDao.save(participation);
     }
 
     @Override
-    public void addVerification(Long userId, Long usesId) throws InstanceNotFoundException {
+    public List<Verification> listVerification(Long userId, Long projectId) throws InstanceNotFoundException, InvalidAttributesException {
+        if(userId != null) {
+            User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", userId));
+            if(projectId != null) {
+                Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
+                return verificationDao.findAllByKnowledgeUserAndUsesProject(user, project);
+            }
+            return verificationDao.findAllByKnowledgeUser(user);
+        }
+        if(projectId != null) {
+            Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
+            return verificationDao.findAllByUsesProject(project);
+        }
+        throw new InvalidAttributesException();
+    }
+
+    @Override
+    public Verification addVerification(Long userId, Long usesId) throws InstanceNotFoundException {
         User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", userId));
         Uses uses = usesDao.findById(usesId).orElseThrow(() -> new InstanceNotFoundException("project.entity.uses", usesId));
         //crear la fila de verification y de knowledge si es necesario
@@ -232,29 +242,28 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         assert knowledge != null;
-        addVerificationHierarchy(uses, knowledge);
+        return addVerificationHierarchy(uses, knowledge);
     }
-    private void addVerificationHierarchy(Uses uses, Knowledge knowledge) {
+
+    private Verification addVerificationHierarchy(Uses uses, Knowledge knowledge) {
         if (knowledge.getTechnology().getParentId() != null) {
-            Optional<Verification> parentVerification = verificationDao.findByKnowledgeUserAndKnowledgeTechnologyId(knowledge.getUser(), knowledge.getTechnology().getParentId());
+            Optional<Verification> parentVerification = verificationDao.findByUsesProjectAndKnowledgeUserAndKnowledgeTechnologyId(uses.getProject(), knowledge.getUser(), knowledge.getTechnology().getParentId());
             if (!parentVerification.isPresent()) {
                 addVerificationHierarchy(usesDao.findByProjectAndTechnologyId(uses.getProject(), uses.getTechnology().getParentId()),
                         knowledgeDao.findByUserAndTechnologyId(knowledge.getUser(),knowledge.getTechnology().getParentId()));
             }
         }
-        verificationDao.save(new Verification(knowledge, uses));
+        return verificationDao.save(new Verification(knowledge, uses));
     }
 
     @Override
-    public void deleteVerification(Long userId, Long usesId, Boolean deleteKnowledge) throws InstanceNotFoundException {
-        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
-        Uses uses = usesDao.findById(usesId).orElseThrow(() -> new InstanceNotFoundException("project.entity.uses", usesId));
-        Verification verification = verificationDao.findByKnowledgeUserAndUses(user, uses).orElseThrow(() -> new InstanceNotFoundException("project.entity.verification", null));;
+    public Verification deleteVerification(Long verificationId, Boolean deleteKnowledge) throws InstanceNotFoundException {
+        Verification verification = verificationDao.findById(verificationId).orElseThrow(() -> new InstanceNotFoundException("project.entity.verification", verificationId));;
 
-        deleteVerificationHierarchy(verification, deleteKnowledge);
+        return deleteVerificationHierarchy(verification, deleteKnowledge);
     }
 
-    private void deleteVerificationHierarchy(Verification verification, Boolean deleteKnowledge) {
+    private Verification deleteVerificationHierarchy(Verification verification, Boolean deleteKnowledge) {
         List<Verification> childrenVerifications = verificationDao.findAllByUsesProjectAndKnowledgeUserAndKnowledgeTechnologyParentId(verification.getUses().getProject(), verification.getKnowledge().getUser(), verification.getKnowledge().getTechnology().getId());
         verificationDao.delete(verification);
 
@@ -267,6 +276,7 @@ public class ProjectServiceImpl implements ProjectService {
                 deleteVerificationHierarchy(childVerification, deleteKnowledge);
             }
         }
+        return verification;
     }
 
 }

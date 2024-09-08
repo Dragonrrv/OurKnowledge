@@ -55,34 +55,15 @@ const Profile= () => {
             </div>
             <h5><FormattedMessage id="project.profiles.profile.workOn"/></h5>
                 {profile.projects.map(project => (
-                    <ProjectLink name={project.name} id={project.id}/>
+                    <p><ProjectLink name={project.name} id={project.id}/></p>
                 ))}
-            <table className="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">
-                        <FormattedMessage id='project.global.fields.name'/>
-                    </th>
-                    <th scope="col" style={{ width: '100px' }}>
-                        <FormattedMessage id='project.global.fields.mainSkill'/>
-                    </th>
-                    <th scope="col" style={{ width: '70px' }}>
-                        <FormattedMessage id='project.global.fields.likeIt'/>
-                    </th>
-                    <th scope="col">
-                        <FormattedMessage id='project.profiles.profile.'/>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td colSpan="3">
-                        <TreeList treeType={KnowledgeTree} treeList={profile.knowledgeTreeList} root={true} />
-                    </td>
-                    <td> X </td>
-                </tr>
-                </tbody>
-            </table>
+            <div style={{display: 'flex'}}>
+                <h6 style={{flexBasis: '40%'}}><FormattedMessage id='project.global.fields.name'/></h6>
+                <h6 style={{flexBasis: '10%'}}><FormattedMessage id='project.global.fields.mainSkill'/></h6>
+                <h6 style={{flexBasis: '10%'}}><FormattedMessage id='project.global.fields.likeIt'/></h6>
+                <h6 style={{flexBasis: '40%'}}><FormattedMessage id='project.profiles.profile.useInProjects'/></h6>
+            </div>
+            <TreeList treeType={KnowledgeTree} treeList={profile.knowledgeTreeList} dept={0} />
         </div>
     )
 }

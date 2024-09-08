@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
+import AddTechnology from "./AddTechnology";
 
-const TreeList = ({ treeType: TreeTypeComponent, treeList, root }) => {
+const TreeList = ({ treeType: TreeTypeComponent, treeList, dept }) => {
 
     const rootStyle = {
         background: 'linear-gradient(to bottom, #F5F3F3 50%, #EDECEC 50%)',
@@ -10,10 +11,10 @@ const TreeList = ({ treeType: TreeTypeComponent, treeList, root }) => {
     const defaultStyle = {};
 
     return (
-        <div style={root ? rootStyle : defaultStyle}>
+        <div style={dept===0 ? rootStyle : defaultStyle}>
             {treeList.map(tree => (
                 <div key={tree.id} onContextMenu={e => e.stopPropagation()}>
-                    <TreeTypeComponent tree={tree} />
+                    <TreeTypeComponent tree={tree} dept={dept} />
                 </div>
             ))}
         </div>
@@ -21,7 +22,7 @@ const TreeList = ({ treeType: TreeTypeComponent, treeList, root }) => {
 };
 
 TreeList.propTypes = {
-    treeType: PropTypes.elementType.isRequired,  // Asegúrate de que el componente pasado es un componente React
+    treeType: PropTypes.elementType.isRequired,
     treeList: PropTypes.array.isRequired,
     root: PropTypes.bool,
 };

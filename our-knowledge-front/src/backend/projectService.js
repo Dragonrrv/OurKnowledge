@@ -26,3 +26,20 @@ export const deleteUses = (usesId, onSuccess) =>
     appFetch(`/project/uses/delete`,
         config('Post', {usesId}), onSuccess);
 
+export const addParticipation = (userId, projectId, startDate, endDate, onSuccess) =>
+    appFetch(`/project/participation/add`,
+        config('Post', {userId, projectId, startDate, endDate}), onSuccess);
+
+export const updateParticipation = (participationId, startDate, endDate, onSuccess) =>
+    appFetch(`/project/participation/update`,
+        config('Post', {participationId, startDate, endDate}), onSuccess);
+
+export const addVerification = (userId, usesId, onSuccess) =>
+    appFetch(`/project/verification/add`,
+        config('Post', {userId, usesId}), onSuccess);
+
+export const deleteVerification = (verificationId, deleteKnowledge, onSuccess) =>
+    appFetch(`/project/verification/delete`,
+        config('Post', {verificationId, deleteKnowledge}), onSuccess);
+
+

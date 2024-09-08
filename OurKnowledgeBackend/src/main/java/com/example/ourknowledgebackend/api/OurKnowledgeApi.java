@@ -5,8 +5,10 @@ import com.example.ourKnowledge.api.TechnologyApi;
 import com.example.ourKnowledge.api.UserApi;
 import com.example.ourKnowledge.api.model.*;
 import com.example.ourknowledgebackend.exceptions.*;
+import com.example.ourknowledgebackend.model.entities.Participation;
 import com.example.ourknowledgebackend.model.entities.Project;
 import com.example.ourknowledgebackend.model.entities.Uses;
+import com.example.ourknowledgebackend.model.entities.Verification;
 import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.ProjectService;
 import com.example.ourknowledgebackend.service.TechnologyService;
@@ -141,7 +143,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
         try {
             return ResponseEntity.status(200).body(projectService.projectDetails(longId(projectDetailsRequestDTO.getId())));
         } catch (InstanceNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(404).body(e);
         }
     }
 
@@ -157,7 +159,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
         } catch (DuplicateInstanceException e) {
             return ResponseEntity.status(409).body(e);
         } catch (InstanceNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(404).body(e);
         }
     }
 
@@ -174,7 +176,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
         } catch (DuplicateInstanceException e) {
             return ResponseEntity.status(409).body(e);
         } catch (InstanceNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(404).body(e);
         }
     }
 
@@ -185,7 +187,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
             projectService.deleteProject(longId(deleteProjectRequestDTO.getProjectId()));
             return ResponseEntity.status(200).body(null);
         } catch (InstanceNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(404).body(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -211,7 +213,7 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
             Uses uses = projectService.deleteUses(longId(deleteUsesRequestDTO.getUsesId()));
             return ResponseEntity.status(200).body(projectService.projectDetails(uses.getProject().getId()));
         } catch (InstanceNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(404).body(e);
         }
     }
 
@@ -219,14 +221,14 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
     @PreAuthorize("hasRole('client_developer')")
     public ResponseEntity participate(ParticipateRequestDTO participateRequestDTO){
         try {
-            projectService.participate(longId(participateRequestDTO.getUserId()),
+            Participation participation = projectService.participate(longId(participateRequestDTO.getUserId()),
                     longId(participateRequestDTO.getProjectId()),
                     participateRequestDTO.getStartDate(), participateRequestDTO.getEndDate());
-            return ResponseEntity.status(200).body(null);
+            return ResponseEntity.status(200).body(projectService.projectDetails(participation.getProject().getId()));
         } catch (DuplicateInstanceException e) {
             return ResponseEntity.status(409).body(e);
         } catch (InstanceNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(404).body(e);
         }
     }
 
@@ -234,11 +236,24 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
     @PreAuthorize("hasRole('client_developer')")
     public ResponseEntity updateParticipate(UpdateParticipateRequestDTO updateParticipateRequestDTO){
         try {
-            projectService.updateParticipate(longId(updateParticipateRequestDTO.getParticipationId()),
+            Participation participation = projectService.updateParticipate(longId(updateParticipateRequestDTO.getParticipationId()),
                     updateParticipateRequestDTO.getStartDate(), updateParticipateRequestDTO.getEndDate());
-            return ResponseEntity.status(200).body(null);
+            return ResponseEntity.status(200).body(projectService.projectDetails(participation.getProject().getId()));
         } catch (InstanceNotFoundException e) {
+            return ResponseEntity.status(404).body(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_developer')")
+    public ResponseEntity listVerification(ListVerificationRequestDTO listVerificationRequestDTO){
+        try {
+            return ResponseEntity.status(200).body(projectService.listVerification(longId(listVerificationRequestDTO.getUserId()),
+                    longId(listVerificationRequestDTO.getProjectId())));
+        } catch (InvalidAttributesException e) {
             throw new RuntimeException(e);
+        } catch (InstanceNotFoundException e) {
+            return ResponseEntity.status(404).body(e);
         }
     }
 
@@ -246,9 +261,9 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
     @PreAuthorize("hasRole('client_developer')")
     public ResponseEntity addVerification(AddVerificationRequestDTO addVerificationRequestDTO){
         try {
-            projectService.addVerification(longId(addVerificationRequestDTO.getUserId()),
+            Verification verification = projectService.addVerification(longId(addVerificationRequestDTO.getUserId()),
                     longId(addVerificationRequestDTO.getUsesId()));
-            return ResponseEntity.status(200).body(null);
+            return ResponseEntity.status(200).body(projectService.projectDetails(verification.getUses().getProject().getId()));
         } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -258,10 +273,10 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
     @PreAuthorize("hasRole('client_developer')")
     public ResponseEntity deleteVerification(DeleteVerificationRequestDTO deleteVerificationRequestDTO){
         try {
-            projectService.deleteVerification(longId(deleteVerificationRequestDTO.getUserId()),
-                    longId(deleteVerificationRequestDTO.getUsesId()),
+            Verification verification = projectService.deleteVerification(
+                    longId(deleteVerificationRequestDTO.getVerificationId()),
                     deleteVerificationRequestDTO.getDeleteKnowledge());
-            return ResponseEntity.status(200).body(null);
+            return ResponseEntity.status(200).body(projectService.projectDetails(verification.getUses().getProject().getId()));
         } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }

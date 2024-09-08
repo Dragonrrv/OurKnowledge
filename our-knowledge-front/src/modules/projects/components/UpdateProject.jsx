@@ -12,7 +12,7 @@ const UpdateProject = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const projectDetails = useSelector(projects.selectors.getProject);
+    const projectDetails = useSelector(projects.selectors.getProjectDetails);
 
     console.log(projectDetails);
     const updateProject = (name, description, startDate, status, size) => {
@@ -34,7 +34,7 @@ const UpdateProject = () => {
 
             <h6 style={{marginTop: '10px'}}><FormattedMessage id='project.projects.addProject.TechnologiesUsed'/></h6>
             <div style={{ width: '300px'}}>
-                <TreeList treeType={UpdateUsesTree} treeList={projectDetails.usesTreeList} root={true} />
+                <TreeList treeType={UpdateUsesTree} treeList={projectDetails.usesTreeList} dept={0} />
             </div>
         </div>
     );

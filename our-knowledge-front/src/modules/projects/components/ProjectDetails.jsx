@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {useNavigate, useParams} from 'react-router-dom';
 
@@ -13,7 +13,7 @@ import TreeList from "../../common/components/TreeList";
 const ProjectDetails = () => {
     const {id} = useParams();
 
-    const project = useSelector(selectors.getProject);
+    const projectDetails = useSelector(selectors.getProjectDetails);
     const userRole = useSelector(users.selectors.getUserRole);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -24,7 +24,7 @@ const ProjectDetails = () => {
         }
     }, [dispatch]);
 
-    if (!project) {
+    if (!projectDetails) {
         return <div>Loading...</div>
     }
         
@@ -34,10 +34,10 @@ const ProjectDetails = () => {
             <div style={{display: 'flex'}}>
                 <div  style={{flexGrow: 1}} className="card text-left">
                     <div className="card-body">
-                        <h3 className="card-title">{project.project.name}</h3>
-                        <p className="card-text">{project.project.description}</p>
-                        <p><span style={{fontWeight:'bold'}}><FormattedMessage id="project.global.fields.startDate"/>: </span>{project.project.startDate}</p>
-                        <p><span style={{fontWeight:'bold'}}><FormattedMessage style={{fontWeight:'bold'}} id="project.global.fields.status"/>: </span>{project.project.status}</p>
+                        <h3 className="card-title">{projectDetails.project.name}</h3>
+                        <p className="card-text">{projectDetails.project.description}</p>
+                        <p><span style={{fontWeight:'bold'}}><FormattedMessage id="project.global.fields.startDate"/>: </span>{projectDetails.project.startDate}</p>
+                        <p><span style={{fontWeight:'bold'}}><FormattedMessage style={{fontWeight:'bold'}} id="project.global.fields.status"/>: </span>{projectDetails.project.status}</p>
                     </div>
                 </div>
                 {userRole === "Admin" && (
@@ -57,13 +57,12 @@ const ProjectDetails = () => {
             <div style={{display: 'flex'}}>
                 <div  style={{flexGrow: 1}}>
                     <h5><FormattedMessage id="project.projectDetails.usedTechnologies"/>:</h5>
-                    <TreeList treeType={UsesTree} treeList={project.usesTreeList} root={true} />
+                    <TreeList treeType={UsesTree} treeList={projectDetails.usesTreeList} dept={0} />
                 </div>
                 <div  style={{flexGrow: 2}}>
                     <h5><FormattedMessage id="project.projectDetails.participatedDevelopers"/>:</h5>
-                    <ParticipationList participationList={project.participationList}/>
+                    <ParticipationList participationList={projectDetails.participationList} projectId={projectDetails.project.id}/>
                 </div>
-
             </div>
 
 

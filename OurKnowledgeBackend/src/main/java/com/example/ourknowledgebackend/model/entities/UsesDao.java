@@ -15,4 +15,5 @@ public interface UsesDao extends CrudRepository<Uses, Long> {
     List<Uses> findAllByProjectAndTechnologyParentId(Project project, Long parentId);
 
     Optional<Uses> findByProjectAndTechnology(Project project, Technology technology);
+
 }

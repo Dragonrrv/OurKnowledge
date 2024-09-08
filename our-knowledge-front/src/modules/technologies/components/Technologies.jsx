@@ -1,10 +1,11 @@
 import {useDispatch, useSelector} from "react-redux";
 import {FormattedMessage} from "react-intl";
 
-import TechnologyTreeList from './TechnologyTreeList';
 import * as selectors from '../selectors';
 import {useEffect} from "react";
 import technologies from "../index";
+import TreeList from "../../common/components/TreeList";
+import TechnologyTree from "./TechnologyTree";
 
 const Technologies= () => {
 
@@ -39,7 +40,7 @@ const Technologies= () => {
                 </thead>
                 <tbody>
                     <tr>
-                        <TechnologyTreeList technologyTreeList={technologyTreeList} root={true}/>
+                        <TreeList treeType={TechnologyTree} treeList={technologyTreeList} dept={0}/>
                     </tr>
                 </tbody>
             </table>

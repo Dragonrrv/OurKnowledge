@@ -25,32 +25,27 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     private final PermissionChecker permissionChecker;
 
+    private final Common common;
+
     private final TechnologyService technologyService;
 
     private final KnowledgeDao knowledgeDao;
 
     private final TechnologyDao technologyDao;
 
+    private final VerificationDao verificationDao;
+
     public List<KnowledgeTree> listUserKnowledge(User user) {
         List<KnownTechnology> knownTechnologyList = technologyDao.findTechnologiesWithKnowledge(user.getId());
 
-        Map<Long, List<KnownTechnology>> knownTechnologyMap = knownTechnologyList.stream()
-                .collect(Collectors.groupingBy(tech -> tech.getParentId() != null ? tech.getParentId() : 0L));
-
-        KnowledgeTree root = fillKnowledgeTreeList(null, knownTechnologyMap, 0L);
-
-        return root.getChildren();
-    }
-
-    private KnowledgeTree fillKnowledgeTreeList(KnownTechnology parent, Map<Long, List<KnownTechnology>> knownTechnologyMap, Long parentId) {
-        List<KnownTechnology> childrenKnownTechnology = knownTechnologyMap.get(parentId);
-        ArrayList<KnowledgeTree> childTreeList = new ArrayList<>();
-        if (childrenKnownTechnology != null) {
-            for (KnownTechnology knownTechnology : childrenKnownTechnology) {
-                childTreeList.add(fillKnowledgeTreeList(knownTechnology, knownTechnologyMap, knownTechnology.getId()));
-            }
+        for (KnownTechnology knownTechnology : knownTechnologyList) {
+            List<Verification> verificationList = verificationDao.findAllByKnowledgeId(knownTechnology.getKnowledgeId());
+            knownTechnology.setVerificationList(verificationList.stream()
+                    .map(SimpleVerification::new)
+                    .collect(Collectors.toList()));
         }
-        return new KnowledgeTree(parent, childTreeList);
+
+        return (List<KnowledgeTree>) common.ListToTreeList(knownTechnologyList);
     }
 
     @Override

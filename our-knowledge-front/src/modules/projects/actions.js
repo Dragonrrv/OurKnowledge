@@ -19,34 +19,34 @@ const clearProjectsResult = () => ({
     type: actionTypes.CLEAR_PROJECT_SEARCH
 });
 
-const findProjectByIdCompleted = project => ({
+const findProjectByIdCompleted = projectDetails => ({
     type: actionTypes.FIND_PROJECT_BY_ID_COMPLETED,
-    project
+    projectDetails
 });
 
 export const findProjectById = id => dispatch => {
     backend.projectService.findByProjectId(id,
-        project => dispatch(findProjectByIdCompleted(project)));
+        projectDetails => dispatch(findProjectByIdCompleted(projectDetails)));
 }
 
-const addProjectCompleted = project => ({
+const addProjectCompleted = projectDetails => ({
     type: actionTypes.ADD_PROJECT_COMPLETED,
-    project
+    projectDetails
 });
 
 export const addProject = (name, description, startDate, status, size, technologyIdList) => dispatch => {
     backend.projectService.addProject(name, description, startDate, status, size, technologyIdList,
-        project => dispatch(addProjectCompleted(project)));
+        projectDetails => dispatch(addProjectCompleted(projectDetails)));
 }
 
-const updateProjectCompleted = project => ({
+const updateProjectCompleted = projectDetails => ({
     type: actionTypes.UPDATE_PROJECT_COMPLETED,
-    project
+    projectDetails
 });
 
 export const updateProject = (id, name, description, startDate, status, size, updateTechnologies, technologyIdList) => dispatch => {
     backend.projectService.updateProject(id, name, description, startDate, status, size, updateTechnologies, technologyIdList,
-        project => dispatch(updateProjectCompleted(project)));
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 
 export const clearProject = () => ({
@@ -55,10 +55,30 @@ export const clearProject = () => ({
 
 export const addUses = (projectId, technologyId) => dispatch => {
     backend.projectService.addUses(projectId, technologyId,
-        project => dispatch(updateProjectCompleted(project)));
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 
 export const deleteUses = (usesId) => dispatch => {
     backend.projectService.deleteUses(usesId,
-        project => dispatch(updateProjectCompleted(project)));
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
+}
+
+export const addParticipation = (userId, projectId, startDate, endDate) => dispatch => {
+    backend.projectService.addParticipation(userId, projectId, startDate, endDate,
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
+}
+
+export const updateParticipation = (participationId, startDate, endDate) => dispatch => {
+    backend.projectService.updateParticipation(participationId, startDate, endDate,
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
+}
+
+export const addVerification = (userId, usesId) => dispatch => {
+    backend.projectService.addVerification(userId, usesId,
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
+}
+
+export const deleteVerification = (verificationId, deleteKnowledge) => dispatch => {
+    backend.projectService.deleteVerification(verificationId, deleteKnowledge,
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }

@@ -1,5 +1,7 @@
 package com.example.ourknowledgebackend.model;
 
+import com.example.ourknowledgebackend.model.entities.Verification;
+
 import java.util.List;
 
 public class UsesTree extends Tree<UsesTechnology>{

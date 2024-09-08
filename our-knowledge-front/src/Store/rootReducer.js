@@ -8,10 +8,10 @@ import projects from "../modules/projects";
 
 const rootReducer = combineReducers({
     app: app.reducer,
+    users: users.reducer,
     technologies: technologies.reducer,
     profiles: profiles.reducer,
     projects: projects.reducer,
-    users: users.reducer,
 });
 
 export default rootReducer;
