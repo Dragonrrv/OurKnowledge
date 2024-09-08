@@ -6,6 +6,7 @@ import {useEffect} from "react";
 import technologies from "../index";
 import TreeList from "../../common/components/TreeList";
 import TechnologyTree from "./TechnologyTree";
+import AddTechnology from "../../common/components/AddTechnology";
 
 const Technologies= () => {
 
@@ -41,6 +42,7 @@ const Technologies= () => {
                 <tbody>
                     <tr>
                         <TreeList treeType={TechnologyTree} treeList={technologyTreeList} dept={0}/>
+                        <AddTechnology parentId={null} relevant={true}/>
                     </tr>
                 </tbody>
             </table>

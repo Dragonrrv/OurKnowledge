@@ -106,11 +106,9 @@ const UpdateKnowledgeTree = ({tree, dept}) => {
                                    onAdd = {() =>setShowAddMenu(!showAddMenu)}/>
                 </div>
             )}
-            <div>
-                {isOpen && (
-                    <TreeList treeType={UpdateKnowledgeTree} treeList={tree.children} dept={dept+1}/>
-                    )}
-            </div>
+            {isOpen && (
+                <TreeList treeType={UpdateKnowledgeTree} treeList={tree.children} dept={dept+1}/>
+                )}
         </div>
     );
 }

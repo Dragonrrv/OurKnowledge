@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import users from "../../users";
 import TreeList from "../../common/components/TreeList";
 import UpdateKnowledgeTree from "./UpdateKnowledgeTree";
+import AddTechnology from "../../common/components/AddTechnology";
 
 const UpdateProfile= () => {
 
@@ -48,6 +49,7 @@ const UpdateProfile= () => {
             </div>
             <div>
                 <TreeList treeType={UpdateKnowledgeTree} treeList={profile.knowledgeTreeList} dept={0} />
+                <AddTechnology parentId={null} relevant={false}/>
             </div>
         </div>
     )

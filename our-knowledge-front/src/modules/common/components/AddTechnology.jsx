@@ -48,7 +48,9 @@ const AddTechnology = ({parentId, relevant, onAdd}) => {
 }
 
 AddTechnology.propTypes = {
-    onAdd: PropTypes.func.isRequired
+    parentId: PropTypes.number.isRequired,
+    relevant: PropTypes.bool.isRequired,
+    onAdd: PropTypes.func
 }
 
 export default AddTechnology;

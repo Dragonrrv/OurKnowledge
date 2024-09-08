@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import AddTechnology from "./AddTechnology";
 
 const TreeList = ({ treeType: TreeTypeComponent, treeList, dept }) => {
 
