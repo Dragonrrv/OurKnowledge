@@ -45,7 +45,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
                     .collect(Collectors.toList()));
         }
 
-        return (List<KnowledgeTree>) common.ListToTreeList(knownTechnologyList);
+        return common.ListToTreeList(knownTechnologyList, KnowledgeTree::new);
     }
 
     @Override

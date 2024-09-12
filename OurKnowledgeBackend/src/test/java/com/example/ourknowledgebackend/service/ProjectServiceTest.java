@@ -3,6 +3,7 @@ package com.example.ourknowledgebackend.service;
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
+import com.example.ourknowledgebackend.model.SimpleVerification;
 import com.example.ourknowledgebackend.model.entities.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -266,17 +267,20 @@ class ProjectServiceTest {
         Verification verification1 = verificationDao.save(new Verification(knowledge1, uses1));
         Verification verification2 = verificationDao.save(new Verification(knowledge2, uses2));
         Verification verification3 = verificationDao.save(new Verification(knowledge3, uses1));
-        List<Verification> verificationList1 = new ArrayList<>();
-        verificationList1.add(verification1);
-        verificationList1.add(verification3);
-        List<Verification> verificationList2 = new ArrayList<>();
-        verificationList2.add(verification2);
+        List<SimpleVerification> verificationList1 = new ArrayList<>();
+        verificationList1.add(new SimpleVerification(verification1));
+        verificationList1.add(new SimpleVerification(verification3));
+        List<SimpleVerification> verificationList2 = new ArrayList<>();
+        verificationList2.add(new SimpleVerification(verification2));
 
 
         try{
             ProjectDetails result = projectService.projectDetails(project1.getId());
-            assertEquals(verificationList1, result.getUsesTreeList().get(0).getParent().getVerificationList());
-            assertEquals(verificationList2, result.getUsesTreeList().get(1).getParent().getVerificationList());
+            assertEquals(verificationList1.get(0).getId(), result.getUsesTreeList().get(0).getParent().getVerificationList().get(0).getId());
+            assertEquals(verificationList1.get(1).getId(), result.getUsesTreeList().get(0).getParent().getVerificationList().get(1).getId());
+            assertEquals(2, result.getUsesTreeList().get(0).getParent().getVerificationList().size());
+            assertEquals(verificationList2.get(0).getId(), result.getUsesTreeList().get(1).getParent().getVerificationList().get(0).getId());
+            assertEquals(1, result.getUsesTreeList().get(1).getParent().getVerificationList().size());
 
         } catch (InstanceNotFoundException e) {
             assert false;

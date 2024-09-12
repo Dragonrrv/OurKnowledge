@@ -28,7 +28,7 @@ public class TechnologyServiceImpl implements TechnologyService {
     public List<TechnologyTree> listRelevantTechnologies() {
         List<Technology> relevantTechnologies = technologyDao.findAllByRelevantTrue();
 
-        return (List<TechnologyTree>) common.ListToTreeList(relevantTechnologies);
+        return common.ListToTreeList(relevantTechnologies, TechnologyTree::new);
     }
 
     @Override

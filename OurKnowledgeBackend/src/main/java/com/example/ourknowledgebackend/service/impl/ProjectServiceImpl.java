@@ -62,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
                     .collect(Collectors.toList()));
         }
 
-        return (List<UsesTree>) common.ListToTreeList(usesTechnologyList);
+        return common.ListToTreeList(usesTechnologyList, UsesTree::new);
     }
 
     @Override
