@@ -64,7 +64,7 @@ class ProjectServiceTest {
 
         Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
 
-        assertEquals(result, expected);
+        assertEquals(expected, result);
     }
 
     @Test

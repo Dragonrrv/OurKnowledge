@@ -78,6 +78,14 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
 
     @Override
     @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
+    public ResponseEntity listUsers(ListUsersRequestDTO listUsersRequestDTO) {
+        return ResponseEntity.status(200).body(userService.listUsers(listUsersRequestDTO.getPage(),
+                listUsersRequestDTO.getKeywords() != null ? listUsersRequestDTO.getKeywords().trim() : null,
+                listUsersRequestDTO.getSize()));
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
     public ResponseEntity showProfile(ProfileRequestDTO profileRequestDTO) {
         return ResponseEntity.status(200).body(
                 userService.showProfile(profileRequestDTO.getProfileId().longValue(),

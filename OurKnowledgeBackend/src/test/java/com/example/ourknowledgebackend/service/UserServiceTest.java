@@ -8,6 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -48,11 +51,88 @@ class UserServiceTest {
 
     @Test
     void loginExists() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Admin", null));
+        User user1 = userDao.save(new User("Juan1", "example@example.com", "Admin", null));
         User user2 = userDao.save(new User("Juan2", "example2@example.com", "Admin", null));
         User result = userService.login("Juan", "example@example.com", "Admin");
 
-        assertEquals(user, result);
+        assertEquals(user1, result);
+    }
+
+    @Test
+    void listUsers() {
+        User user1 = userDao.save(new User("Juan1", "example@example.com", "Developer", null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
+        User user3 = userDao.save(new User("Juan3", "example2@example.com", "Developer", null));
+        User user4 = userDao.save(new User("Juan4", "example2@example.com", "Developer", null));
+
+        List<User> userList = new ArrayList<>();
+        userList.add(user1);
+        userList.add(user2);
+        userList.add(user3);
+        userList.add(user4);
+
+        Block<User> expected = new Block<>(userList, false, 1, 5);
+
+        Block<User> result = userService.listUsers(expected.getPage(), null, expected.getSize());
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void listUsersOnlyDeveloper() {
+        User user1 = userDao.save(new User("Juan1", "example@example.com", "Developer", null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
+        User user3 = userDao.save(new User("Juan3", "example2@example.com", "Admin", null));
+        User user4 = userDao.save(new User("Juan4", "example2@example.com", "Developer", null));
+
+        List<User> userList = new ArrayList<>();
+        userList.add(user1);
+        userList.add(user2);
+        userList.add(user4);
+
+        Block<User> expected = new Block<>(userList, false, 1, 5);
+
+        Block<User> result = userService.listUsers(expected.getPage(), null, expected.getSize());
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void listUsersOrder() {
+        User user1 = userDao.save(new User("AJuan1", "example@example.com", "Developer", null));
+        User user2 = userDao.save(new User("CJuan2", "example2@example.com", "Developer", null));
+        User user3 = userDao.save(new User("BJuan3", "example2@example.com", "Developer", null));
+        User user4 = userDao.save(new User("JJuan4", "example2@example.com", "Developer", null));
+
+        List<User> userList = new ArrayList<>();
+        userList.add(user1);
+        userList.add(user3);
+        userList.add(user2);
+        userList.add(user4);
+
+        Block<User> expected = new Block<>(userList, false, 1, 5);
+
+        Block<User> result = userService.listUsers(expected.getPage(), null, expected.getSize());
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void listUsersKeyWordsFilter() {
+        User user1 = userDao.save(new User("Juan1", "example@example.com", "Developer", null));
+        User user2 = userDao.save(new User("Manuel1", "example2@example.com", "Developer", null));
+        User user3 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
+        User user4 = userDao.save(new User("Manuel2", "example2@example.com", "Developer", null));
+
+        List<User> userList = new ArrayList<>();
+        userList.add(user1);
+        userList.add(user3);
+
+        Block<User> expected = new Block<>(userList, false, 1, 5);
+
+        Block<User> result = userService.listUsers(expected.getPage(), "juA", expected.getSize());
+
+        assertEquals(expected, result);
     }
 
     @Test

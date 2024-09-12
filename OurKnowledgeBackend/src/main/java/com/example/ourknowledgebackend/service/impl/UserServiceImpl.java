@@ -2,9 +2,11 @@ package com.example.ourknowledgebackend.service.impl;
 
 import com.example.ourknowledgebackend.model.*;
 import com.example.ourknowledgebackend.model.entities.*;
+import com.example.ourknowledgebackend.service.Block;
 import com.example.ourknowledgebackend.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +31,12 @@ public class UserServiceImpl implements UserService {
         }
         return userDao.findByEmail(email);
 
+    }
+
+    @Override
+    public Block<User> listUsers(int page, String keywords, int size) {
+        Slice<User> slice = userDao.find(page, keywords, size);
+        return new Block<>(slice.getContent(), slice.hasNext(), page, size);
     }
 
     @Override
