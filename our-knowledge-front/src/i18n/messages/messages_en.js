@@ -5,6 +5,7 @@ export default {
     'project.app.Header.technologies': 'Technologies',
     'project.app.Header.profile': 'My Profile',
     'project.app.Header.projects': 'Projects',
+    'project.app.Header.users': 'Users',
     'project.app.Header.logout': 'Logout',
     'project.app.Home.welcome': 'Welcome to Our Knowledge',
 

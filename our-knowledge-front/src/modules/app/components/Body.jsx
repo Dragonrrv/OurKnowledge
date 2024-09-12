@@ -3,10 +3,9 @@ import {Route, Routes} from 'react-router-dom';
 
 import AppGlobalComponents from './AppGlobalComponents';
 import Home from './Home';
-import users from '../../users';
+import users, {FindUsersAdmin, FindUsersDeveloper} from '../../users';
 import {Technologies} from "../../technologies";
-import Profile from "../../profiles/components/Profile";
-import UpdateProfile from "../../profiles/components/UpdateProfile";
+import {Profile, UpdateProfile} from "../../profiles";
 import {FindProjectsDeveloper, FindProjectsAdmin, ProjectDetails, AddProject, UpdateProject} from "../../projects";
 
 const Body = () => {
@@ -24,7 +23,9 @@ const Body = () => {
                 {role==="Admin" && <Route path="/projects/findProjectsAdmin" element={<FindProjectsAdmin/>}/>}
                 {role==="Admin" && <Route path="/projects/addProject" element={<AddProject/>}/>}
                 {role==="Admin" && <Route path="/projects/updateProject" element={<UpdateProject/>}/>}
+                {role==="Admin" && <Route path="/projects/findUsersAdmin" element={<FindUsersAdmin/>}/>}
                 {role==="Developer" && <Route path="/projects/findProjectsDeveloper" element={<FindProjectsDeveloper/>}/>}
+                {role==="Developer" && <Route path="/projects/findUsersDeveloper" element={<FindUsersDeveloper/>}/>}
                 {role==="Developer" && <Route path="/profiles/updateProfile" element={<UpdateProfile/>}/>}
                 {<Route path="/profiles/profile/:profileId" element={<Profile/>}/>}
                 {<Route path="/projects/projectDetails/:id" element={<ProjectDetails/>}/>}

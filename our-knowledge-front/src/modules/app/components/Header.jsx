@@ -4,7 +4,6 @@ import {FormattedMessage} from 'react-intl';
 
 import users from '../../users';
 import keycloak from "../../../oauth/keycloak";
-import {getServiceToken} from "../../../backend/appFetch";
 
 const Header = () => {
 
@@ -34,6 +33,11 @@ return (
                                     <FormattedMessage id="project.app.Header.projects"/>
                                 </Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/projects/findUsersAdmin">
+                                    <FormattedMessage id="project.app.Header.users"/>
+                                </Link>
+                            </li>
                         </ul>
                     );
                 } else if (userRole === "Developer") {
@@ -47,6 +51,11 @@ return (
                             <li className="nav-item">
                                 <Link className="nav-link" to="/projects/findProjectsDeveloper">
                                     <FormattedMessage id="project.app.Header.projects"/>
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/projects/findUsersDeveloper">
+                                    <FormattedMessage id="project.app.Header.users"/>
                                 </Link>
                             </li>
 

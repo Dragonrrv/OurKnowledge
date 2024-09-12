@@ -8,6 +8,22 @@ const loginCompleted = authenticatedUser => ({
     authenticatedUser
 });
 
+const findUsersCompleted = usersResult => ({
+    type: actionTypes.FIND_USERS_COMPLETED,
+    usersResult
+});
+
+export const findUsers = (page, keywords) => dispatch => {
+
+    dispatch(clearUsersResult());
+    backend.userService.findUsers(page, keywords,
+        result => dispatch(findUsersCompleted(result)));
+}
+
+const clearUsersResult = () => ({
+    type: actionTypes.CLEAR_PROJECT_SEARCH
+});
+
 export const login = (userName, email, role, onSuccess, onErrors) => dispatch =>
     backend.userService.login(userName, email, role,
         authenticatedUser => {

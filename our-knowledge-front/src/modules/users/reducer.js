@@ -3,7 +3,8 @@ import {combineReducers} from 'redux';
 import * as actionTypes from './actionTypes';
 
 const initialState = {
-    user: null
+    user: null,
+    usersResult: null
 };
 
 const user = (state = initialState.user, action) => {
@@ -23,8 +24,26 @@ const user = (state = initialState.user, action) => {
 
 }
 
+const usersResult = (state = initialState.usersResult, action) => {
+
+    switch (action.type) {
+
+        case actionTypes.FIND_USERS_COMPLETED:
+            return action.usersResult;
+
+        case actionTypes.CLEAR_PROJECT_SEARCH:
+            return initialState.usersResult;
+
+        default:
+            return state;
+
+    }
+
+}
+
 const reducer = combineReducers({
-    user
+    user,
+    usersResult
 });
 
 export default reducer;
