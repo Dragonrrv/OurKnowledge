@@ -5,6 +5,11 @@ logging:
         SQL: debug
 server:
   port: 8181
+app:
+  constants:
+    default_filter_name: "NOT_SAVED_FILTER"
+    admin_role: "Admin"
+    developer_role: "Developer"
 spring:
   datasource:
     url: @dataSource.url@

@@ -7,6 +7,7 @@ import com.example.ourknowledgebackend.model.SimpleVerification;
 import com.example.ourknowledgebackend.model.entities.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectServiceTest {
 
     private final Long NON_EXISTENT_ID = (long) -1;
+
+    @Value("${app.constants.developer_role}")
+    private String developerRole;
 
     @Autowired
     private ProjectService projectService;
@@ -221,9 +225,9 @@ class ProjectServiceTest {
         Uses uses1 = usesDao.save(new Uses(project1, technology1));
         Uses uses2 = usesDao.save(new Uses(project1, technology3));
 
-        User user1 = userDao.save(new User("Juan", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
-        userDao.save(new User("Juan3", "example3@example.com", "Developer", null));
+        User user1 = userDao.save(new User("Juan", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", developerRole, null));
+        userDao.save(new User("Juan3", "example3@example.com", developerRole, null));
         Participation participation1 = participationDao.save(new Participation(project1, user1, "2024-08-22", null));
         Participation participation2 = participationDao.save(new Participation(project1, user2, "2024-08-21", null));
         List<Participation> participationList = new ArrayList<>();
@@ -255,9 +259,9 @@ class ProjectServiceTest {
         Uses uses1 = usesDao.save(new Uses(project1, technology1));
         Uses uses2 = usesDao.save(new Uses(project1, technology3));
 
-        User user1 = userDao.save(new User("Juan", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
-        userDao.save(new User("Juan3", "example3@example.com", "Developer", null));
+        User user1 = userDao.save(new User("Juan", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", developerRole, null));
+        userDao.save(new User("Juan3", "example3@example.com", developerRole, null));
         participationDao.save(new Participation(project1, user1, "2024-08-22", null));
         participationDao.save(new Participation(project1, user2, "2024-08-21", null));
 
@@ -496,7 +500,7 @@ class ProjectServiceTest {
     @Test
     void participate() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Participation expected = new Participation(project, user, "2024-08-02", null);
         try {
             projectService.participate(user.getId(), project.getId(), expected.getStartDate(), expected.getEndDate());
@@ -515,7 +519,7 @@ class ProjectServiceTest {
     @Test
     void participateWithEndDate() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Participation expected = new Participation(project, user, "2024-08-02", "2024-08-06");
         try {
             projectService.participate(user.getId(), project.getId(), expected.getStartDate(), expected.getEndDate());
@@ -534,7 +538,7 @@ class ProjectServiceTest {
     @Test
     void participateInstanceNotFoundProject() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         try {
             projectService.participate(user.getId(), NON_EXISTENT_ID, "2024-08-02", "2024-08-06");
             assert false;
@@ -550,7 +554,7 @@ class ProjectServiceTest {
     @Test
     void participateInstanceNotFoundUser() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         try {
             projectService.participate(NON_EXISTENT_ID, project.getId(), "2024-08-02", "2024-08-06");
             assert false;
@@ -566,7 +570,7 @@ class ProjectServiceTest {
     @Test
     void participateDuplicateInstance() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         participationDao.save(new Participation(project, user, "2024-08-21", null));
         try {
             projectService.participate(user.getId(), project.getId(), "2024-08-02", "2024-08-06");
@@ -583,7 +587,7 @@ class ProjectServiceTest {
     @Test
     void updateParticipate() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Participation participation = participationDao.save(new Participation(project, user, "2024-08-21", null));
         Participation expected = new Participation(project, user, "2024-08-22", "2024-08-24");
         try {
@@ -601,7 +605,7 @@ class ProjectServiceTest {
     @Test
     void updateParticipateInstanceNotFound() {
         Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Participation participation = participationDao.save(new Participation(project, user, "2024-08-21", null));
         Participation expected = new Participation(project, user, "2024-08-22", "2024-08-24");
         try {
@@ -627,7 +631,7 @@ class ProjectServiceTest {
         usesDao.save(new Uses(project, technology4));
         usesDao.save(new Uses(project, technology5));
 
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         participationDao.save(new Participation(project, user, "2024-08-21", null));
 
         try {
@@ -661,7 +665,7 @@ class ProjectServiceTest {
         Uses uses4 = usesDao.save(new Uses(project, technology4));
         Uses uses5 = usesDao.save(new Uses(project, technology5));
 
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         participationDao.save(new Participation(project, user, "2024-08-21", null));
         Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
         Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));
@@ -707,7 +711,7 @@ class ProjectServiceTest {
         Uses uses4 = usesDao.save(new Uses(project, technology4));
         Uses uses5 = usesDao.save(new Uses(project, technology5));
 
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         participationDao.save(new Participation(project, user, "2024-08-21", null));
         Knowledge knowledge1 = knowledgeDao.save(new Knowledge(user, technology1, false, false));
         Knowledge knowledge2 = knowledgeDao.save(new Knowledge(user, technology2, false, false));

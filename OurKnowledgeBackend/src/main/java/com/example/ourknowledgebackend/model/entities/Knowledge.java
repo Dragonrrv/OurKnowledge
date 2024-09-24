@@ -9,6 +9,7 @@ public class Knowledge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
@@ -18,6 +19,7 @@ public class Knowledge {
     private Technology technology;
 
     private boolean mainSkill;
+
     private boolean likeIt;
 
     public Knowledge() {}

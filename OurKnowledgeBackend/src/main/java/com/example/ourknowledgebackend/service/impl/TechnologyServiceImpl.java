@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class TechnologyServiceImpl implements TechnologyService {
 
     private final PermissionChecker permissionChecker;
+    
+    @Value("${app.constants.admin_role}")
+    private String adminRole;
 
     private final Common common;
 
@@ -37,7 +41,7 @@ public class TechnologyServiceImpl implements TechnologyService {
         if (parentId != null) {
             permissionChecker.checkTechnology(parentId);
         }
-        if (relevant && !user.getRole().equals("Admin")) {
+        if (relevant && !user.getRole().equals(adminRole)) {
             throw new PermissionException();
         }
         Technology technology = permissionChecker.checkTechnology(name, parentId);
@@ -57,7 +61,7 @@ public class TechnologyServiceImpl implements TechnologyService {
     public List<TechnologyTree> deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException {
         User user = permissionChecker.checkUser(userId);
         Technology technology = permissionChecker.checkTechnology(technologyId);
-        if (!user.getRole().equals("Admin")) {
+        if (!user.getRole().equals(adminRole)) {
             throw new PermissionException();
         }
         if (deleteChildren) {

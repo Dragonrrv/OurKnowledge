@@ -4,8 +4,10 @@ import {FormattedMessage} from 'react-intl';
 
 import ProjectsResult from './ProjectsResult';
 import projects from "../index";
-import Button from "bootstrap/js/src/button";
 import {useNavigate} from "react-router-dom";
+import technologies from "../../technologies";
+import TechnologyFilter from "../../filters/components/TechnologyFilter";
+import FilterList from "../../filters/components/FilterList";
 
 const FindProjectsAdmin = () => {
 
@@ -15,6 +17,7 @@ const FindProjectsAdmin = () => {
 
     useEffect(() => {
         dispatch(projects.actions.findProjects(1, keywords));
+        dispatch(technologies.actions.findTechnologies());
     }, [dispatch]);
 
     const handleSubmit = event => {
@@ -33,7 +36,6 @@ const FindProjectsAdmin = () => {
                     <button type="submit" className="btn btn-primary my-2 my-sm-0">
                         <FormattedMessage id='project.global.buttons.search'/>
                     </button>
-
                 </form>
                 <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
                     <button className="btn btn-primary my-2 my-sm-0"
@@ -45,6 +47,10 @@ const FindProjectsAdmin = () => {
                         <FormattedMessage id="project.projects.button.addProject"/>
                     </button>
                 </div>
+            </div>
+            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <TechnologyFilter/>
+                <FilterList/>
             </div>
             <ProjectsResult keywords={keywords}/>
         </div>

@@ -20,9 +20,6 @@ const UsesTree = ({tree, dept}) => {
     const [isOpen, setIsOpen] = useState(true);
     const verification = tree.parent.verificationList.find(verification => verification.userId === userId);
 
-    console.log(tree.parent.verificationList)
-    console.log(verification)
-
     const toggleOpen = () => {
         setIsOpen(!isOpen);
     };

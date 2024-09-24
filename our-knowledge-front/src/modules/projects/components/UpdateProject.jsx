@@ -33,7 +33,7 @@ const UpdateProject = () => {
                          onClick={updateProject}/>
 
             <h6 style={{marginTop: '10px'}}><FormattedMessage id='project.projects.addProject.TechnologiesUsed'/></h6>
-            <div style={{ width: '300px'}}>
+            <div style={{ width: '350px'}}>
                 <TreeList treeType={UpdateUsesTree} treeList={projectDetails.usesTreeList} dept={0} />
             </div>
         </div>

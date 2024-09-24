@@ -400,6 +400,126 @@ paths:
               schema:
                 $ref: '#/components/schemas/profileResponse'
 
+  /filter/list:
+    post:
+      summary: get all filters by an user
+      operationId: listFilters
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/listFiltersRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listFiltersResponse'
+
+  /filter:
+    post:
+      summary: get a filter and all technologies it uses
+      operationId: getFilter
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/getFilterRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getFilterResponse'
+
+  /filter/default:
+    post:
+      summary: get the default filter
+      operationId: getDefaultFilter
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/getDefaultFilterRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getFilterResponse'
+
+  /filter/save:
+    post:
+      summary: save filter with a name
+      operationId: saveFilter
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/saveFilterRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listFiltersResponse'
+
+  /filter/delete:
+    post:
+      summary: delete a filter
+      operationId: deleteFilter
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/deleteFilterRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listFiltersResponse'
+
+  /filter/filterParam/update:
+    post:
+      summary: create, update or delete a filterParam
+      operationId: updateFilterParam
+      tags:
+        - technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateFilterParamRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getFilterResponse'
+
 components:
   schemas:
 
@@ -795,4 +915,103 @@ components:
         mainSkill:
           type: boolean
         likeIt:
+          type: boolean
+
+    listFiltersRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+
+    listFiltersResponse:
+      type: object
+      properties:
+        filterList:
+          type: array
+          items:
+            properties:
+              filter:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  filterTechnologyTreeList:
+                    type: array
+                    items:
+                      properties:
+                        filterTechnologyTree:
+                          type: object
+
+    getFilterRequest:
+      type: object
+      properties:
+        filterId:
+          type: integer
+
+    getFilterResponse:
+      type: object
+      properties:
+        filter:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        filterTechnologyList:
+          type: array
+          items:
+            properties:
+              filterTechnology:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  filterTechnologyId:
+                    type: integer
+                  mandatory:
+                    type: boolean
+                  recommended:
+                    type: boolean
+
+    getDefaultFilterRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+
+    saveFilterRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        filterName:
+          type: string
+
+    deleteFilterRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        filterId:
+          type: integer
+
+    updateFilterParamRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        filterParamId:
+          type: integer
+        filterId:
+          type: integer
+        technologyId:
+          type: integer
+        mandatory:
+          type: boolean
+        recommended:
           type: boolean

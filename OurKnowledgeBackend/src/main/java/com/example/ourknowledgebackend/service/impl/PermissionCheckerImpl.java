@@ -22,6 +22,9 @@ public class PermissionCheckerImpl implements PermissionChecker {
     @Autowired
     private KnowledgeDao knowledgeDao;
 
+    @Autowired
+    private FilterDao filterDao;
+
     @Override
     public User checkUser(Long userId) throws InstanceNotFoundException {
 
@@ -68,6 +71,15 @@ public class PermissionCheckerImpl implements PermissionChecker {
             throw new PermissionException();
         }
         return knowledge.get();
+    }
+
+    @Override
+    public Filter checkFilterExistsAndBelongsTo(Long filterId, Long userId) throws InstanceNotFoundException, PermissionException {
+        Filter filter = filterDao.findById(filterId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", filterId));
+        if (!filter.getUser().getId().equals(userId)) {
+            throw new PermissionException();
+        }
+        return filter;
     }
 
     @Override

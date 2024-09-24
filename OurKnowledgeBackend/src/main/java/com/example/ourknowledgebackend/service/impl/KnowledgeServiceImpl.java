@@ -9,7 +9,6 @@ import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.PermissionChecker;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,10 +32,12 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     private final TechnologyDao technologyDao;
 
+    private final ExtendedTechnologyDao extendedTechnologyDao;
+
     private final VerificationDao verificationDao;
 
     public List<KnowledgeTree> listUserKnowledge(User user) {
-        List<KnownTechnology> knownTechnologyList = technologyDao.findTechnologiesWithKnowledge(user.getId());
+        List<KnownTechnology> knownTechnologyList = extendedTechnologyDao.findTechnologiesWithKnowledge(user.getId());
 
         for (KnownTechnology knownTechnology : knownTechnologyList) {
             List<Verification> verificationList = verificationDao.findAllByKnowledgeId(knownTechnology.getKnowledgeId());

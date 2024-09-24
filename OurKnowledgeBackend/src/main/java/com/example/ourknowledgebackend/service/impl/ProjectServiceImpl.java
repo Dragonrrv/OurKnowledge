@@ -34,6 +34,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final TechnologyDao technologyDao;
 
+    private final ExtendedTechnologyDao extendedTechnologyDao;
+
     private final UserDao userDao;
 
     private final KnowledgeDao knowledgeDao;
@@ -53,7 +55,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public List<UsesTree> listProjectUses(Project project) {
-        List<UsesTechnology> usesTechnologyList = technologyDao.findTechnologiesWithUses(project.getId());
+        List<UsesTechnology> usesTechnologyList = extendedTechnologyDao.findTechnologiesWithUses(project.getId());
 
         for (UsesTechnology uses : usesTechnologyList) {
             List<Verification> verificationList = verificationDao.findAllByUsesId(uses.getUsesId());

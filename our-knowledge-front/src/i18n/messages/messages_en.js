@@ -42,6 +42,9 @@ export default {
     'project.global.fields.technologyName': 'Technology Name',
     'project.global.validator.passwordsDoNotMatch': 'Passwords do not match',
     'project.global.validator.required': 'Required field',
+    'project.global.fields.moreOptions': 'More Options',
+    'project.global.filter.mandatory': 'Mandatory:',
+    'project.global.filter.recommended': 'Recommended:',
 
     'project.users.Login.title': 'Login',
 
@@ -58,7 +61,7 @@ export default {
     'project.profiles.profile.useInProjects': 'Use in projects like:',
     'project.profiles.button.updateProfile': 'Update Profile',
     'project.profiles.tittle.updateProfile': 'Update your Profile',
-    'project.profile.updateProfile.deleteKnowledge.explanation': 'Are you sure you want to delete this knowledge an all verifications in projects?',
+    'project.profile.updateProfile.deleteKnowledge.explanation': 'Are you sure you want to delete this knowledge and all verifications in projects?',
 
     'project.projects.button.updateParticipation': 'Update Participation',
     'project.projects.participationList.alreadyParticipate': 'Remember you already have a participation',
@@ -76,5 +79,8 @@ export default {
     'project.projects.addProject.status': 'Status: ',
     'project.projects.addProject.size': 'Expected size: ',
     'project.projects.addProject.TechnologiesUsed': 'Mark technologies used: ',
+
+    'project.filters.technologyFilter.title': 'Filter by technologies: ',
+    'project.filters.filterList.noFilters': 'There\'s not filters saved',
 
 }

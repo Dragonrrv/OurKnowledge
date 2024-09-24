@@ -4,6 +4,7 @@ import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.model.UserProfile;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,23 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Transactional
 class UserServiceTest {
 
+    @Value("${app.constants.default_filter_name}")
+    private String filterName;
+
+    @Value("${app.constants.admin_role}")
+    private String adminRole;
+
+    @Value("${app.constants.developer_role}")
+    private String developerRole;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private FilterDao filterDao;
 
     @Autowired
     private KnowledgeDao knowledgeDao;
@@ -28,21 +44,29 @@ class UserServiceTest {
     @Autowired
     private TechnologyDao technologyDao;
 
-    @Autowired
-    private UserDao userDao;
 
     @Test
     void login() {
-        User result = userService.login("Juan", "example@example.com", "Admin");
+        User result = userService.login("Juan", "example@example.com", adminRole);
 
         User user = userDao.findByEmail("example@example.com");
 
         assertEquals(user, result);
+    }
+
+
+    @Test
+    void loginAdminCreateFilter() {
+        User user = userService.login("Juan", "example@example.com", adminRole);
+
+        Filter filter = filterDao.findByUser(user).get(0);
+
+        assertEquals(filterName, filter.getName());
     }
 
     @Test
     void loginDeveloper() {
-        User result = userService.login("Juan", "example@example.com", "Developer");
+        User result = userService.login("Juan", "example@example.com", developerRole);
 
         User user = userDao.findByEmail("example@example.com");
 
@@ -50,20 +74,29 @@ class UserServiceTest {
     }
 
     @Test
+    void loginDeveloperDontCreateFilter() {
+        User user = userService.login("Juan", "example@example.com", developerRole);
+
+        List<Filter> filter = filterDao.findByUser(user);
+
+        assert(filter.isEmpty());
+    }
+
+    @Test
     void loginExists() {
-        User user1 = userDao.save(new User("Juan1", "example@example.com", "Admin", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Admin", null));
-        User result = userService.login("Juan", "example@example.com", "Admin");
+        User user1 = userDao.save(new User("Juan1", "example@example.com", adminRole, null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", adminRole, null));
+        User result = userService.login("Juan", "example@example.com", adminRole);
 
         assertEquals(user1, result);
     }
 
     @Test
     void listUsers() {
-        User user1 = userDao.save(new User("Juan1", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
-        User user3 = userDao.save(new User("Juan3", "example2@example.com", "Developer", null));
-        User user4 = userDao.save(new User("Juan4", "example2@example.com", "Developer", null));
+        User user1 = userDao.save(new User("Juan1", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", developerRole, null));
+        User user3 = userDao.save(new User("Juan3", "example2@example.com", developerRole, null));
+        User user4 = userDao.save(new User("Juan4", "example2@example.com", developerRole, null));
 
         List<User> userList = new ArrayList<>();
         userList.add(user1);
@@ -80,10 +113,10 @@ class UserServiceTest {
 
     @Test
     void listUsersOnlyDeveloper() {
-        User user1 = userDao.save(new User("Juan1", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
-        User user3 = userDao.save(new User("Juan3", "example2@example.com", "Admin", null));
-        User user4 = userDao.save(new User("Juan4", "example2@example.com", "Developer", null));
+        User user1 = userDao.save(new User("Juan1", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", developerRole, null));
+        User user3 = userDao.save(new User("Juan3", "example2@example.com", adminRole, null));
+        User user4 = userDao.save(new User("Juan4", "example2@example.com", developerRole, null));
 
         List<User> userList = new ArrayList<>();
         userList.add(user1);
@@ -99,10 +132,10 @@ class UserServiceTest {
 
     @Test
     void listUsersOrder() {
-        User user1 = userDao.save(new User("AJuan1", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("CJuan2", "example2@example.com", "Developer", null));
-        User user3 = userDao.save(new User("BJuan3", "example2@example.com", "Developer", null));
-        User user4 = userDao.save(new User("JJuan4", "example2@example.com", "Developer", null));
+        User user1 = userDao.save(new User("AJuan1", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("CJuan2", "example2@example.com", developerRole, null));
+        User user3 = userDao.save(new User("BJuan3", "example2@example.com", developerRole, null));
+        User user4 = userDao.save(new User("JJuan4", "example2@example.com", developerRole, null));
 
         List<User> userList = new ArrayList<>();
         userList.add(user1);
@@ -119,10 +152,10 @@ class UserServiceTest {
 
     @Test
     void listUsersKeyWordsFilter() {
-        User user1 = userDao.save(new User("Juan1", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("Manuel1", "example2@example.com", "Developer", null));
-        User user3 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
-        User user4 = userDao.save(new User("Manuel2", "example2@example.com", "Developer", null));
+        User user1 = userDao.save(new User("Juan1", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("Manuel1", "example2@example.com", developerRole, null));
+        User user3 = userDao.save(new User("Juan2", "example2@example.com", developerRole, null));
+        User user4 = userDao.save(new User("Manuel2", "example2@example.com", developerRole, null));
 
         List<User> userList = new ArrayList<>();
         userList.add(user1);
@@ -137,7 +170,7 @@ class UserServiceTest {
 
     @Test
     void showProfile() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology1 = technologyDao.save(new Technology("Java", null, true));
         Technology technology2 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology3 = technologyDao.save(new Technology("Spring", technology2.getId(), true));
@@ -169,8 +202,8 @@ class UserServiceTest {
 
     @Test
     void showProfileMultiUsers() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("Juan2", "example2@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("Juan2", "example2@example.com", developerRole, null));
         Technology technology1 = technologyDao.save(new Technology("Java", null, true));
         Technology technology2 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology3 = technologyDao.save(new Technology("Spring", technology2.getId(), true));

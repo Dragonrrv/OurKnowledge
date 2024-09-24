@@ -1,3 +1,5 @@
+DROP TABLE filterParam;
+DROP TABLE filter;
 DROP TABLE verification;
 DROP TABLE knowledge;
 DROP TABLE uses;
@@ -51,7 +53,7 @@ create table knowledge
     constraint knowledge_pk
         unique (userId, technologyId),
     constraint foreign_key_name
-        foreign key (userId) references user (id),
+        foreign key (userId) references user (id) on delete cascade,
     constraint foreign_key_name2
         foreign key (technologyId) references technology (id)
 ) ENGINE = InnoDB;
@@ -98,4 +100,32 @@ create table verification
         foreign key (knowledgeId) references knowledge (id) on delete cascade,
     constraint foreign_key_name8
         foreign key (usesId) references uses (id) on delete cascade
+) ENGINE = InnoDB;
+
+create table filter
+(
+    id bigint auto_increment
+        primary key,
+    userId bigint not null,
+    name varchar(50) not null,
+    constraint filter_pk
+        unique (userId, name),
+    constraint foreign_key_name9
+        foreign key (userId) references user (id) on delete cascade
+) ENGINE = InnoDB;
+
+create table filterParam
+(
+    id bigint auto_increment
+        primary key,
+    filterId bigint not null,
+    technologyId bigint not null,
+    mandatory boolean not null,
+    recommended boolean not null,
+    constraint filterTechnology_pk
+        unique (filterId, technologyId),
+    constraint foreign_key_name10
+        foreign key (filterId) references filter (id) on delete cascade,
+    constraint foreign_key_name11
+        foreign key (technologyId) references technology (id) on delete cascade
 ) ENGINE = InnoDB;

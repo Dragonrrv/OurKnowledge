@@ -9,10 +9,7 @@ import com.example.ourknowledgebackend.model.entities.Participation;
 import com.example.ourknowledgebackend.model.entities.Project;
 import com.example.ourknowledgebackend.model.entities.Uses;
 import com.example.ourknowledgebackend.model.entities.Verification;
-import com.example.ourknowledgebackend.service.KnowledgeService;
-import com.example.ourknowledgebackend.service.ProjectService;
-import com.example.ourknowledgebackend.service.TechnologyService;
-import com.example.ourknowledgebackend.service.UserService;
+import com.example.ourknowledgebackend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +29,8 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
     private final UserService userService;
 
     private final KnowledgeService knowledgeService;
+
+    private final FilterService filterService;
 
     @Override
     @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
@@ -286,6 +285,75 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
                     deleteVerificationRequestDTO.getDeleteKnowledge());
             return ResponseEntity.status(200).body(projectService.projectDetails(verification.getUses().getProject().getId()));
         } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity listFilters(ListFiltersRequestDTO listFiltersRequestDTO) {
+        try {
+            return ResponseEntity.status(200).body(filterService.listFilter(longId(listFiltersRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity getFilter(GetFilterRequestDTO getFilterRequestDTO) {
+        try {
+            return ResponseEntity.status(200).body(filterService.getFilter(longId(getFilterRequestDTO.getFilterId())));
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity getDefaultFilter(GetDefaultFilterRequestDTO getDefaultFilterRequestDTO) {
+        try {
+            return ResponseEntity.status(200).body(filterService.getDefaultFilter(longId(getDefaultFilterRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity saveFilter(SaveFilterRequestDTO saveFilterRequestDTO) {
+        try {
+            filterService.saveFilter(longId(saveFilterRequestDTO.getUserId()), saveFilterRequestDTO.getFilterName());
+            return ResponseEntity.status(200).body(filterService.listFilter(longId(saveFilterRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity deleteFilter(DeleteFilterRequestDTO deleteFilterRequestDTO) {
+        try {
+            filterService.deleteFilter(longId(deleteFilterRequestDTO.getUserId()), longId(deleteFilterRequestDTO.getFilterId()));
+            return ResponseEntity.status(200).body(filterService.listFilter(longId(deleteFilterRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException | PermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity updateFilterParam(UpdateFilterParamRequestDTO updateFilterParamRequestDTO) {
+        try {
+            long filterId = filterService.updateFilterParam(longId(updateFilterParamRequestDTO.getUserId()),
+                    longId(updateFilterParamRequestDTO.getFilterParamId()),
+                    longId(updateFilterParamRequestDTO.getFilterId()),
+                    longId(updateFilterParamRequestDTO.getTechnologyId()),
+                    updateFilterParamRequestDTO.getMandatory(),
+                    updateFilterParamRequestDTO.getRecommended());
+            return ResponseEntity.status(200).body(filterService.getFilter(filterId));
+        } catch (InstanceNotFoundException | PermissionException | InvalidAttributesException |
+                 DuplicateInstanceException e) {
             throw new RuntimeException(e);
         }
     }

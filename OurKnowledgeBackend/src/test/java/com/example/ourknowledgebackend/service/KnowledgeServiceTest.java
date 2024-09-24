@@ -6,6 +6,7 @@ import com.example.ourknowledgebackend.exceptions.PermissionException;
 import com.example.ourknowledgebackend.model.entities.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,9 @@ class KnowledgeServiceTest {
 
     private final Long NON_EXISTENT_ID = (long) -1;
 
+    @Value("${app.constants.developer_role}")
+    private String developerRole;
+
     @Autowired
     private KnowledgeService knowledgeService;
 
@@ -37,7 +41,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addKnowledge() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
             List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), technology.getId(), null, null);
@@ -52,7 +56,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addTechnologyAndKnowledge() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Backend", null, true));
         try {
             List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), null, "Spring", technology.getId());
@@ -67,7 +71,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addTechnologyWhitParentAndKnowledge() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         try {
             List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), null, "Java", null);
             Optional<Knowledge> result = knowledgeDao.findById(knowledges.get(0).getId());
@@ -81,7 +85,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addKnowledgeList() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
@@ -102,7 +106,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addKnowledgeUserNotFound() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
             List<Knowledge> knowledges = knowledgeService.addKnowledge(NON_EXISTENT_ID, technology.getId(), null, null);
@@ -118,7 +122,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addKnowledgeTechnologyNotFound() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
             List<Knowledge> knowledges = knowledgeService.addKnowledge(user.getId(), NON_EXISTENT_ID, null, null);
@@ -134,7 +138,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addKnowledgeDuplicateException() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         knowledgeDao.save(new Knowledge(user, technology, false, false));
         try {
@@ -151,7 +155,7 @@ class KnowledgeServiceTest {
 
     @Test
     void addKnowledgeInvalidAttributesException() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
             knowledgeService.addKnowledge(user.getId(), null, null, technology.getId());
@@ -168,7 +172,7 @@ class KnowledgeServiceTest {
 
     @Test
     void deleteKnowledge() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         Knowledge knowledge = knowledgeDao.save(new Knowledge(user, technology, false, false));
         try {
@@ -185,7 +189,7 @@ class KnowledgeServiceTest {
 
     @Test
     void deleteKnowledgeTree() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
@@ -213,7 +217,7 @@ class KnowledgeServiceTest {
 
     @Test
     void updateKnowledge() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         Knowledge knowledge = knowledgeDao.save(new Knowledge(user, technology, false, false));
         try {
@@ -231,7 +235,7 @@ class KnowledgeServiceTest {
 
     @Test
     void updateKnowledgeToFalse() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         Knowledge knowledge = knowledgeDao.save(new Knowledge(user, technology, true, true));
         try {
@@ -249,7 +253,7 @@ class KnowledgeServiceTest {
 
     @Test
     void updateKnowledgeUserNotFound() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         Knowledge knowledge = knowledgeDao.save(new Knowledge(user, technology, false, false));
         try {
@@ -265,7 +269,7 @@ class KnowledgeServiceTest {
 
     @Test
     void updateKnowledgeNotFound() {
-        User user = userDao.save(new User("Juan", "example@example.com", "Developer", null));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         Knowledge knowledge = knowledgeDao.save(new Knowledge(user, technology, false, false));
         try {
@@ -281,8 +285,8 @@ class KnowledgeServiceTest {
 
     @Test
     void updateKnowledgePermissionException() {
-        User user1 = userDao.save(new User("Juan", "example@example.com", "Developer", null));
-        User user2 = userDao.save(new User("Juan2", "example@example.com", "Developer", null));
+        User user1 = userDao.save(new User("Juan", "example@example.com", developerRole, null));
+        User user2 = userDao.save(new User("Juan2", "example@example.com", developerRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         Knowledge knowledge = knowledgeDao.save(new Knowledge(user1, technology, false, false));
         try {
