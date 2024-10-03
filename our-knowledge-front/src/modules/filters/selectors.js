@@ -6,8 +6,11 @@ export const getFilterList = state =>
 export const getFilterDetails = state =>
     getModuleState(state).filterDetails;
 
-export const getFilterDetailsId = state =>
-    getModuleState(state).filterDetails.filter.id;
+export const getFilterId = state =>
+    getModuleState(state).filterDetails?.filter.id || null;
+
+export const getFilterName = state =>
+    getModuleState(state).filterDetails?.filter.name || null;
 
 
 

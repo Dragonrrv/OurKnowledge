@@ -12,12 +12,15 @@ public class FilterParamTechnology extends Technology {
 
     private Boolean unnecessary;
 
-    public FilterParamTechnology(Long id, String name, Long parentId, boolean relevant, Long filterParamId, Boolean mandatory, Boolean recommended, Boolean unnecessary) {
+    private Boolean recommendedUnnecessary;
+
+    public FilterParamTechnology(Long id, String name, Long parentId, boolean relevant, Long filterParamId, Boolean mandatory, Boolean recommended, Boolean unnecessary, Boolean recommendedUnnecessary) {
         super(id, name, parentId, relevant);
         this.filterParamId = filterParamId;
         this.mandatory = mandatory;
         this.recommended = recommended;
         this.unnecessary = unnecessary;
+        this.recommendedUnnecessary = recommendedUnnecessary;
     }
 
     public Long getFilterParamId() {
@@ -50,5 +53,13 @@ public class FilterParamTechnology extends Technology {
 
     public void setUnnecessary(Boolean unnecessary) {
         this.unnecessary = unnecessary;
+    }
+
+    public Boolean getRecommendedUnnecessary() {
+        return recommendedUnnecessary;
+    }
+
+    public void setRecommendedUnnecessary(Boolean recommendedUnnecessary) {
+        this.recommendedUnnecessary = recommendedUnnecessary;
     }
 }

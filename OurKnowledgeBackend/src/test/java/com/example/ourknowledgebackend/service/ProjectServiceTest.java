@@ -27,6 +27,9 @@ class ProjectServiceTest {
     @Value("${app.constants.developer_role}")
     private String developerRole;
 
+    @Value("${app.constants.admin_role}")
+    private String adminRole;
+
     @Autowired
     private ProjectService projectService;
 
@@ -51,6 +54,12 @@ class ProjectServiceTest {
     @Autowired
     private VerificationDao verificationDao;
 
+    @Autowired
+    private FilterDao filterDao;
+
+    @Autowired
+    private FilterParamDao filterParamDao;
+
     @Test
     void listProjects() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
@@ -65,10 +74,15 @@ class ProjectServiceTest {
         projectList.add(project4);
 
         Block<Project> expected = new Block<>(projectList, false, 1, 5);
+        
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
-
-        assertEquals(expected, result);
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -87,9 +101,14 @@ class ProjectServiceTest {
 
         Block<Project> expected = new Block<>(projectList, false, 1, 5);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
-        assertEquals(result, expected);
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -107,9 +126,14 @@ class ProjectServiceTest {
 
         Block<Project> expected = new Block<>(projectList, true, 1, 3);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
-        assertEquals(result, expected);
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -127,9 +151,14 @@ class ProjectServiceTest {
 
         Block<Project> expected = new Block<>(projectList, false, 1, 4);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
-        assertEquals(result, expected);
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -145,9 +174,14 @@ class ProjectServiceTest {
 
         Block<Project> expected = new Block<>(projectList, false, 1, 5);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), "KeY", expected.getSize());
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), "KeY", null);
 
-        assertEquals(result, expected);
+            assertEquals(expected, result);
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -161,9 +195,14 @@ class ProjectServiceTest {
 
         Block<Project> expected = new Block<>(projectList, false, 1, 5);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), "key", expected.getSize());
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), "key", null);
 
-        assertEquals(result, expected);
+            assertEquals(expected, result);
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -179,9 +218,14 @@ class ProjectServiceTest {
 
         Block<Project> expected = new Block<>(projectList, false, 2, 2);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
-        assertEquals(result, expected);
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -197,9 +241,51 @@ class ProjectServiceTest {
 
         Block<Project> expected = new Block<>(projectList, false, 3, 2);
 
-        Block<Project> result = projectService.listProjects(expected.getPage(), null, expected.getSize());
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
-        assertEquals(result, expected);
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void listProjectsWithMandatory() {
+        Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project1, technology1));
+        usesDao.save(new Uses(project1, technology2));
+        usesDao.save(new Uses(project1, technology3));
+        usesDao.save(new Uses(project2, technology1));
+        usesDao.save(new Uses(project2, technology3));
+        usesDao.save(new Uses(project3, technology1));
+        usesDao.save(new Uses(project3, technology2));
+
+        User user1 = userDao.save(new User("Juan", "example@example.com", adminRole, null));
+        Filter filter1 = filterDao.save(new Filter(user1, "test"));
+        filterParamDao.save(new FilterParam(filter1, technology2, true, false));
+        filterParamDao.save(new FilterParam(filter1, technology3, true, false));
+
+        List<Project> projectList = new ArrayList<>();
+        projectList.add(project1);
+
+        Block<Project> expected = new Block<>(projectList, false, 1, 5);
+
+        try {
+            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, filter1.getId());
+
+            assertEquals(expected, result);
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test

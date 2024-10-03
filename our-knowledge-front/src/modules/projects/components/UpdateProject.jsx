@@ -14,7 +14,6 @@ const UpdateProject = () => {
     const navigate = useNavigate();
     const projectDetails = useSelector(projects.selectors.getProjectDetails);
 
-    console.log(projectDetails);
     const updateProject = (name, description, startDate, status, size) => {
         dispatch(projects.actions.updateProject(projectDetails.project.id, name, description, startDate, status, size, false, []));
         navigate('/projects/projectDetails/0')

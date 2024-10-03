@@ -2,9 +2,9 @@ import {config, appFetch} from './appFetch';
 
 export const size = 4;
 
-export const findProjects = (page, keywords, onSuccess) =>
+export const findProjects = (page, keywords, filterId, onSuccess) =>
     appFetch(`/project/list`,
-        config('POST', {size, page, keywords}), onSuccess);
+        config('POST', {size, page, keywords, filterId}), onSuccess);
 
 export const findByProjectId = (id, onSuccess) =>
     appFetch(`/project`,

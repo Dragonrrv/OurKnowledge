@@ -19,6 +19,8 @@ public interface FilterService {
 
     void saveFilter(Long userId, String name) throws InstanceNotFoundException, DuplicateInstanceException;
 
+    void clearFilter(Long userId) throws InstanceNotFoundException;
+
     void deleteFilter(Long userId, Long filterId) throws InstanceNotFoundException, PermissionException;
 
     Long updateFilterParam(Long userId, Long filterParamId, Long filterId, Long technologyId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException, InvalidAttributesException, PermissionException, DuplicateInstanceException;

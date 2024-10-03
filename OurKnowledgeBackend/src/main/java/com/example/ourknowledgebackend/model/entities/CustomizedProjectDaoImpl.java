@@ -25,12 +25,16 @@ public class CustomizedProjectDaoImpl implements CustomizedProjectDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Slice<Project> find(int page, String keywords, int size) {
+    public Slice<Project> find(int page, int size, String keywords,  List<Long> mandatoryList,  List<Long> recommendedList) {
 
         String[] tokens = getTokens(keywords);
-        String queryString = "SELECT p FROM Project p";
+        String queryString = "SELECT DISTINCT p FROM Project p";
 
-        if (tokens.length > 0) {
+        if (!mandatoryList.isEmpty()) {
+            queryString += " join Uses u on p = u.project";
+        }
+
+        if (tokens.length > 0 || !mandatoryList.isEmpty()) {
             queryString += " WHERE ";
         }
 
@@ -44,6 +48,19 @@ public class CustomizedProjectDaoImpl implements CustomizedProjectDao {
 
         }
 
+        if (tokens.length > 0 && !mandatoryList.isEmpty()) {
+            queryString += " AND ";
+        }
+
+        if(!mandatoryList.isEmpty()){
+
+            queryString += "technology.id in (:techIdList)" +
+                    "GROUP BY p.id " +
+                    "HAVING COUNT(DISTINCT u.technology.id) = :techCount ";
+
+
+        }
+
         queryString += " ORDER BY p.startDate DESC";
 
         Query query = entityManager.createQuery(queryString).setFirstResult((page-1)*size).setMaxResults(size+1);
@@ -52,7 +69,11 @@ public class CustomizedProjectDaoImpl implements CustomizedProjectDao {
             for (int i = 0; i<tokens.length; i++) {
                 query.setParameter("token" + i, '%' + tokens[i] + '%');
             }
+        }
 
+        if (!mandatoryList.isEmpty()) {
+            query.setParameter("techIdList" , mandatoryList );
+            query.setParameter("techCount" , mandatoryList.size() );
         }
 
         List<Project> products = query.getResultList();

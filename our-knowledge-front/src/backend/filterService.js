@@ -16,6 +16,10 @@ export const saveFilter = (userId, filterName, onSuccess) =>
     appFetch(`/filter/save`,
         config('Post', {userId, filterName}), onSuccess);
 
+export const clearFilter = (userId, onSuccess) =>
+    appFetch(`/filter/clear`,
+        config('Post', {userId}), onSuccess);
+
 export const deleteFilter = (userId, filterId, onSuccess) =>
     appFetch(`/filter/delete`,
         config('Post', {userId, filterId}), onSuccess);

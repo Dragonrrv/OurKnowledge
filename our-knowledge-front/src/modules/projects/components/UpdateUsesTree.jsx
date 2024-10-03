@@ -9,9 +9,7 @@ import TreeList from "../../common/components/TreeList";
 const UpdateUsesTree = ({tree, dept}) => {
 
     const dispatch = useDispatch();
-
     const projectId = useSelector(projects.selectors.getProjectId);
-    console.log(projectId)
     const [isOpen, setIsOpen] = useState(true);
 
     const toggleOpen = () => {

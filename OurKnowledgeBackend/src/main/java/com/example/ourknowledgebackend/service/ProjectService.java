@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ProjectService {
 
-    Block<Project> listProjects(int page, String keywords, int size);
+    Block<Project> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException;
 
     ProjectDetails projectDetails(Long id) throws InstanceNotFoundException;
 

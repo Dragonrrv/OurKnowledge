@@ -12,12 +12,11 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.directory.InvalidAttributesException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +65,7 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
+    @Transactional
     public void saveFilter(Long userId, String name) throws InstanceNotFoundException, DuplicateInstanceException {
         User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
         Filter filter = filterDao.findByUserAndName(user, defaultFilter).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", null));
@@ -76,6 +76,14 @@ public class FilterServiceImpl implements FilterService {
         filterDao.save(filter);
         entityManager.flush();
         filterDao.save(new Filter(user, defaultFilter));
+    }
+
+    @Override
+    public void clearFilter(Long userId) throws InstanceNotFoundException {
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
+        Filter filter = filterDao.findByUserAndName(user, defaultFilter).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", null));
+        List<FilterParam> filterParamList = filterParamDao.findAllByFilter(filter);
+        filterParamDao.deleteAll(filterParamList);
     }
 
     @Override
@@ -116,17 +124,21 @@ public class FilterServiceImpl implements FilterService {
 
     public void deleteFilterParam(Long filterParamId) throws InstanceNotFoundException {
         FilterParam filterParam = filterParamDao.findById(filterParamId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filterParam", filterParamId));
-        // Borrar todos los filterParam padres (aunque parezca extraño) y todos los hijos (aunque debiera ser inecesario)
-        deleteFilterParamHierarchy(filterParam);
+        deleteFilterParamHierarchy(filterParam, filterParam.isRecommended());
     }
 
-    private void deleteFilterParamHierarchy(FilterParam filterParam) {
+    private void deleteFilterParamHierarchy(FilterParam filterParam, Boolean recommended) {
         if (filterParam.getTechnology().getParentId() != null) {
             List<FilterParam> brotherFilterParams = filterParamDao.findAllByFilterAndTechnologyParentId(
                     filterParam.getFilter() , filterParam.getTechnology().getParentId());
             if (brotherFilterParams.size() == 1) {
                 Optional<FilterParam> parentFilterParam = filterParamDao.findByFilterAndTechnologyId(filterParam.getFilter(), filterParam.getTechnology().getParentId());
-                parentFilterParam.ifPresent(this::deleteFilterParamHierarchy);
+                parentFilterParam.ifPresent(value -> deleteFilterParamHierarchy(value, recommended));
+            }
+        }
+        if(recommended){
+            if(filterParam.isMandatory()){
+                return;
             }
         }
         filterParamDao.delete(filterParam);

@@ -1,5 +1,6 @@
 package com.example.ourknowledgebackend.api;
 
+import com.example.ourKnowledge.api.FilterApi;
 import com.example.ourKnowledge.api.ProjectApi;
 import com.example.ourKnowledge.api.TechnologyApi;
 import com.example.ourKnowledge.api.UserApi;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
+public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi, FilterApi {
 
     private final TechnologyService technologyService;
 
@@ -137,10 +138,15 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
 
     @Override
     @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
-    public ResponseEntity listProjects(ListProjectsRequestDTO listProjectsRequestDTO) {
-        return ResponseEntity.status(200).body(projectService.listProjects(listProjectsRequestDTO.getPage(),
-                listProjectsRequestDTO.getKeywords() != null ? listProjectsRequestDTO.getKeywords().trim() : null,
-                listProjectsRequestDTO.getSize()));
+    public ResponseEntity listProjects(ListProjectsRequestDTO listProjectsRequestDTO){
+        try {
+            return ResponseEntity.status(200).body(projectService.listProjects(listProjectsRequestDTO.getPage(),
+                    listProjectsRequestDTO.getSize(),
+                    listProjectsRequestDTO.getKeywords() != null ? listProjectsRequestDTO.getKeywords().trim() : null,
+                    longId(listProjectsRequestDTO.getFilterId())));
+        } catch (InstanceNotFoundException e){
+            return ResponseEntity.status(404).body(e);
+        }
     }
 
 
@@ -326,6 +332,17 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi {
             filterService.saveFilter(longId(saveFilterRequestDTO.getUserId()), saveFilterRequestDTO.getFilterName());
             return ResponseEntity.status(200).body(filterService.listFilter(longId(saveFilterRequestDTO.getUserId())));
         } catch (InstanceNotFoundException | DuplicateInstanceException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity clearFilter(ClearFilterRequestDTO clearFilterRequestDTO) {
+        try {
+            filterService.clearFilter(longId(clearFilterRequestDTO.getUserId()));
+            return ResponseEntity.status(200).body(filterService.getDefaultFilter(longId(clearFilterRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

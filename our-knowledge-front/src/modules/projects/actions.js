@@ -7,10 +7,10 @@ const findProjectsCompleted = projectsResult => ({
     projectsResult
 });
 
-export const findProjects = (page, keywords) => dispatch => {
+export const findProjects = (page, keywords, filterId) => dispatch => {
 
     dispatch(clearProjectsResult());
-    backend.projectService.findProjects(page, keywords,
+    backend.projectService.findProjects(page, keywords, filterId,
         result => dispatch(findProjectsCompleted(result)));
 
 }

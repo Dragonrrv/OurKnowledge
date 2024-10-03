@@ -405,7 +405,7 @@ paths:
       summary: get all filters by an user
       operationId: listFilters
       tags:
-        - technology
+        - filter
       requestBody:
         content:
           application/json:
@@ -425,7 +425,7 @@ paths:
       summary: get a filter and all technologies it uses
       operationId: getFilter
       tags:
-        - technology
+        - filter
       requestBody:
         content:
           application/json:
@@ -445,7 +445,7 @@ paths:
       summary: get the default filter
       operationId: getDefaultFilter
       tags:
-        - technology
+        - filter
       requestBody:
         content:
           application/json:
@@ -465,7 +465,7 @@ paths:
       summary: save filter with a name
       operationId: saveFilter
       tags:
-        - technology
+        - filter
       requestBody:
         content:
           application/json:
@@ -480,12 +480,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/listFiltersResponse'
 
+  /filter/clear:
+    post:
+      summary: clear the default filter
+      operationId: clearFilter
+      tags:
+        - filter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clearFilterRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getFilterResponse'
+
   /filter/delete:
     post:
       summary: delete a filter
       operationId: deleteFilter
       tags:
-        - technology
+        - filter
       requestBody:
         content:
           application/json:
@@ -505,7 +525,7 @@ paths:
       summary: create, update or delete a filterParam
       operationId: updateFilterParam
       tags:
-        - technology
+        - filter
       requestBody:
         content:
           application/json:
@@ -646,6 +666,8 @@ components:
           default: 5
         keywords:
           type: string
+        filterId:
+          type: integer
 
     listProjectsResponse:
       type: object
@@ -991,6 +1013,12 @@ components:
           type: integer
         filterName:
           type: string
+
+    clearFilterRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
 
     deleteFilterRequest:
       type: object

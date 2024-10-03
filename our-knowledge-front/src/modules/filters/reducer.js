@@ -15,6 +15,9 @@ const filterList = (state = initialState.filterList, action) => {
         case actionTypes.FIND_FILTERS_COMPLETED:
             return action.filterList;
 
+        case actionTypes.UPDATE_FILTERS_COMPLETED:
+            return action.filterList;
+
         case actionTypes.CLEAR_FILTER_SEARCH:
             return initialState.filterList;
 
@@ -29,7 +32,7 @@ const filterDetails = (state = initialState.filterDetails, action) => {
 
     switch (action.type) {
 
-        case actionTypes.FIND_FILTER_BY_ID_COMPLETED:
+        case actionTypes.FIND_FILTER_COMPLETED:
             return action.filterDetails;
 
         case actionTypes.SAVE_FILTER_COMPLETED:

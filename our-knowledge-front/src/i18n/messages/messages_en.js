@@ -24,6 +24,7 @@ export default {
     'project.global.buttons.update': 'Update',
     'project.global.buttons.delete': 'Delete',
     'project.global.exceptions.NetworkError': 'Network error',
+    'project.global.fields.loading': 'Loading',
     'project.global.fields.date': 'Date',
     'project.global.fields.startDate': 'Start date',
     'project.global.fields.endDate': 'End date',
@@ -40,6 +41,8 @@ export default {
     'project.global.fields.mainSkill': 'Main Skill',
     'project.global.fields.likeIt': 'Like it',
     'project.global.fields.technologyName': 'Technology Name',
+    'project.global.fields.saveFilter': 'Save Filter',
+    'project.global.fields.savedFilters': 'Saved filters: ',
     'project.global.validator.passwordsDoNotMatch': 'Passwords do not match',
     'project.global.validator.required': 'Required field',
     'project.global.fields.moreOptions': 'More Options',
@@ -80,6 +83,11 @@ export default {
     'project.projects.addProject.size': 'Expected size: ',
     'project.projects.addProject.TechnologiesUsed': 'Mark technologies used: ',
 
+    'project.filters.newFilter': 'Save custom filter',
+    'project.filters.filterName': 'Filter Name: ',
+    'project.filters.search': 'search',
+    'project.filters.clear': 'clear',
+    'project.filters.filterByName': 'Filter by name: ',
     'project.filters.technologyFilter.title': 'Filter by technologies: ',
     'project.filters.filterList.noFilters': 'There\'s not filters saved',
 

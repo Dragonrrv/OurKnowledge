@@ -12,7 +12,7 @@ const FilterTechnologyTree = ({tree, dept}) => {
 
     const dispatch = useDispatch();
     const userId = useSelector(users.selectors.getUserId);
-    const filterId = useSelector(selectors.getFilterDetailsId);
+    const filterId = useSelector(selectors.getFilterId);
     const [isOpen, setIsOpen] = useState(true);
 
     const toggleOpen = () => {
@@ -20,8 +20,6 @@ const FilterTechnologyTree = ({tree, dept}) => {
     };
 
     const updateMandatory = () => {
-        console.log(filterId)
-        console.log(tree.parent.id)
         dispatch(actions.updateFilterParam(userId, tree.parent.filterParamId, filterId, tree.parent.id,
             !tree.parent.mandatory, false))
     };
@@ -42,9 +40,11 @@ const FilterTechnologyTree = ({tree, dept}) => {
                         <div style={{flexBasis: '50%'}}>
                             <TickBox ok={tree.parent.mandatory} clickable={true} onClick={updateMandatory}/>
                         </div>
-                        <div style={{flexBasis: '50%'}}>
-                            <TickBox ok={tree.parent.recommended} clickable={true} onClick={updateRecommended}/>
-                        </div>
+                        {!tree.parent.recommendedUnnecessary && (
+                            <div style={{flexBasis: '50%'}}>
+                                <TickBox ok={tree.parent.recommended} clickable={true} onClick={updateRecommended}/>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -63,7 +63,8 @@ FilterTechnologyTree.propTypes = {
             filterParamId: PropTypes.number,
             mandatory: PropTypes.bool,
             recommended: PropTypes.bool,
-            unnecessary: PropTypes.bool.isRequired
+            unnecessary: PropTypes.bool.isRequired,
+            recommendedUnnecessary: PropTypes.bool.isRequired
         }).isRequired,
         children: PropTypes.array.isRequired
     }).isRequired

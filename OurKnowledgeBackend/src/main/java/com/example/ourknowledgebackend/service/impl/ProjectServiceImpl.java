@@ -36,13 +36,31 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ExtendedTechnologyDao extendedTechnologyDao;
 
+    private final FilterDao filterDao;
+
+    private final FilterParamDao filterParamDao;
+
     private final UserDao userDao;
 
     private final KnowledgeDao knowledgeDao;
 
     @Override
-    public Block<Project> listProjects(int page, String keywords, int size) {
-        Slice<Project> slice = projectDao.find(page, keywords, size);
+    public Block<Project> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException {
+        List<Long> mandatoryList = new ArrayList<>();
+        List<Long> recommendedList = new ArrayList<>();
+        if(filterId!=null){
+            Filter filter = filterDao.findById(filterId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", filterId));;
+            List<FilterParam> filterParamList = filterParamDao.findAllByFilter(filter);
+            mandatoryList = filterParamList.stream()
+                    .filter(FilterParam::isMandatory)
+                    .map(filterParam -> filterParam.getTechnology().getId())
+                    .collect(Collectors.toList());
+            recommendedList = filterParamList.stream()
+                    .filter(FilterParam::isRecommended)
+                    .map(filterParam -> filterParam.getTechnology().getId())
+                    .collect(Collectors.toList());
+        }
+        Slice<Project> slice = projectDao.find(page, size, keywords, mandatoryList, recommendedList);
         return new Block<>(slice.getContent(), slice.hasNext(), page, size);
     }
 
