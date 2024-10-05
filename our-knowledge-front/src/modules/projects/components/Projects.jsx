@@ -18,6 +18,9 @@ const Projects = ({projects}) => (
                 <th scope="col">
                     <FormattedMessage id='project.global.fields.status'/>
                 </th>
+                <th scope="col">
+                    <FormattedMessage id='project.global.fields.recommendedTechnologies'/>
+                </th>
             </tr>
         </thead>
 
@@ -27,6 +30,7 @@ const Projects = ({projects}) => (
                     <td><ProjectLink id={project.id} name={project.name}/></td>
                     <td>{project.startDate}</td>
                     <td>{project.status}</td>
+                    <td>{project.recommendedCount}</td>
                 </tr>
             )}
         </tbody>

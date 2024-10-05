@@ -3,6 +3,7 @@ package com.example.ourknowledgebackend.service;
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
+import com.example.ourknowledgebackend.model.ProjectResult;
 import com.example.ourknowledgebackend.model.entities.Participation;
 import com.example.ourknowledgebackend.model.entities.Project;
 import com.example.ourknowledgebackend.model.entities.Uses;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public interface ProjectService {
 
-    Block<Project> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException;
+    Block<ProjectResult> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException;
 
     ProjectDetails projectDetails(Long id) throws InstanceNotFoundException;
 

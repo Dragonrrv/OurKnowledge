@@ -48,6 +48,7 @@ export default {
     'project.global.fields.moreOptions': 'More Options',
     'project.global.filter.mandatory': 'Mandatory:',
     'project.global.filter.recommended': 'Recommended:',
+    'project.global.fields.recommendedTechnologies': 'Recommended Technologies',
 
     'project.users.Login.title': 'Login',
 

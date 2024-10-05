@@ -3,6 +3,7 @@ package com.example.ourknowledgebackend.service;
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
+import com.example.ourknowledgebackend.model.ProjectResult;
 import com.example.ourknowledgebackend.model.SimpleVerification;
 import com.example.ourknowledgebackend.model.entities.*;
 import org.junit.jupiter.api.Test;
@@ -67,16 +68,16 @@ class ProjectServiceTest {
         Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project1);
-        projectList.add(project2);
-        projectList.add(project3);
-        projectList.add(project4);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project1, 0L));
+        projectList.add(new ProjectResult(project2, 0L));
+        projectList.add(new ProjectResult(project3, 0L));
+        projectList.add(new ProjectResult(project4, 0L));
 
-        Block<Project> expected = new Block<>(projectList, false, 1, 5);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
         
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
             assertEquals(expected, result);
             
@@ -93,16 +94,16 @@ class ProjectServiceTest {
         Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-02", 3));
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-03", 4));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project1);
-        projectList.add(project4);
-        projectList.add(project3);
-        projectList.add(project2);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project1, 0L));
+        projectList.add(new ProjectResult(project4, 0L));
+        projectList.add(new ProjectResult(project3, 0L));
+        projectList.add(new ProjectResult(project2, 0L));
 
-        Block<Project> expected = new Block<>(projectList, false, 1, 5);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
             assertEquals(expected, result);
             
@@ -119,15 +120,15 @@ class ProjectServiceTest {
         Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project1);
-        projectList.add(project2);
-        projectList.add(project3);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project1, 0L));
+        projectList.add(new ProjectResult(project2, 0L));
+        projectList.add(new ProjectResult(project3, 0L));
 
-        Block<Project> expected = new Block<>(projectList, true, 1, 3);
+        Block<ProjectResult> expected = new Block<>(projectList, true, 1, 3);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
             assertEquals(expected, result);
             
@@ -143,16 +144,16 @@ class ProjectServiceTest {
         Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project1);
-        projectList.add(project2);
-        projectList.add(project3);
-        projectList.add(project4);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project1, 0L));
+        projectList.add(new ProjectResult(project2, 0L));
+        projectList.add(new ProjectResult(project3, 0L));
+        projectList.add(new ProjectResult(project4, 0L));
 
-        Block<Project> expected = new Block<>(projectList, false, 1, 4);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 4);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
             assertEquals(expected, result);
             
@@ -168,14 +169,14 @@ class ProjectServiceTest {
         Project project3 = projectDao.save(new Project("name3key", "description3", "doing", "2024-08-01", 3));
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project1);
-        projectList.add(project3);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project1, 0L));
+        projectList.add(new ProjectResult(project3, 0L));
 
-        Block<Project> expected = new Block<>(projectList, false, 1, 5);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), "KeY", null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), "KeY", null);
 
             assertEquals(expected, result);
 
@@ -191,12 +192,12 @@ class ProjectServiceTest {
         Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
-        List<Project> projectList = new ArrayList<>();
+        List<ProjectResult> projectList = new ArrayList<>();
 
-        Block<Project> expected = new Block<>(projectList, false, 1, 5);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), "key", null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), "key", null);
 
             assertEquals(expected, result);
 
@@ -212,14 +213,14 @@ class ProjectServiceTest {
         Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project3);
-        projectList.add(project4);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project3, 0L));
+        projectList.add(new ProjectResult(project4, 0L));
 
-        Block<Project> expected = new Block<>(projectList, false, 2, 2);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 2, 2);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
             assertEquals(expected, result);
             
@@ -236,13 +237,13 @@ class ProjectServiceTest {
         Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
         Project project5 = projectDao.save(new Project("name5", "description5", "doing", "2024-08-01", 4));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project5);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project5, 0L));
 
-        Block<Project> expected = new Block<>(projectList, false, 3, 2);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 3, 2);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, null);
 
             assertEquals(expected, result);
             
@@ -273,13 +274,92 @@ class ProjectServiceTest {
         filterParamDao.save(new FilterParam(filter1, technology2, true, false));
         filterParamDao.save(new FilterParam(filter1, technology3, true, false));
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project1);
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project1, 0L));
 
-        Block<Project> expected = new Block<>(projectList, false, 1, 5);
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
 
         try {
-            Block<Project> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, filter1.getId());
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, filter1.getId());
+
+            assertEquals(expected, result);
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void listProjectsWithRecommended() {
+        Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project4, technology1));
+        usesDao.save(new Uses(project4, technology2));
+        usesDao.save(new Uses(project4, technology3));
+        usesDao.save(new Uses(project3, technology1));
+        usesDao.save(new Uses(project3, technology3));
+        usesDao.save(new Uses(project2, technology1));
+        usesDao.save(new Uses(project2, technology2));
+
+        User user1 = userDao.save(new User("Juan", "example@example.com", adminRole, null));
+        Filter filter1 = filterDao.save(new Filter(user1, "test"));
+        filterParamDao.save(new FilterParam(filter1, technology2, false, true));
+        filterParamDao.save(new FilterParam(filter1, technology3, false, true));
+
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project4, 2L));
+        projectList.add(new ProjectResult(project1, 1L));
+        projectList.add(new ProjectResult(project3, 1L));
+        projectList.add(new ProjectResult(project2, 0L));
+
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
+
+        try {
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, filter1.getId());
+
+            assertEquals(expected, result);
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void listProjectsWithMandatoryAndRecommended() {
+        Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project1, technology1));
+        usesDao.save(new Uses(project1, technology2));
+        usesDao.save(new Uses(project1, technology3));
+        usesDao.save(new Uses(project2, technology1));
+        usesDao.save(new Uses(project2, technology3));
+        usesDao.save(new Uses(project3, technology1));
+        usesDao.save(new Uses(project3, technology2));
+
+        User user1 = userDao.save(new User("Juan", "example@example.com", adminRole, null));
+        Filter filter1 = filterDao.save(new Filter(user1, "test"));
+        filterParamDao.save(new FilterParam(filter1, technology1, true, false));
+        filterParamDao.save(new FilterParam(filter1, technology3, false, true));
+
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project1, 1L));
+        projectList.add(new ProjectResult(project2, 1L));
+        projectList.add(new ProjectResult(project3, 0L));
+
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
+
+        try {
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, filter1.getId());
 
             assertEquals(expected, result);
 

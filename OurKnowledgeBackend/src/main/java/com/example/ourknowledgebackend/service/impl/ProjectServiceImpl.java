@@ -45,7 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final KnowledgeDao knowledgeDao;
 
     @Override
-    public Block<Project> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException {
+    public Block<ProjectResult> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException {
         List<Long> mandatoryList = new ArrayList<>();
         List<Long> recommendedList = new ArrayList<>();
         if(filterId!=null){
@@ -60,7 +60,7 @@ public class ProjectServiceImpl implements ProjectService {
                     .map(filterParam -> filterParam.getTechnology().getId())
                     .collect(Collectors.toList());
         }
-        Slice<Project> slice = projectDao.find(page, size, keywords, mandatoryList, recommendedList);
+        Slice<ProjectResult> slice = projectDao.find(page, size, keywords, mandatoryList, recommendedList);
         return new Block<>(slice.getContent(), slice.hasNext(), page, size);
     }
 

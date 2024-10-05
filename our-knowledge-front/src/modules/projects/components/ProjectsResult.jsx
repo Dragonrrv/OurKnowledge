@@ -5,11 +5,13 @@ import * as selectors from '../selectors';
 import * as actions from '../actions';
 import {Pager} from '../../common';
 import Projects from './Projects';
+import filters from "../../filters";
 
 const ProjectsResult = ({keywords}) => {
 
 
     const projectsResult = useSelector(selectors.getProjectsResult);
+    const filterId = useSelector(filters.selectors.getFilterId);
     const dispatch = useDispatch();
 
     if (!projectsResult) {
@@ -32,11 +34,11 @@ const ProjectsResult = ({keywords}) => {
                 back={{
                     enabled: projectsResult.page > 1,
                     onClick: () =>
-                        dispatch(actions.findProjects(projectsResult.page-1, keywords))}}
+                        dispatch(actions.findProjects(projectsResult.page-1, keywords.trim(), filterId))}}
                 next={{
                     enabled: projectsResult.existMoreItems,
                     onClick: () =>
-                        dispatch(actions.findProjects(projectsResult.page+1, keywords))}}/>
+                        dispatch(actions.findProjects(projectsResult.page+1, keywords, filterId))}}/>
         </div>
 
     );

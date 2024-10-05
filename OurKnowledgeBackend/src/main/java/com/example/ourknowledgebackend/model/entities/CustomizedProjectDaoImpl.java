@@ -1,5 +1,6 @@
 package com.example.ourknowledgebackend.model.entities;
 
+import com.example.ourknowledgebackend.model.ProjectResult;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -25,27 +26,23 @@ public class CustomizedProjectDaoImpl implements CustomizedProjectDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Slice<Project> find(int page, int size, String keywords,  List<Long> mandatoryList,  List<Long> recommendedList) {
+    public Slice<ProjectResult> find(int page, int size, String keywords, List<Long> mandatoryList, List<Long> recommendedList) {
 
         String[] tokens = getTokens(keywords);
-        String queryString = "SELECT DISTINCT p FROM Project p";
-
-        if (!mandatoryList.isEmpty()) {
-            queryString += " join Uses u on p = u.project";
-        }
+        String queryString = "SELECT DISTINCT new com.example.ourknowledgebackend.model.ProjectResult(p.id, p.name, p.description, p.status, p.startDate, p.size," +
+                " (SELECT COUNT(DISTINCT u2.technology.id) FROM Uses u2 WHERE u2.project = p AND u2.technology.id IN :recommendedList) AS recommendedCount)" +
+                " FROM Project p left join Uses u on p = u.project";
 
         if (tokens.length > 0 || !mandatoryList.isEmpty()) {
             queryString += " WHERE ";
         }
 
-        if (tokens.length != 0) {
+        if (tokens.length > 0) {
 
             for (int i = 0; i<tokens.length-1; i++) {
                 queryString += "LOWER(p.name) LIKE LOWER(:token" + i + ") AND ";
             }
-
             queryString += "LOWER(p.name) LIKE LOWER(:token" + (tokens.length-1) + ")";
-
         }
 
         if (tokens.length > 0 && !mandatoryList.isEmpty()) {
@@ -53,17 +50,20 @@ public class CustomizedProjectDaoImpl implements CustomizedProjectDao {
         }
 
         if(!mandatoryList.isEmpty()){
-
-            queryString += "technology.id in (:techIdList)" +
-                    "GROUP BY p.id " +
-                    "HAVING COUNT(DISTINCT u.technology.id) = :techCount ";
-
-
+            queryString += "technology.id in (:mandatoryList)";
         }
 
-        queryString += " ORDER BY p.startDate DESC";
+        queryString += " GROUP BY p.id ";
+
+        if(!mandatoryList.isEmpty()){
+            queryString += "HAVING COUNT(DISTINCT u.technology.id) = :mandatoryCount ";
+        }
+
+        queryString += " ORDER BY recommendedCount DESC, p.startDate DESC";
 
         Query query = entityManager.createQuery(queryString).setFirstResult((page-1)*size).setMaxResults(size+1);
+
+        query.setParameter("recommendedList" , recommendedList );
 
         if (tokens.length != 0) {
             for (int i = 0; i<tokens.length; i++) {
@@ -72,11 +72,11 @@ public class CustomizedProjectDaoImpl implements CustomizedProjectDao {
         }
 
         if (!mandatoryList.isEmpty()) {
-            query.setParameter("techIdList" , mandatoryList );
-            query.setParameter("techCount" , mandatoryList.size() );
+            query.setParameter("mandatoryList" , mandatoryList );
+            query.setParameter("mandatoryCount" , mandatoryList.size() );
         }
 
-        List<Project> products = query.getResultList();
+        List<ProjectResult> products = query.getResultList();
         boolean hasNext = products.size() == (size+1);
 
         if (hasNext) {
