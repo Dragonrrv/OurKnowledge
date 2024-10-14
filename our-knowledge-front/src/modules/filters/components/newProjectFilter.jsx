@@ -4,15 +4,15 @@ import filters from "../index";
 import {useDispatch, useSelector} from "react-redux";
 import users from "../../users";
 import {FormattedMessage} from "react-intl";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 const newProjectFilter = () => {
-
+    const {filterNameParam} = useParams() || '';
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const userId = useSelector(users.selectors.getUserId);
-    const [filterName, setFilterName] = useState('');
+    const [filterName, setFilterName] = useState(filterNameParam);
 
     useEffect(() => {
         dispatch(filters.actions.getDefaultFilter(userId));

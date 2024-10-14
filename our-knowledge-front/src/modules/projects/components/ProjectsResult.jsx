@@ -7,7 +7,7 @@ import {Pager} from '../../common';
 import Projects from './Projects';
 import filters from "../../filters";
 
-const ProjectsResult = ({keywords}) => {
+const ProjectsResult = ({keywords, useFilter}) => {
 
 
     const projectsResult = useSelector(selectors.getProjectsResult);
@@ -34,11 +34,17 @@ const ProjectsResult = ({keywords}) => {
                 back={{
                     enabled: projectsResult.page > 1,
                     onClick: () =>
-                        dispatch(actions.findProjects(projectsResult.page-1, keywords.trim(), filterId))}}
+                        useFilter
+                            ? dispatch(actions.findProjects(projectsResult.page - 1, keywords, filterId))
+                            : dispatch(actions.findProjects(projectsResult.page - 1, ''))
+            }}
                 next={{
                     enabled: projectsResult.existMoreItems,
                     onClick: () =>
-                        dispatch(actions.findProjects(projectsResult.page+1, keywords, filterId))}}/>
+                        useFilter
+                            ? dispatch(actions.findProjects(projectsResult.page + 1, keywords, filterId))
+                            : dispatch(actions.findProjects(projectsResult.page + 1, ''))
+            }}/>
         </div>
 
     );

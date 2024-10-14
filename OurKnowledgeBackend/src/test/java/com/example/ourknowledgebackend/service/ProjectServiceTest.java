@@ -330,6 +330,47 @@ class ProjectServiceTest {
     }
 
     @Test
+    void listProjectsRecommendedCount() {
+        Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));
+        Project project3 = projectDao.save(new Project("name3", "description3", "doing", "2024-08-01", 3));
+        Project project4 = projectDao.save(new Project("name4", "description4", "doing", "2024-08-01", 4));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        usesDao.save(new Uses(project4, technology1));
+        usesDao.save(new Uses(project4, technology2));
+        usesDao.save(new Uses(project4, technology3));
+        usesDao.save(new Uses(project3, technology1));
+        usesDao.save(new Uses(project3, technology3));
+        usesDao.save(new Uses(project2, technology1));
+        usesDao.save(new Uses(project2, technology2));
+
+        User user1 = userDao.save(new User("Juan", "example@example.com", adminRole, null));
+        Filter filter1 = filterDao.save(new Filter(user1, "test"));
+        filterParamDao.save(new FilterParam(filter1, technology1, false, true));
+        filterParamDao.save(new FilterParam(filter1, technology2, false, true));
+        filterParamDao.save(new FilterParam(filter1, technology3, false, true));
+
+        List<ProjectResult> projectList = new ArrayList<>();
+        projectList.add(new ProjectResult(project4, 2L));
+        projectList.add(new ProjectResult(project1, 1L));
+        projectList.add(new ProjectResult(project3, 1L));
+        projectList.add(new ProjectResult(project2, 0L));
+
+        Block<ProjectResult> expected = new Block<>(projectList, false, 1, 5);
+
+        try {
+            Block<ProjectResult> result = projectService.listProjects(expected.getPage(), expected.getSize(), null, filter1.getId());
+
+            assertEquals(expected, result);
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
     void listProjectsWithMandatoryAndRecommended() {
         Project project1 = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
         Project project2 = projectDao.save(new Project("name2", "description2", "doing", "2024-08-01", 2));

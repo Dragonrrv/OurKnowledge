@@ -2,7 +2,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {FormattedMessage} from "react-intl";
 
 import * as selectors from '../selectors';
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 import profiles from "../index";
 import PropTypes from "prop-types";
 import users from "../../users";
@@ -12,13 +12,18 @@ import AddTechnology from "../../common/components/AddTechnology";
 
 const UpdateProfile= () => {
 
+    const dispatch = useDispatch();
     const profile = useSelector(selectors.getProfile);
     const userId = useSelector(users.selectors.getUserId);
-    const dispatch = useDispatch();
+
 
     useEffect(() => {
         dispatch(profiles.actions.findProfile(userId, userId));
     }, [dispatch]);
+
+    const updateUser = (startDate) => {
+        dispatch(users.actions.updateUser(userId, startDate));
+    }
 
     if (!profile) {
         return <div>Loading...</div>
@@ -31,10 +36,13 @@ const UpdateProfile= () => {
                     <FormattedMessage id="project.profiles.tittle.updateProfile"/>
                 </h5>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <FormattedMessage id='project.global.fields.name'/>
-                </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px'}}>
+                <h6><FormattedMessage id='project.profiles.profile.startDate' /></h6>
+                <input id="startDate" type="date" className="form-control mr-sm-2" style={{ width: '150px', marginLeft: '10px'}}
+                       value={profile.startDate} onChange={e => updateUser(e.target.value)} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px'}}>
+                <h6><FormattedMessage id='project.profiles.updateProfile.knowledge' /></h6>
                 <div style={{ marginLeft: 'auto', display: 'flex' }}>
                     <div style={{ width: '70px' }}>
                         <FormattedMessage id='project.global.fields.known'/>

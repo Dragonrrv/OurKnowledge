@@ -64,3 +64,8 @@ export const updateFilterParam = (userId, filterParamId, filterId, technologyId,
     backend.filterService.updateFilterParam(userId, filterParamId, filterId, technologyId, mandatory, relevant,
         filterDetails => dispatch(updateFilterCompleted(filterDetails)));
 }
+
+export const useProjectAsFilter = (userId, projectId) => dispatch => {
+    backend.filterService.useProjectAsFilter(userId, projectId,
+        filterDetails => dispatch(findFilterCompleted(filterDetails)))
+}

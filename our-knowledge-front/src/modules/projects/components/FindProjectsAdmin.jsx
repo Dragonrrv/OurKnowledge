@@ -9,7 +9,6 @@ import FilterList from "../../filters/components/FilterList";
 import MoreOptions from "../../filters/components/MoreOptions";
 import filters from "../../filters";
 import users from "../../users";
-import * as selectors from "../../filters/selectors";
 
 const FindProjectsAdmin = () => {
 
@@ -18,20 +17,21 @@ const FindProjectsAdmin = () => {
     const userId = useSelector(users.selectors.getUserId);
     const filterId = useSelector(filters.selectors.getFilterId);
     const [keywords, setKeywords] = useState('');
+    const [useFilter, setUseFilter] = useState(false);
 
     useEffect(() => {
         dispatch(filters.actions.getDefaultFilter(userId));
-        dispatch(projects.actions.findProjects(1, keywords, null));
+        dispatch(projects.actions.findProjects(1, ''));
     }, [dispatch]);
 
     const findProjects = event => {
         event.preventDefault();
+        setUseFilter(true);
         dispatch(projects.actions.findProjects(1, keywords.trim(), filterId));
     }
 
     const clearFilter = event => {
         event.preventDefault();
-        console.log("lo intenté")
         dispatch(filters.actions.clearFilter(userId));
     }
 
@@ -41,7 +41,7 @@ const FindProjectsAdmin = () => {
                 <div style={{display: 'flex', justifyContent: 'space-between'}}>
                     <div>
                         <h6><FormattedMessage id='project.filters.filterByName'/></h6>
-                        <input id="keywords" type="text" className="form-control mr-sm-2" style={{maxWidth: '500px', width: '100%'}}
+                        <input id="keywords" type="text" className="form-control mr-sm-2" style={{maxWidth: '350px', width: '100%'}}
                                value={keywords} onChange={e => setKeywords(e.target.value)}/>
                     </div>
                     <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
@@ -68,11 +68,10 @@ const FindProjectsAdmin = () => {
                         <FormattedMessage id="project.filters.newFilter"/>
                     </Link>
                 </div>
-                <ProjectsResult keywords={keywords}/>
+                <ProjectsResult keywords={keywords} useFilter={useFilter}/>
             </div>
             <FilterList/>
         </div>
-
 
     );
 

@@ -1,36 +1,62 @@
-import {useDispatch} from "react-redux";
-import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import React, {useEffect, useState} from "react";
 import {FormattedMessage} from "react-intl";
 import users from "../index";
 import UsersResult from "./UsersResult";
+import {Link, useNavigate} from "react-router-dom";
+import filters from "../../filters";
+import MoreOptions from "../../filters/components/MoreOptions";
+import FilterList from "../../filters/components/FilterList";
 
 const FindUsersAdmin = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const userId = useSelector(users.selectors.getUserId);
+    const filterId = useSelector(filters.selectors.getFilterId);
     const [keywords, setKeywords] = useState('');
+    const [useFilter, setUseFilter] = useState(false);
 
     useEffect(() => {
-        dispatch(users.actions.findUsers(1, keywords));
+        dispatch(filters.actions.getDefaultFilter(userId));
+        dispatch(users.actions.findUsers(1, ''));
     }, [dispatch]);
 
-    const handleSubmit = event => {
+    const findUsers = event => {
         event.preventDefault();
-        dispatch(users.actions.findUsers(1, keywords.trim()));
+        setUseFilter(true)
+        dispatch(users.actions.findUsers(1, keywords.trim(), filterId));
+    }
+
+    const clearFilter = event => {
+        event.preventDefault();
+        dispatch(filters.actions.clearFilter(userId));
     }
 
     return (
-        <div>
-            <form className="form-inline mt-2 mt-md-0" onSubmit={e => handleSubmit(e)}>
-
-                <input id="keywords" type="text" className="form-control mr-sm-2"
-                       value={keywords} onChange={e => setKeywords(e.target.value)}/>
-
-                <button type="submit" className="btn btn-primary my-2 my-sm-0">
-                    <FormattedMessage id='project.global.buttons.search'/>
-                </button>
-
-            </form>
-            <UsersResult keywords={keywords}/>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <div style={{flexGrow: 1}}>
+                <div style={{marginBottom: '20px'}}>
+                    <h6><FormattedMessage id='project.filters.filterByName'/></h6>
+                    <input id="keywords" type="text" className="form-control mr-sm-2" style={{maxWidth: '350px', width: '100%'}}
+                           value={keywords} onChange={e => setKeywords(e.target.value)}/>
+                </div>
+                <MoreOptions/>
+                <div style={{display: 'flex'}}>
+                    <div className="nav-link" onClick={e => findUsers(e)} style={{cursor: 'pointer', color: 'blue'}} onMouseEnter={e => e.target.style.color = 'darkBlue'}  // Hover color
+                         onMouseLeave={e => e.target.style.color = 'blue'}>
+                        <FormattedMessage id='project.filters.search'/>
+                    </div><div className="nav-link" onClick={e => clearFilter(e)} style={{cursor: 'pointer', color: 'blue'}} onMouseEnter={e => e.target.style.color = 'darkBlue'}  // Hover color
+                               onMouseLeave={e => e.target.style.color = 'blue'}>
+                    <FormattedMessage id='project.filters.clear'/>
+                </div>
+                    <Link className="nav-link" to={`/filters/newProjectFilter`}>
+                        <FormattedMessage id="project.filters.newFilter"/>
+                    </Link>
+                </div>
+                <UsersResult keywords={keywords} useFilter={useFilter}/>
+            </div>
+            <FilterList/>
         </div>
 
     );

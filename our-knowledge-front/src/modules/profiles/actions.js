@@ -7,7 +7,7 @@ const profileUpdated = profile => ({
     profile
 })
 
-const findProfileCompleted = profile => ({
+export const findProfileCompleted = profile => ({
     type: actionTypes.FIND_PROFILE_COMPLETED,
     profile
 });

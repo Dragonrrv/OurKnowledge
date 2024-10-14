@@ -47,6 +47,12 @@ class FilterServiceTest {
     @Autowired
     private TechnologyDao technologyDao;
 
+    @Autowired
+    private ProjectDao projectDao;
+
+    @Autowired
+    private UsesDao usesDao;
+
 
     Filter setBaseFilter() {
         User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
@@ -374,6 +380,37 @@ class FilterServiceTest {
 
             assert true;
 
+        }
+    }
+
+    @Test
+    void createByProject() {
+        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
+        Filter filter = filterDao.save(new Filter(user, defaultFilter));
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology3.getId(), true));
+        usesDao.save(new Uses(project, technology1));
+        usesDao.save(new Uses(project, technology2));
+        usesDao.save(new Uses(project, technology3));
+
+        try {
+            filterService.createByProject(user.getId(), project.getId());
+            List<FilterParam> result = filterParamDao.findAllByFilter(filter);
+
+            assertEquals(technology1, result.get(0).getTechnology());
+            assertEquals(technology2, result.get(1).getTechnology());
+            assertEquals(technology3, result.get(2).getTechnology());
+            assertTrue(result.get(0).isRecommended());
+            assertTrue(result.get(1).isRecommended());
+            assertTrue(result.get(2).isRecommended());
+            assertEquals(3, result.size());
+            assertEquals(filter, result.get(0).getFilter());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
         }
     }
 

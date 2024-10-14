@@ -28,3 +28,8 @@ export const updateFilterParam = (userId, filterParamId, filterId, technologyId,
     appFetch(`/filter/filterParam/update`,
         config('Post', {userId, filterParamId, filterId, technologyId, mandatory, recommended}),
         onSuccess);
+
+export const useProjectAsFilter = (userId, projectId, onSuccess) =>
+    appFetch(`/filter/createByProject`,
+        config('Post', {userId, projectId}),
+        onSuccess);

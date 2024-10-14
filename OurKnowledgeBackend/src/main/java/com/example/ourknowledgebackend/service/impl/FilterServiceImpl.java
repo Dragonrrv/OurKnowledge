@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.naming.directory.InvalidAttributesException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,10 @@ public class FilterServiceImpl implements FilterService {
     private final UserDao userDao;
 
     private final TechnologyDao technologyDao;
+
+    private final ProjectDao projectDao;
+
+    private final UsesDao usesDao;
 
 
     @Value("${app.constants.default_filter_name}")
@@ -94,6 +99,17 @@ public class FilterServiceImpl implements FilterService {
         } else {
             filterDao.delete(filter);
         }
+    }
+
+    @Override
+    public void createByProject(Long userId, Long projectId) throws InstanceNotFoundException {
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
+        Project project = projectDao.findById(projectId).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", projectId));
+        Filter filter = filterDao.findByUserAndName(user, defaultFilter).orElse(null);
+        List<FilterParam> filterParamList = usesDao.findAllByProject(project).stream()
+                .map( uses -> new FilterParam( filter, uses.getTechnology(), false, true ) ).collect(Collectors.toList());
+        clearFilter(userId);
+        filterParamDao.saveAll(filterParamList);
     }
 
     public void addFilterParam(Filter filter, Long technologyId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException, PermissionException, InvalidAttributesException, DuplicateInstanceException {

@@ -10,7 +10,14 @@ public interface FilterParamDao extends CrudRepository<FilterParam, Long> {
 
     boolean existsByFilterAndTechnology(Filter filter, Technology technology);
 
-    List<FilterParam> findAllByFilterAndTechnologyParentId(Filter filter, Long parentId);
+    Optional<FilterParam> findByFilterAndTechnology(Filter filter, Technology technology);
 
     Optional<FilterParam> findByFilterAndTechnologyId(Filter filter, Long parentId);
+
+    List<FilterParam> findAllByFilterAndTechnologyParentId(Filter filter, Long parentId);
+
+    List<FilterParam> findAllByFilterAndMandatoryTrue(Filter filter);
+
+    List<FilterParam> findAllByFilterAndRecommendedTrue(Filter filter);
+
 }

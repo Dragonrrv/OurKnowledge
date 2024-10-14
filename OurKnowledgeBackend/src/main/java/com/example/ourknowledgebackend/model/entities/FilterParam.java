@@ -71,4 +71,6 @@ public class FilterParam {
     public void setRecommended(boolean recommended) {
         this.recommended = recommended;
     }
+
+
 }

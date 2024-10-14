@@ -1,20 +1,21 @@
 package com.example.ourknowledgebackend.model;
 
-import com.example.ourknowledgebackend.model.entities.Project;
+import com.example.ourknowledgebackend.model.entities.User;
 
+import java.util.Date;
 import java.util.Objects;
 
-public class ProjectResult extends Project {
+public class UserResult extends User {
 
     Long recommendedCount;
 
-    public ProjectResult(Project project, Long recommendedCount) {
-        super(project.getId(), project.getName(), project.getDescription(), project.getStatus(), project.getStartDate(), project.getSize());
+    public UserResult(User user, Long recommendedCount) {
+        super(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getStartDate());
         this.recommendedCount = recommendedCount;
     }
 
-    public ProjectResult(Long id, String name, String description, String status, String startDate, int size, Long recommendedCount) {
-        super(id, name, description, status, startDate, size);
+    public UserResult(Long id, String name, String email, String role, String startDate, Long recommendedCount) {
+        super(id, name, email, role, startDate);
         this.recommendedCount = recommendedCount;
     }
 
@@ -30,7 +31,7 @@ public class ProjectResult extends Project {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProjectResult that = (ProjectResult) o;
+        UserResult that = (UserResult) o;
         return recommendedCount.equals(that.recommendedCount);
     }
 

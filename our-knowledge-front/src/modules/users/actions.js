@@ -1,6 +1,7 @@
 import * as actionTypes from './actionTypes';
 import backend from '../../backend';
 import {removeServiceToken} from "../../backend/appFetch";
+import profiles from "../profiles";
 
 
 const loginCompleted = authenticatedUser => ({
@@ -13,11 +14,18 @@ const findUsersCompleted = usersResult => ({
     usersResult
 });
 
-export const findUsers = (page, keywords) => dispatch => {
+export const findUsers = (page, keywords, filterId) => dispatch => {
 
     dispatch(clearUsersResult());
-    backend.userService.findUsers(page, keywords,
+    backend.userService.findUsers(page, keywords, filterId,
         result => dispatch(findUsersCompleted(result)));
+}
+
+export const updateUser = (userId, startDate) => dispatch => {
+
+    dispatch(clearUsersResult());
+    backend.userService.updateUser(userId, startDate,
+        result => dispatch(profiles.actions.findProfileCompleted(result)));
 }
 
 const clearUsersResult = () => ({

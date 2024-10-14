@@ -1,5 +1,7 @@
 package com.example.ourknowledgebackend.service;
 
+import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
+import com.example.ourknowledgebackend.model.UserResult;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.model.UserProfile;
 import org.junit.jupiter.api.Test;
@@ -98,17 +100,22 @@ class UserServiceTest {
         User user3 = userDao.save(new User("Juan3", "example2@example.com", developerRole, null));
         User user4 = userDao.save(new User("Juan4", "example2@example.com", developerRole, null));
 
-        List<User> userList = new ArrayList<>();
-        userList.add(user1);
-        userList.add(user2);
-        userList.add(user3);
-        userList.add(user4);
+        List<UserResult> userList = new ArrayList<>();
+        userList.add(new UserResult(user1, 0L));
+        userList.add(new UserResult(user2, 0L));
+        userList.add(new UserResult(user3, 0L));
+        userList.add(new UserResult(user4, 0L));
 
-        Block<User> expected = new Block<>(userList, false, 1, 5);
-
-        Block<User> result = userService.listUsers(expected.getPage(), null, expected.getSize());
-
-        assertEquals(expected, result);
+        Block<UserResult> expected = new Block<>(userList, false, 1, 5);
+        
+        try {
+            Block<UserResult> result = userService.listUsers(expected.getPage(), expected.getSize(), null, null);
+            
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -118,16 +125,21 @@ class UserServiceTest {
         User user3 = userDao.save(new User("Juan3", "example2@example.com", adminRole, null));
         User user4 = userDao.save(new User("Juan4", "example2@example.com", developerRole, null));
 
-        List<User> userList = new ArrayList<>();
-        userList.add(user1);
-        userList.add(user2);
-        userList.add(user4);
+        List<UserResult> userList = new ArrayList<>();
+        userList.add(new UserResult(user1, 0L));
+        userList.add(new UserResult(user2, 0L));
+        userList.add(new UserResult(user4, 0L));
 
-        Block<User> expected = new Block<>(userList, false, 1, 5);
+        Block<UserResult> expected = new Block<>(userList, false, 1, 5);
 
-        Block<User> result = userService.listUsers(expected.getPage(), null, expected.getSize());
-
-        assertEquals(expected, result);
+        try {
+            Block<UserResult> result = userService.listUsers(expected.getPage(), expected.getSize(), null, null);
+            
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -137,17 +149,22 @@ class UserServiceTest {
         User user3 = userDao.save(new User("BJuan3", "example2@example.com", developerRole, null));
         User user4 = userDao.save(new User("JJuan4", "example2@example.com", developerRole, null));
 
-        List<User> userList = new ArrayList<>();
-        userList.add(user1);
-        userList.add(user3);
-        userList.add(user2);
-        userList.add(user4);
+        List<UserResult> userList = new ArrayList<>();
+        userList.add(new UserResult(user1, 0L));
+        userList.add(new UserResult(user2, 0L));
+        userList.add(new UserResult(user3, 0L));
+        userList.add(new UserResult(user4, 0L));
 
-        Block<User> expected = new Block<>(userList, false, 1, 5);
+        Block<UserResult> expected = new Block<>(userList, false, 1, 5);
 
-        Block<User> result = userService.listUsers(expected.getPage(), null, expected.getSize());
-
-        assertEquals(expected, result);
+        try {
+            Block<UserResult> result = userService.listUsers(expected.getPage(), expected.getSize(), null, null);
+            
+            assertEquals(expected, result);
+            
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -157,15 +174,20 @@ class UserServiceTest {
         User user3 = userDao.save(new User("Juan2", "example2@example.com", developerRole, null));
         User user4 = userDao.save(new User("Manuel2", "example2@example.com", developerRole, null));
 
-        List<User> userList = new ArrayList<>();
-        userList.add(user1);
-        userList.add(user3);
+        List<UserResult> userList = new ArrayList<>();
+        userList.add(new UserResult(user1, 0L));
+        userList.add(new UserResult(user3, 0L));
 
-        Block<User> expected = new Block<>(userList, false, 1, 5);
+        Block<UserResult> expected = new Block<>(userList, false, 1, 5);
 
-        Block<User> result = userService.listUsers(expected.getPage(), "juA", expected.getSize());
+        try {
+            Block<UserResult> result = userService.listUsers(expected.getPage(), expected.getSize(), "juA", null);
 
-        assertEquals(expected, result);
+            assertEquals(expected, result);
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 
     @Test
@@ -181,23 +203,28 @@ class UserServiceTest {
         Knowledge knowledge3 = knowledgeDao.save(new Knowledge(user, technology3, true, true));
         Knowledge knowledge4 = knowledgeDao.save(new Knowledge(user, technology4, false, false));
 
-        UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
+        try {
+            UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
 
-        assertEquals(userProfile.getUser(), user);
-        // todos los datos correctos
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getId(), technology1.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getName(), technology1.getName());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().isRelevant(), technology1.isRelevant());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getKnowledgeId(), knowledge1.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getMainSkill(), knowledge1.isMainSkill());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getLikeIt(), knowledge1.isLikeIt());
-        // Todas las tecnologías conocidas
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getParent().getKnowledgeId(), knowledge2.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(0).getParent().getKnowledgeId(), knowledge3.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(1).getParent().getKnowledgeId(), knowledge4.getId());
-        // No conocida
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getId(), technology5.getId());
-        assertNull(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getKnowledgeId());
+            assertEquals(userProfile.getUser(), user);
+            // todos los datos correctos
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getId(), technology1.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getName(), technology1.getName());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().isRelevant(), technology1.isRelevant());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getKnowledgeId(), knowledge1.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getMainSkill(), knowledge1.isMainSkill());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getLikeIt(), knowledge1.isLikeIt());
+            // Todas las tecnologías conocidas
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getParent().getKnowledgeId(), knowledge2.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(0).getParent().getKnowledgeId(), knowledge3.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(1).getParent().getKnowledgeId(), knowledge4.getId());
+            // No conocida
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getId(), technology5.getId());
+            assertNull(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getKnowledgeId());
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+
     }
 
     @Test
@@ -215,24 +242,29 @@ class UserServiceTest {
         Knowledge knowledge4 = knowledgeDao.save(new Knowledge(user, technology4, false, false));
         Knowledge knowledge5 = knowledgeDao.save(new Knowledge(user2, technology1, false, false));
 
-        UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
+        try {
+            UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
 
-        assertEquals(userProfile.getUser(), user);
-        // todos los datos correctos
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getId(), technology1.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getName(), technology1.getName());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().isRelevant(), technology1.isRelevant());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getKnowledgeId(), knowledge1.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getMainSkill(), knowledge1.isMainSkill());
-        assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getLikeIt(), knowledge1.isLikeIt());
-        // Todas las tecnologías conocidas
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getParent().getKnowledgeId(), knowledge2.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(0).getParent().getKnowledgeId(), knowledge3.getId());
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(1).getParent().getKnowledgeId(), knowledge4.getId());
-        // No conocida
-        assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getId(), technology5.getId());
-        assertNull(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getKnowledgeId());
-        // Tamaños correctos
-        assert userProfile.getKnowledgeTreeList().size() == 2;
+            assertEquals(userProfile.getUser(), user);
+            // todos los datos correctos
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getId(), technology1.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getName(), technology1.getName());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().isRelevant(), technology1.isRelevant());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getKnowledgeId(), knowledge1.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getMainSkill(), knowledge1.isMainSkill());
+            assertEquals(userProfile.getKnowledgeTreeList().get(0).getParent().getLikeIt(), knowledge1.isLikeIt());
+            // Todas las tecnologías conocidas
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getParent().getKnowledgeId(), knowledge2.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(0).getParent().getKnowledgeId(), knowledge3.getId());
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(1).getParent().getKnowledgeId(), knowledge4.getId());
+            // No conocida
+            assertEquals(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getId(), technology5.getId());
+            assertNull(userProfile.getKnowledgeTreeList().get(1).getChildren().get(2).getParent().getKnowledgeId());
+            // Tamaños correctos
+            assert userProfile.getKnowledgeTreeList().size() == 2;
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
     }
 }

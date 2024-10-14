@@ -13,13 +13,21 @@ public class User {
     private String name;
     private String email;
     private String role;
-    private Date startDate;
+    private String startDate;
 
     public User() {
 
     }
 
-    public User(String name, String email, String role, Date startDate) {
+    public User(Long id, String name, String email, String role, String startDate) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.startDate = startDate;
+    }
+
+    public User(String name, String email, String role, String startDate) {
         this.name = name;
         this.email = email;
         this.role = role;
@@ -58,11 +66,11 @@ public class User {
         this.role = role;
     }
 
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 }

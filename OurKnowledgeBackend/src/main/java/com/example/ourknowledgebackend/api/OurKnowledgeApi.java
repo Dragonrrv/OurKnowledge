@@ -6,6 +6,7 @@ import com.example.ourKnowledge.api.TechnologyApi;
 import com.example.ourKnowledge.api.UserApi;
 import com.example.ourKnowledge.api.model.*;
 import com.example.ourknowledgebackend.exceptions.*;
+import com.example.ourknowledgebackend.model.UserResult;
 import com.example.ourknowledgebackend.model.entities.Participation;
 import com.example.ourknowledgebackend.model.entities.Project;
 import com.example.ourknowledgebackend.model.entities.Uses;
@@ -17,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.directory.InvalidAttributesException;
+import java.text.ParseException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -79,17 +81,42 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi, Filt
     @Override
     @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
     public ResponseEntity listUsers(ListUsersRequestDTO listUsersRequestDTO) {
-        return ResponseEntity.status(200).body(userService.listUsers(listUsersRequestDTO.getPage(),
-                listUsersRequestDTO.getKeywords() != null ? listUsersRequestDTO.getKeywords().trim() : null,
-                listUsersRequestDTO.getSize()));
+        try {
+            ResponseEntity<Block<UserResult>> a = ResponseEntity.status(200).body(userService.listUsers(listUsersRequestDTO.getPage(),
+                    listUsersRequestDTO.getSize(),
+                    listUsersRequestDTO.getKeywords() != null ? listUsersRequestDTO.getKeywords().trim() : null,
+                    longId(listUsersRequestDTO.getFilterId())));
+            return a;
+        } catch (InstanceNotFoundException e) {
+            return ResponseEntity.status(404).body(e);
+        }
+
     }
 
     @Override
     @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
     public ResponseEntity showProfile(ProfileRequestDTO profileRequestDTO) {
-        return ResponseEntity.status(200).body(
-                userService.showProfile(profileRequestDTO.getProfileId().longValue(),
-                        profileRequestDTO.getUserId().longValue()));
+        try {
+            return ResponseEntity.status(200).body(
+                    userService.showProfile(longId(profileRequestDTO.getProfileId()),
+                            longId(profileRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_developer') or hasRole('client_admin')")
+    public ResponseEntity updateUser(UpdateUserRequestDTO updateUserRequestDTO) {
+        try {
+            userService.updateUser(longId(updateUserRequestDTO.getUserId()),
+                    updateUserRequestDTO.getStartDate());
+            return ResponseEntity.status(200).body(
+                    userService.showProfile(longId(updateUserRequestDTO.getUserId()),
+                            longId(updateUserRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException | ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -354,6 +381,17 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi, Filt
             filterService.deleteFilter(longId(deleteFilterRequestDTO.getUserId()), longId(deleteFilterRequestDTO.getFilterId()));
             return ResponseEntity.status(200).body(filterService.listFilter(longId(deleteFilterRequestDTO.getUserId())));
         } catch (InstanceNotFoundException | PermissionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasRole('client_admin')")
+    public ResponseEntity createFilterByProject(CreateByProjectRequestDTO createByProjectRequestDTO) {
+        try {
+            filterService.createByProject(longId(createByProjectRequestDTO.getUserId()), longId(createByProjectRequestDTO.getProjectId()));
+            return ResponseEntity.status(200).body(filterService.getDefaultFilter(longId(createByProjectRequestDTO.getUserId())));
+        } catch (InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

@@ -38,8 +38,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final FilterDao filterDao;
 
-    private final FilterParamDao filterParamDao;
-
     private final UserDao userDao;
 
     private final KnowledgeDao knowledgeDao;
@@ -50,15 +48,9 @@ public class ProjectServiceImpl implements ProjectService {
         List<Long> recommendedList = new ArrayList<>();
         if(filterId!=null){
             Filter filter = filterDao.findById(filterId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", filterId));;
-            List<FilterParam> filterParamList = filterParamDao.findAllByFilter(filter);
-            mandatoryList = filterParamList.stream()
-                    .filter(FilterParam::isMandatory)
-                    .map(filterParam -> filterParam.getTechnology().getId())
-                    .collect(Collectors.toList());
-            recommendedList = filterParamList.stream()
-                    .filter(FilterParam::isRecommended)
-                    .map(filterParam -> filterParam.getTechnology().getId())
-                    .collect(Collectors.toList());
+            Map<String, List<Long>> filterParamTechnologiesId = common.getFilterParamTechnologiesId(filter);
+            mandatoryList = filterParamTechnologiesId.get("mandatory");
+            recommendedList = filterParamTechnologiesId.get("recommended");
         }
         Slice<ProjectResult> slice = projectDao.find(page, size, keywords, mandatoryList, recommendedList);
         return new Block<>(slice.getContent(), slice.hasNext(), page, size);

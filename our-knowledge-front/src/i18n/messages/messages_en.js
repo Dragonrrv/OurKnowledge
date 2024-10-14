@@ -23,6 +23,7 @@ export default {
     'project.global.buttons.create': 'Create',
     'project.global.buttons.update': 'Update',
     'project.global.buttons.delete': 'Delete',
+    'project.global.buttons.useAsFilter': 'Use as Filter',
     'project.global.exceptions.NetworkError': 'Network error',
     'project.global.fields.loading': 'Loading',
     'project.global.fields.date': 'Date',
@@ -66,6 +67,7 @@ export default {
     'project.profiles.button.updateProfile': 'Update Profile',
     'project.profiles.tittle.updateProfile': 'Update your Profile',
     'project.profile.updateProfile.deleteKnowledge.explanation': 'Are you sure you want to delete this knowledge and all verifications in projects?',
+    'project.profiles.updateProfile.knowledge': 'Knowledge:',
 
     'project.projects.button.updateParticipation': 'Update Participation',
     'project.projects.participationList.alreadyParticipate': 'Remember you already have a participation',

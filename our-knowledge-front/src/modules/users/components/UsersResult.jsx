@@ -5,11 +5,13 @@ import * as selectors from '../selectors';
 import * as actions from '../actions';
 import {Pager} from '../../common';
 import Users from "./Users";
+import filters from "../../filters";
 
-const UsersResult = ({keywords}) => {
+const UsersResult = ({keywords, useFilter}) => {
 
 
     const usersResult = useSelector(selectors.getUsersResult);
+    const filterId = useSelector(filters.selectors.getFilterId);
     const dispatch = useDispatch();
 
     if (!usersResult) {
@@ -32,11 +34,15 @@ const UsersResult = ({keywords}) => {
                 back={{
                     enabled: usersResult.page > 1,
                     onClick: () =>
-                        dispatch(actions.findUsers(usersResult.page-1, keywords))}}
+                        useFilter
+                            ? dispatch(actions.findUsers(usersResult.page - 1, keywords, filterId))
+                            : dispatch(actions.findUsers(usersResult.page - 1, ''))}}
                 next={{
                     enabled: usersResult.existMoreItems,
                     onClick: () =>
-                        dispatch(actions.findUsers(usersResult.page+1, keywords))}}/>
+                        useFilter
+                            ? dispatch(actions.findUsers(usersResult.page + 1, keywords, filterId))
+                            : dispatch(actions.findUsers(usersResult.page + 1, ''))}}/>
         </div>
 
     );

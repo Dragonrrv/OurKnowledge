@@ -34,7 +34,7 @@ return (
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/projects/findUsersAdmin">
+                                <Link className="nav-link" to="/users/findUsersAdmin">
                                     <FormattedMessage id="project.app.Header.users"/>
                                 </Link>
                             </li>
@@ -54,7 +54,7 @@ return (
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/projects/findUsersDeveloper">
+                                <Link className="nav-link" to="/users/findUsersDeveloper">
                                     <FormattedMessage id="project.app.Header.users"/>
                                 </Link>
                             </li>

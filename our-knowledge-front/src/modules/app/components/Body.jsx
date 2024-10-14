@@ -25,10 +25,10 @@ const Body = () => {
                 {role==="Admin" && <Route path="/projects/addProject" element={<AddProject/>}/>}
                 {role==="Admin" && <Route path="/projects/updateProject" element={<UpdateProject/>}/>}
                 {role==="Admin" && <Route path="/users/findUsersAdmin" element={<FindUsersAdmin/>}/>}
-                {role==="Admin" && <Route path="/filters/newProjectFilter" element={<NewProjectFilter/>}/>}
+                {role==="Admin" && <Route path="/filters/newProjectFilter/:filterNameParam" element={<NewProjectFilter/>}/>}
                 {role==="Developer" && <Route path="/projects/findProjectsDeveloper" element={<FindProjectsDeveloper/>}/>}
                 {role==="Developer" && <Route path="/users/findUsersDeveloper" element={<FindUsersDeveloper/>}/>}
-                {role==="Developer" && <Route path="/users/updateProfile" element={<UpdateProfile/>}/>}
+                {role==="Developer" && <Route path="/profiles/updateProfile" element={<UpdateProfile/>}/>}
                 {<Route path="/profiles/profile/:profileId" element={<Profile/>}/>}
                 {<Route path="/projects/projectDetails/:id" element={<ProjectDetails/>}/>}
             </Routes>

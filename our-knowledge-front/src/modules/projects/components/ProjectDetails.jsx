@@ -9,11 +9,13 @@ import ParticipationList from "./ParticipationList";
 import users from "../../users";
 import UsesTree from "./UsesTree";
 import TreeList from "../../common/components/TreeList";
+import filters from "../../filters";
 
 const ProjectDetails = () => {
     const {id} = useParams();
 
     const projectDetails = useSelector(selectors.getProjectDetails);
+    const userId = useSelector(users.selectors.getUserId);
     const userRole = useSelector(users.selectors.getUserRole);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -23,6 +25,11 @@ const ProjectDetails = () => {
             dispatch(actions.findProjectById(id));
         }
     }, [dispatch]);
+
+    const useAsFilter = () => {
+        dispatch(filters.actions.useProjectAsFilter(userId, projectDetails.project.id));
+        navigate('/filters/newProjectFilter/' + projectDetails.project.name)
+    }
 
     if (!projectDetails) {
         return <div>Loading...</div>
@@ -41,15 +48,27 @@ const ProjectDetails = () => {
                     </div>
                 </div>
                 {userRole === "Admin" && (
-                    <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
-                        <button className="btn btn-primary my-2 my-sm-0"
-                                style={{
-                                    padding: '20px 40px', /* Relleno interno */
-                                }}
-                                onClick={() => navigate('/projects/updateProject')}
-                        >
-                            <FormattedMessage id="project.projects.button.updateProject"/>
-                        </button>
+                    <div style={{ marginLeft: '20px', marginRight: '20px'}}>
+                        <div style={{marginTop: '20px'}}>
+                            <button className="btn btn-primary my-2 my-sm-0"
+                                    style={{
+                                        padding: '20px 40px', /* Relleno interno */
+                                    }}
+                                    onClick={() => navigate('/projects/updateProject')}
+                            >
+                                <FormattedMessage id="project.projects.button.updateProject"/>
+                            </button>
+                        </div>
+                        <div style={{marginTop: '20px'}}>
+                            <button className="btn btn-primary my-2 my-sm-0"
+                                    style={{
+                                        padding: '20px 40px',
+                                    }}
+                                    onClick={() => useAsFilter()}
+                            >
+                                <FormattedMessage id="project.global.buttons.useAsFilter"/>
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -59,7 +78,7 @@ const ProjectDetails = () => {
                     <h5><FormattedMessage id="project.projectDetails.usedTechnologies"/>:</h5>
                     <TreeList treeType={UsesTree} treeList={projectDetails.usesTreeList} dept={0} />
                 </div>
-                <div  style={{flexGrow: 2}}>
+                <div  style={{flexGrow: 2, marginLeft: '20px'}}>
                     <h5><FormattedMessage id="project.projectDetails.participatedDevelopers"/>:</h5>
                     <ParticipationList participationList={projectDetails.participationList} projectId={projectDetails.project.id}/>
                 </div>

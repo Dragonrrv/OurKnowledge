@@ -23,6 +23,8 @@ public interface FilterService {
 
     void deleteFilter(Long userId, Long filterId) throws InstanceNotFoundException, PermissionException;
 
+    void createByProject(Long userId, Long projectId) throws InstanceNotFoundException;
+
     Long updateFilterParam(Long userId, Long filterParamId, Long filterId, Long technologyId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException, InvalidAttributesException, PermissionException, DuplicateInstanceException;
 
 }

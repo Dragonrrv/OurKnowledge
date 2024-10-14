@@ -1,22 +1,26 @@
 package com.example.ourknowledgebackend.service.impl;
 
+import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.model.*;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.Block;
 import com.example.ourknowledgebackend.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private final Common common;
 
     private final KnowledgeServiceImpl knowledgeService;
 
@@ -47,21 +51,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Block<User> listUsers(int page, String keywords, int size) {
-        Slice<User> slice = userDao.find(page, keywords, size);
+    public Block<UserResult> listUsers(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException {
+        List<Long> mandatoryList = new ArrayList<>();
+        List<Long> recommendedList = new ArrayList<>();
+        if(filterId!=null){
+            Filter filter = filterDao.findById(filterId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", filterId));;
+            Map<String, List<Long>> filterParamTechnologiesId = common.getFilterParamTechnologiesId(filter);
+            mandatoryList = filterParamTechnologiesId.get("mandatory");
+            recommendedList = filterParamTechnologiesId.get("recommended");
+        }
+
+        Slice<UserResult> slice = userDao.find(page, size,  keywords, mandatoryList, recommendedList);
         return new Block<>(slice.getContent(), slice.hasNext(), page, size);
     }
 
     @Override
-    public UserProfile showProfile(Long profileId, Long userId) {
-        Optional<User> user = userDao.findById(profileId);
-        if (!user.isPresent()) {
-            throw new EntityNotFoundException();
-        }
-        List<Project> projects = participationDao.findAllByUser(user.get()).stream()
-                .map(Participation::getProject).collect(Collectors.toList());
-        List<KnowledgeTree> knowledgeTreeList = knowledgeService.listUserKnowledge(user.get());
+    public UserProfile showProfile(Long profileId, Long userId) throws InstanceNotFoundException {
+        User user = userDao.findById(profileId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", profileId));
 
-        return new UserProfile(user.get(), projects, knowledgeTreeList);
+        List<Project> projects = participationDao.findAllByUser(user).stream()
+                .map(Participation::getProject).collect(Collectors.toList());
+        List<KnowledgeTree> knowledgeTreeList = knowledgeService.listUserKnowledge(user);
+
+        return new UserProfile(user, projects, knowledgeTreeList);
     }
+
+
+    @Override
+    public void updateUser(Long userId, String startDate) throws InstanceNotFoundException, ParseException {
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
+
+        userDao.save(new User(user.getId(), user.getName(), user.getEmail(), user.getRole(), startDate));
+    }
+
 }
