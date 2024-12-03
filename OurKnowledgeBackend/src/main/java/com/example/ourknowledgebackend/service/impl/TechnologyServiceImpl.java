@@ -28,6 +28,8 @@ public class TechnologyServiceImpl implements TechnologyService {
 
     private final KnowledgeDao knowledgeDao;
 
+    private final UserDao userDao;
+
     @Override
     public List<TechnologyTree> listRelevantTechnologies() {
         List<Technology> relevantTechnologies = technologyDao.findAllByRelevantTrue();
@@ -37,7 +39,7 @@ public class TechnologyServiceImpl implements TechnologyService {
 
     @Override
     public List<TechnologyTree> addTechnology(Long userId, String name, Long parentId, boolean relevant) throws InstanceNotFoundException, DuplicateInstanceException, PermissionException {
-        User user = permissionChecker.checkUser(userId);
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
         if (parentId != null) {
             permissionChecker.checkTechnology(parentId);
         }
@@ -58,12 +60,8 @@ public class TechnologyServiceImpl implements TechnologyService {
     }
 
     @Override
-    public List<TechnologyTree> deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException {
-        User user = permissionChecker.checkUser(userId);
+    public List<TechnologyTree> deleteTechnology(Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException {
         Technology technology = permissionChecker.checkTechnology(technologyId);
-        if (!user.getRole().equals(adminRole)) {
-            throw new PermissionException();
-        }
         if (deleteChildren) {
             deleteTechnologiesTree(technology);
         } else {

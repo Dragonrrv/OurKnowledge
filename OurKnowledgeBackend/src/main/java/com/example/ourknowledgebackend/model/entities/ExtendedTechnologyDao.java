@@ -35,5 +35,17 @@ public interface ExtendedTechnologyDao extends CrudRepository<Technology, Long> 
             "WHERE t.relevant = true or f.filter.id = :filterId")
     List<FilterParamTechnology> findTechnologiesWithFilter(@Param("filterId") Long filterId);
 
+    @Query("SELECT new com.example.ourknowledgebackend.model.FilterParamTechnology(t.id, t.name, t.parentId, t.relevant, f.id, f.mandatory, f.recommended, " +
+            "CASE WHEN EXISTS (SELECT 1 FROM Technology child " +
+            "LEFT JOIN FilterParam childFilter ON child.id = childFilter.technology.id " +
+            "WHERE child.parentId = t.id AND childFilter.filter.id = f.filter.id AND childFilter.mandatory = true) THEN true ELSE false END, " +
+            "CASE WHEN EXISTS (SELECT 1 FROM Technology child " +
+            "LEFT JOIN FilterParam childFilter ON child.id = childFilter.technology.id " +
+            "WHERE child.parentId = t.id AND childFilter.filter.id = f.filter.id AND childFilter.recommended = true) THEN true ELSE false END) " +
+            "FROM Technology t " +
+            "JOIN FilterParam f ON t.id = f.technology.id " +
+            "WHERE f.id = :filterParamId")
+    FilterParamTechnology findFilterParamTechnology(@Param("filterParamId") Long filterParamId);
+
 
 }

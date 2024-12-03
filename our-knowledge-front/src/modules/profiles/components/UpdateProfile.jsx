@@ -18,11 +18,11 @@ const UpdateProfile= () => {
 
 
     useEffect(() => {
-        dispatch(profiles.actions.findProfile(userId, userId));
+        dispatch(profiles.actions.findProfile(userId));
     }, [dispatch]);
 
     const updateUser = (startDate) => {
-        dispatch(users.actions.updateUser(userId, startDate));
+        dispatch(users.actions.updateUser(startDate));
     }
 
     if (!profile) {

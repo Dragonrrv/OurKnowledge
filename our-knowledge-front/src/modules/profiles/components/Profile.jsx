@@ -2,7 +2,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {FormattedMessage} from "react-intl";
 
 import * as selectors from '../selectors';
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 import profiles from "../index";
 import PropTypes from "prop-types";
 import {useNavigate, useParams} from "react-router-dom";
@@ -10,18 +10,25 @@ import users from "../../users";
 import {ProjectLink} from "../../common";
 import TreeList from "../../common/components/TreeList";
 import KnowledgeTree from "./KnowledgeTree";
+import filters from "../../filters";
 
 const Profile= () => {
     const { profileId } = useParams();
 
     const profile = useSelector(selectors.getProfile);
     const userId = useSelector(users.selectors.getUserId);
+    const userRole = useSelector(users.selectors.getUserRole);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(profiles.actions.findProfile(userId, profileId));
+        dispatch(profiles.actions.findProfile(profileId));
     }, [dispatch]);
+
+    const useAsFilter = () => {
+        dispatch(filters.actions.useUserAsFilter(profile.user.id));
+        navigate('/filters/newProjectFilter/' + profile.user.name)
+    }
 
     if (!profile) {
         return <div>Loading...</div>
@@ -49,6 +56,18 @@ const Profile= () => {
                                 onClick={() => navigate('/profiles/updateProfile')}
                         >
                             <FormattedMessage id="project.profiles.button.updateProfile"/>
+                        </button>
+                    </div>
+                )}
+                {userRole === "Admin" && (
+                    <div style={{ marginLeft: '20px', marginRight: '20px', marginTop: '20px'}}>
+                        <button className="btn btn-primary my-2 my-sm-0"
+                                style={{
+                                    padding: '20px 40px',
+                                }}
+                                onClick={() => useAsFilter()}
+                        >
+                            <FormattedMessage id="project.global.buttons.useAsFilter"/>
                         </button>
                     </div>
                 )}

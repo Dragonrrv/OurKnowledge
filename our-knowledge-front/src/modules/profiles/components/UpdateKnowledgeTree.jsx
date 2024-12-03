@@ -16,8 +16,6 @@ const UpdateKnowledgeTree = ({tree, dept}) => {
     const dispatch = useDispatch();
     const intl = useIntl();
 
-    const userId = useSelector(users.selectors.getUserId);
-
     const [isOpen, setIsOpen] = useState(true);
     const [showAddMenu, setShowAddMenu] = useState(false);
     const [addMenuPosition, setAddMenuPosition] = useState({ x: 0, y: 0 });
@@ -54,20 +52,20 @@ const UpdateKnowledgeTree = ({tree, dept}) => {
     const changeKnowledge = (known, technologyId, knowledgeId) => {
         if(known){
             if (window.confirm(intl.formatMessage({ id:'project.profile.updateProfile.deleteKnowledge.explanation'}))) {
-                dispatch(actions.deleteKnowledge(userId, knowledgeId));
+                dispatch(actions.deleteKnowledge(knowledgeId));
             }
         } else {
-            dispatch(actions.addKnowledge(userId, technologyId));
+            dispatch(actions.addKnowledge(technologyId));
         }
     }
 
     const updateMainSkill = (before, id) => {
-        dispatch(actions.updateKnowledge(userId, id, !before, null));
+        dispatch(actions.updateKnowledge(id, !before, null));
 
     }
 
     const updateLikeIt = (before, id) => {
-        dispatch(actions.updateKnowledge(userId, id, null, !before));
+        dispatch(actions.updateKnowledge(id, null, !before));
     }
 
     return (

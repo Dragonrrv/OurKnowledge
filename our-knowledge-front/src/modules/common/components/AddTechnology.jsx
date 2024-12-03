@@ -2,24 +2,21 @@ import {useIntl} from "react-intl";
 import * as adminActions from "../../technologies/actions";
 import * as developActions from "../../profiles/actions";
 import {useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import PropTypes from "prop-types";
-import * as selectors from "../../profiles/selectors";
-import users from "../../users";
 
 const AddTechnology = ({parentId, relevant, onAdd}) => {
 
     const intl = useIntl()
     const dispatch = useDispatch();
-    const userId = useSelector(users.selectors.getUserId);
     const [newTechnologyName, setNewTechnologyName] = useState('');
 
     const handleAddTechnology = (event) => {
         event.preventDefault();
         if(relevant){
-            dispatch(adminActions.addTechnology(userId, newTechnologyName, parentId));
+            dispatch(adminActions.addTechnology(newTechnologyName, parentId));
         } else {
-            dispatch(developActions.addKnowledge(userId, null, newTechnologyName, parentId))
+            dispatch(developActions.addKnowledge(null, newTechnologyName, parentId))
         }
         setNewTechnologyName('');
         onAdd();

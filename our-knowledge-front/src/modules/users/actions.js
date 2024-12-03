@@ -21,10 +21,10 @@ export const findUsers = (page, keywords, filterId) => dispatch => {
         result => dispatch(findUsersCompleted(result)));
 }
 
-export const updateUser = (userId, startDate) => dispatch => {
+export const updateUser = (startDate) => dispatch => {
 
     dispatch(clearUsersResult());
-    backend.userService.updateUser(userId, startDate,
+    backend.userService.updateUser(startDate,
         result => dispatch(profiles.actions.findProfileCompleted(result)));
 }
 

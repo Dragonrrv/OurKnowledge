@@ -29,6 +29,9 @@ class FilterServiceTest {
     @Value("${app.constants.admin_role}")
     private String adminRole;
 
+    @Value("${app.constants.developer_role}")
+    private String developerRole;
+
     @Value("${app.constants.default_filter_name}")
     private String defaultFilter;
 
@@ -52,6 +55,9 @@ class FilterServiceTest {
 
     @Autowired
     private UsesDao usesDao;
+
+    @Autowired
+    private KnowledgeDao knowledgeDao;
 
 
     Filter setBaseFilter() {
@@ -136,7 +142,7 @@ class FilterServiceTest {
         FilterParam filterParam4 = filterParamDao.save(new FilterParam(filter2, technology1, true, false));
 
         try {
-            CompleteFilter result = filterService.getFilter(filter.getId());
+            CompleteFilter result = filterService.getFilter(user.getId(), filter.getId());
 
             assertEquals(filter, result.getFilter());
             assertEquals(filterParam1.getId(), result.getFilterParamTechnologyTreeList().get(0).getParent().getFilterParamId());
@@ -147,7 +153,7 @@ class FilterServiceTest {
             assertEquals(2, result.getFilterParamTechnologyTreeList().get(0).getChildren().size());
             assertNull(result.getFilterParamTechnologyTreeList().get(0).getChildren().get(0).getChildren().get(0).getParent().getFilterParamId());
             assertEquals(1, result.getFilterParamTechnologyTreeList().get(0).getChildren().get(0).getChildren().size());
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | PermissionException e) {
             assert false;
         }
     }
@@ -168,14 +174,14 @@ class FilterServiceTest {
         FilterParam filterParam4 = filterParamDao.save(new FilterParam(filter2, technology1, true, false));
 
         try {
-            CompleteFilter result = filterService.getFilter(filter.getId());
+            CompleteFilter result = filterService.getFilter(user.getId(), filter.getId());
 
             assertTrue(result.getFilterParamTechnologyTreeList().get(0).getParent().getUnnecessary());
             assertFalse(result.getFilterParamTechnologyTreeList().get(1).getParent().getUnnecessary());
             assertFalse(result.getFilterParamTechnologyTreeList().get(0).getChildren().get(0).getParent().getUnnecessary());
             assertFalse(result.getFilterParamTechnologyTreeList().get(0).getChildren().get(1).getParent().getUnnecessary());
             assertFalse(result.getFilterParamTechnologyTreeList().get(0).getChildren().get(0).getChildren().get(0).getParent().getUnnecessary());
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | PermissionException e) {
             assert false;
         }
     }
@@ -192,7 +198,7 @@ class FilterServiceTest {
 
         try {
             filterService.updateFilterParam(user.getId(), null, filter.getId(), technology4.getId(), true, false);
-            CompleteFilter result = filterService.getFilter(filter.getId());
+            CompleteFilter result = filterService.getFilter(user.getId(), filter.getId());
 
             assertTrue(result.getFilterParamTechnologyTreeList().get(0).getParent().getUnnecessary());
             assertTrue(result.getFilterParamTechnologyTreeList().get(0).getChildren().get(0).getParent().getUnnecessary());
@@ -209,10 +215,12 @@ class FilterServiceTest {
         Filter filter = filterDao.save(new Filter(user, defaultFilter));
 
         try {
-            CompleteFilter result = filterService.getFilter(NON_EXISTENT_ID);
+            CompleteFilter result = filterService.getFilter(user.getId(), NON_EXISTENT_ID);
             assert false;
         } catch (InstanceNotFoundException e) {
             assert true;
+        } catch (PermissionException e) {
+            assert false;
         }
     }
 
@@ -415,6 +423,37 @@ class FilterServiceTest {
     }
 
     @Test
+    void createByUser() {
+        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
+        User userAsFilter = userDao.save(new User("Juan2", "example@example2.com", developerRole, null));
+        Filter filter = filterDao.save(new Filter(user, defaultFilter));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Frontend", null, true));
+        Technology technology3 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology3.getId(), true));
+        knowledgeDao.save(new Knowledge(userAsFilter, technology1, false, false));
+        knowledgeDao.save(new Knowledge(userAsFilter, technology2, false, false));
+        knowledgeDao.save(new Knowledge(userAsFilter, technology3, false, false));
+
+        try {
+            filterService.createByUser(user.getId(), userAsFilter.getId());
+            List<FilterParam> result = filterParamDao.findAllByFilter(filter);
+
+            assertEquals(technology1, result.get(0).getTechnology());
+            assertEquals(technology2, result.get(1).getTechnology());
+            assertEquals(technology3, result.get(2).getTechnology());
+            assertTrue(result.get(0).isRecommended());
+            assertTrue(result.get(1).isRecommended());
+            assertTrue(result.get(2).isRecommended());
+            assertEquals(3, result.size());
+            assertEquals(filter, result.get(0).getFilter());
+
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        }
+    }
+
+    @Test
     void updateFilterParamAdd() {
         User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         Filter filter = filterDao.save(new Filter(user, defaultFilter));
@@ -591,6 +630,32 @@ class FilterServiceTest {
             List<FilterParam> result = filterParamDao.findAllByFilter(filter);
 
             assert (result.isEmpty());
+
+        } catch (InstanceNotFoundException | InvalidAttributesException | PermissionException |
+                 DuplicateInstanceException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void updateFilterParamDeleteHasRecommendedChild() {
+        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
+        Filter filter = filterDao.save(new Filter(user, defaultFilter));
+        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
+        Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
+        Technology technology3 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
+        FilterParam filterParam1 = filterParamDao.save(new FilterParam(filter, technology1, true, false));
+        FilterParam filterParam2 = filterParamDao.save(new FilterParam(filter, technology2, true, false));
+        FilterParam filterParam3 = filterParamDao.save(new FilterParam(filter, technology3, false, true));
+
+        try {
+            filterService.updateFilterParam(null, filterParam2.getId(), null, null, false, false);
+            List<FilterParam> result = filterParamDao.findAllByFilter(filter);
+
+            assertEquals(3, result.size());
+            assert (result.get(0).isRecommended());
+            assert (result.get(1).isRecommended());
+            assert (result.get(2).isRecommended());
 
         } catch (InstanceNotFoundException | InvalidAttributesException | PermissionException |
                  DuplicateInstanceException e) {

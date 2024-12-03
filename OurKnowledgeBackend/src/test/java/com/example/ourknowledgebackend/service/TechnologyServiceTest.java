@@ -228,7 +228,7 @@ class TechnologyServiceTest {
         User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
-            technologyService.deleteTechnology(user.getId(), technology.getId(), false);
+            technologyService.deleteTechnology(technology.getId(), false);
             Optional<Technology> result = technologyDao.findById(technology.getId());
 
             assertFalse(result.isPresent());
@@ -246,7 +246,7 @@ class TechnologyServiceTest {
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));
         Technology technology4 = technologyDao.save(new Technology("SpringBoot", technology2.getId(), true));
         try {
-            technologyService.deleteTechnology(user.getId(), technology1.getId(), true);
+            technologyService.deleteTechnology(technology1.getId(), true);
             Optional<Technology> result1 = technologyDao.findById(technology1.getId());
             Optional<Technology> result2 = technologyDao.findById(technology2.getId());
             Optional<Technology> result3 = technologyDao.findById(technology3.getId());
@@ -269,7 +269,7 @@ class TechnologyServiceTest {
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         knowledgeDao.save(new Knowledge(user2, technology, false, false));
         try {
-            technologyService.deleteTechnology(user1.getId(), technology.getId(), false);
+            technologyService.deleteTechnology(technology.getId(), false);
             Optional<Technology> result = technologyDao.findById(technology.getId());
 
             assertFalse(result.get().isRelevant());
@@ -290,7 +290,7 @@ class TechnologyServiceTest {
         knowledgeDao.save(new Knowledge(user2, technology1, false, false));
         knowledgeDao.save(new Knowledge(user2, technology2, false, false));
         try {
-            technologyService.deleteTechnology(user1.getId(), technology1.getId(), true);
+            technologyService.deleteTechnology(technology1.getId(), true);
             Optional<Technology> result1 = technologyDao.findById(technology1.getId());
             Optional<Technology> result2 = technologyDao.findById(technology2.getId());
             Optional<Technology> result3 = technologyDao.findById(technology3.getId());
@@ -312,7 +312,7 @@ class TechnologyServiceTest {
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         try {
-            technologyService.deleteTechnology(user.getId(), technology1.getId(), false);
+            technologyService.deleteTechnology(technology1.getId(), false);
             assert false;
         } catch (HaveChildrenException e) {
 
@@ -324,26 +324,10 @@ class TechnologyServiceTest {
     }
 
     @Test
-    void deleteTechnologiesPermissionException() {
-        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
-        Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
-        try {
-            technologyService.deleteTechnology(user.getId(), technology1.getId(), false);
-            assert false;
-        } catch (PermissionException e) {
-
-            assert true;
-
-        } catch (HaveChildrenException | InstanceNotFoundException e) {
-            assert false;
-        }
-    }
-
-    @Test
     void deleteTechnologiesInstanceNotFoundException() {
         User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         try {
-            technologyService.deleteTechnology(user.getId(), NON_EXISTENT_ID, false);
+            technologyService.deleteTechnology(NON_EXISTENT_ID, false);
             assert false;
         } catch (InstanceNotFoundException e) {
 

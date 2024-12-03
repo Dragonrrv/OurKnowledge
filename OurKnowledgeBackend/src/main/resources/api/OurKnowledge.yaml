@@ -150,6 +150,28 @@ paths:
         '404':
           description: Not Found - Project not found
 
+  /project/updateWithFile:
+    post:
+      summary: update project technologies using a configuration file
+      operationId: updateProjectWithFile
+      tags:
+        - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateWithFileRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateProjectResponse'
+        '404':
+          description: Not Found - Project not found
+
   /project/delete:
     post:
       summary: delete project
@@ -429,12 +451,6 @@ paths:
       operationId: listFilters
       tags:
         - filter
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/listFiltersRequest'
-        required: true
       responses:
         '200':
           description: OK
@@ -469,12 +485,6 @@ paths:
       operationId: getDefaultFilter
       tags:
         - filter
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/getDefaultFilterRequest'
-        required: true
       responses:
         '200':
           description: OK
@@ -509,12 +519,6 @@ paths:
       operationId: clearFilter
       tags:
         - filter
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/clearFilterRequest'
-        required: true
       responses:
         '200':
           description: OK
@@ -554,6 +558,26 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/createByProjectRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getFilterResponse'
+
+  /filter/createByUser:
+    post:
+      summary: create a filter using a user technologies as recommended
+      operationId: createFilterByUser
+      tags:
+        - filter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createByUserRequest'
         required: true
       responses:
         '200':
@@ -669,8 +693,6 @@ components:
           type: string
         parentId:
           type: integer
-        userId:
-          type: integer
 
     addTechnologyResponse:
       type: object
@@ -683,8 +705,6 @@ components:
     deleteTechnologyRequest:
       type: object
       properties:
-        userId:
-          type: integer
         technologyId:
           type: integer
         deleteChildren:
@@ -811,6 +831,16 @@ components:
         updateTechnologies:
           type: boolean
 
+    updateWithFileRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        extension:
+          type: string
+        fileContent:
+          type: string
+
     updateProjectResponse:
       $ref: '#/components/schemas/projectDetailsResponse'
 
@@ -837,8 +867,6 @@ components:
     participateRequest:
       type: object
       properties:
-        userId:
-          type: integer
         projectId:
           type: integer
         startDate:
@@ -859,16 +887,12 @@ components:
     listVerificationRequest:
       type: object
       properties:
-        userId:
-          type: integer
         projectId:
           type: integer
 
     addVerificationRequest:
       type: object
       properties:
-        userId:
-          type: integer
         usesId:
           type: integer
 
@@ -883,17 +907,12 @@ components:
     profileRequest:
       type: object
       properties:
-        profileId:
-          type: integer
         userId:
           type: integer
-          description: Id from the user who send the petition
 
     updateUserRequest:
       type: object
       properties:
-        userId:
-          type: integer
         startDate:
           type: string
 
@@ -965,8 +984,6 @@ components:
     addKnowledgeRequest:
       type: object
       properties:
-        userId:
-          type: integer
         technologyId:
           type: integer
         technologyName:
@@ -977,28 +994,18 @@ components:
     deleteKnowledgeRequest:
       type: object
       properties:
-        userId:
-          type: integer
         knowledgeId:
           type: integer
 
     updateKnowledgeRequest:
       type: object
       properties:
-        userId:
-          type: integer
         knowledgeId:
           type: integer
         mainSkill:
           type: boolean
         likeIt:
           type: boolean
-
-    listFiltersRequest:
-      type: object
-      properties:
-        userId:
-          type: integer
 
     listFiltersResponse:
       type: object
@@ -1055,47 +1062,33 @@ components:
                   recommended:
                     type: boolean
 
-    getDefaultFilterRequest:
-      type: object
-      properties:
-        userId:
-          type: integer
-
     saveFilterRequest:
       type: object
       properties:
-        userId:
-          type: integer
         filterName:
           type: string
-
-    clearFilterRequest:
-      type: object
-      properties:
-        userId:
-          type: integer
 
     deleteFilterRequest:
       type: object
       properties:
-        userId:
-          type: integer
         filterId:
           type: integer
 
     createByProjectRequest:
       type: object
       properties:
-        userId:
-          type: integer
         projectId:
+          type: integer
+
+    createByUserRequest:
+      type: object
+      properties:
+        userId:
           type: integer
 
     updateFilterParamRequest:
       type: object
       properties:
-        userId:
-          type: integer
         filterParamId:
           type: integer
         filterId:

@@ -10,10 +10,10 @@ export const findUsers = (page, keywords, filterId, onSuccess) =>
     appFetch(`/user/list`,
         config('POST', {size, page, keywords, filterId}), onSuccess);
 
-export const getProfile = (userId, profileId, onSuccess, onErrors) =>
+export const getProfile = (userId, onSuccess, onErrors) =>
     appFetch(`/user/profile`,
-        config('POST', {userId, profileId}), onSuccess, onErrors);
+        config('POST', {userId}), onSuccess, onErrors);
 
-export const updateUser = (userId, startDate, onSuccess, onErrors) =>
+export const updateUser = (startDate, onSuccess, onErrors) =>
     appFetch(`/user/update`,
-        config('POST', {userId, startDate}), onSuccess, onErrors);
+        config('POST', {startDate}), onSuccess, onErrors);

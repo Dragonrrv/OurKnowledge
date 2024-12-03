@@ -7,12 +7,24 @@ import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.Block;
 import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.ProjectService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.naming.directory.InvalidAttributesException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import java.io.StringReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -122,29 +134,117 @@ public class ProjectServiceImpl implements ProjectService {
         projectDao.save(project);
     }
 
-    public void updateProjectTechnologies(Project project, List<Long> technologiesId) throws InstanceNotFoundException {
+    @Override
+    @Transactional
+    public void updateProjectWithFile(Long id, String extension, String fileContent) throws InstanceNotFoundException {
+        Project project = projectDao.findById(id).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", id));
+        List<Long> technologiesId;
 
-        List<Long> actualTechnologiesId = usesDao.findAllByProject(project).stream()
-                .map(use -> use.getTechnology().getId())
-                .collect(Collectors.toList());
-
-        List<Long> newTechnologies = technologiesId.stream()
-                .filter(id -> !actualTechnologiesId.contains(id))
-                .collect(Collectors.toList());
-
-        List<Long> missingTechnologies = actualTechnologiesId.stream()
-                .filter(id -> !technologiesId.contains(id))
-                .collect(Collectors.toList());
-
-        for (Long technologyId : missingTechnologies) {
-            Uses use = usesDao.findByProjectAndTechnologyId(project, technologyId);
-            usesDao.delete(use);
+        switch (extension){
+            case "xml":
+                technologiesId = new ArrayList<>(readXmlTechnologies(fileContent).stream()
+                        .map(Technology::getId)
+                        .collect(Collectors.toList()));
+                break;
+            case "json":
+                technologiesId = new ArrayList<>(readJsonTechnologies(fileContent).stream()
+                        .map(Technology::getId)
+                        .collect(Collectors.toList()));
+                break;
+            default:
+                throw new RuntimeException();
         }
 
-        for (Long technologyId : newTechnologies) {
-            Technology technology = technologyDao.findById(technologyId).orElseThrow(() -> new InstanceNotFoundException("project.entity.technology", technologyId));
-            Uses use = new Uses(project, technology);
-            usesDao.save(use);
+        updateProjectTechnologies(project, technologiesId);
+
+        projectDao.save(project);
+    }
+
+    private List<Technology> readXmlTechnologies(String pomContent) {
+        try {
+            InputSource inputSource = new InputSource(new StringReader(pomContent));
+
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputSource);
+            doc.getDocumentElement().normalize();
+
+            XPath xPath = XPathFactory.newInstance().newXPath();
+
+            ArrayList<String> technologyTokens = new ArrayList<>();
+
+            String expression = "/project/dependencies/dependency";
+            NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+
+            technologyTokens.addAll(getGroupAndArtifactIds(nodeList));
+
+            expression = "/project/build/plugins/plugin";
+            nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+
+            technologyTokens.addAll(getGroupAndArtifactIds(nodeList));
+
+            // Eliminar duplicados convirtiendo a un Set y luego de vuelta a una lista
+            Set<String> uniqueTokens = new HashSet<>(technologyTokens);
+            technologyTokens = new ArrayList<>(uniqueTokens);
+
+            return technologyDao.findAllByNameInIgnoreCase(technologyTokens);
+
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
+    private List<Technology> readJsonTechnologies(String jsonContent) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonContent);
+
+            ArrayList<String> technologyTokens = new ArrayList<>();
+
+            String projectName = jsonNode.get("name").asText();
+            JsonNode dependencies = jsonNode.get("dependencies");
+
+            technologyTokens.addAll(separateBySymbols(projectName));
+
+            Iterator<String> fieldNames = dependencies.fieldNames();
+            while (fieldNames.hasNext()) {
+                technologyTokens.addAll(separateBySymbols(fieldNames.next()));
+            }
+            Set<String> uniqueTokens = new HashSet<>(technologyTokens);
+            technologyTokens = new ArrayList<>(uniqueTokens);
+
+            return technologyDao.findAllByNameInIgnoreCase(technologyTokens);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
+    private ArrayList<String> getGroupAndArtifactIds(NodeList nodeList) {
+        ArrayList<String> technologyTokens = new ArrayList<>();
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element dependency = (Element) nodeList.item(i);
+            String groupId = dependency.getElementsByTagName("groupId").item(0).getTextContent();
+            String artifactId = dependency.getElementsByTagName("artifactId").item(0).getTextContent();
+
+            technologyTokens.addAll(separateBySymbols(groupId));
+            technologyTokens.addAll(separateBySymbols(artifactId));
+        }
+        return technologyTokens;
+    }
+
+    private List<String> separateBySymbols(String text){
+        return Arrays.asList(text.toLowerCase().split("[./@-]"));
+    }
+
+    public void updateProjectTechnologies(Project project, List<Long> technologiesId) throws InstanceNotFoundException {
+
+        usesDao.deleteAll();
+
+        for (Long technologyId : technologiesId) {
+            try {
+                addUses(project.getId(), technologyId);
+            } catch (DuplicateInstanceException ignored){}
         }
     }
 

@@ -49,6 +49,11 @@ export const updateProject = (id, name, description, startDate, status, size, up
         projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 
+export const sendFile = (id, extension, fileContent) => dispatch => {
+    backend.projectService.sendProjectFile(id, extension, fileContent,
+        projectDetails => dispatch(updateProjectCompleted(projectDetails)));
+}
+
 export const clearProject = () => ({
     type: actionTypes.CLEAR_PROJECT
 });
@@ -63,8 +68,8 @@ export const deleteUses = (usesId) => dispatch => {
         projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 
-export const addParticipation = (userId, projectId, startDate, endDate) => dispatch => {
-    backend.projectService.addParticipation(userId, projectId, startDate, endDate,
+export const addParticipation = (projectId, startDate, endDate) => dispatch => {
+    backend.projectService.addParticipation(projectId, startDate, endDate,
         projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 
@@ -73,8 +78,8 @@ export const updateParticipation = (participationId, startDate, endDate) => disp
         projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 
-export const addVerification = (userId, usesId) => dispatch => {
-    backend.projectService.addVerification(userId, usesId,
+export const addVerification = (usesId) => dispatch => {
+    backend.projectService.addVerification(usesId,
         projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 

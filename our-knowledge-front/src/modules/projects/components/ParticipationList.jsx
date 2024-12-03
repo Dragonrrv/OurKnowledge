@@ -22,7 +22,7 @@ const ParticipationList = ({participationList, projectId}) => {
     };
 
     const addParticipation = () => {
-        dispatch(actions.addParticipation(userId, projectId, startDate, endDate))
+        dispatch(actions.addParticipation(projectId, startDate, endDate))
     };
 
     return (

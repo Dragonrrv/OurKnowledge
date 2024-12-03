@@ -16,4 +16,6 @@ public interface TechnologyDao extends CrudRepository<Technology, Long> {
     List<Technology> findAllByRelevantTrue();
 
     Optional<Technology> findByNameAndParentId(String name, Long parentId);
-}
+
+    @Query("SELECT t FROM Technology t WHERE LOWER(t.name) IN :names")
+    List<Technology> findAllByNameInIgnoreCase(@Param("names") List<String> names);}

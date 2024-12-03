@@ -13,7 +13,7 @@ public interface FilterService {
 
     List<Filter> listFilter(Long userId) throws InstanceNotFoundException;
 
-    CompleteFilter getFilter(Long filterId) throws InstanceNotFoundException;
+    CompleteFilter getFilter(Long UserId, Long filterId) throws InstanceNotFoundException, PermissionException;
 
     CompleteFilter getDefaultFilter(Long userId) throws InstanceNotFoundException;
 
@@ -24,6 +24,8 @@ public interface FilterService {
     void deleteFilter(Long userId, Long filterId) throws InstanceNotFoundException, PermissionException;
 
     void createByProject(Long userId, Long projectId) throws InstanceNotFoundException;
+
+    void createByUser(Long userId, Long userAsFilterId) throws InstanceNotFoundException;
 
     Long updateFilterParam(Long userId, Long filterParamId, Long filterId, Long technologyId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException, InvalidAttributesException, PermissionException, DuplicateInstanceException;
 

@@ -5,13 +5,11 @@ import PropTypes from "prop-types";
 import {useState} from "react";
 import * as actions from "../actions";
 import {useDispatch, useSelector} from "react-redux";
-import users from "../../users";
 import * as selectors from "../selectors";
 
 const FilterTechnologyTree = ({tree, dept}) => {
 
     const dispatch = useDispatch();
-    const userId = useSelector(users.selectors.getUserId);
     const filterId = useSelector(selectors.getFilterId);
     const [isOpen, setIsOpen] = useState(true);
 
@@ -20,12 +18,12 @@ const FilterTechnologyTree = ({tree, dept}) => {
     };
 
     const updateMandatory = () => {
-        dispatch(actions.updateFilterParam(userId, tree.parent.filterParamId, filterId, tree.parent.id,
+        dispatch(actions.updateFilterParam(tree.parent.filterParamId, filterId, tree.parent.id,
             !tree.parent.mandatory, false))
     };
 
     const updateRecommended = () => {
-        dispatch(actions.updateFilterParam(userId, tree.parent.filterParamId, filterId, tree.parent.id,
+        dispatch(actions.updateFilterParam(tree.parent.filterParamId, filterId, tree.parent.id,
             false, !tree.parent.recommended))
     };
 

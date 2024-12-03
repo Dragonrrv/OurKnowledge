@@ -50,3 +50,7 @@ jwt:
     converter:
       resource-id: "ourknowledge-client"
       principle-attribute: "preferred_username"
+
+openai:
+  url: "https://api.openai.com/v1"
+  api-key: ""

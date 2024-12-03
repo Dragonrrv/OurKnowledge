@@ -66,11 +66,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfile showProfile(Long profileId, Long userId) throws InstanceNotFoundException {
-        User user = userDao.findById(profileId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", profileId));
+    public UserProfile showProfile(Long userId) throws InstanceNotFoundException {
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
 
         List<Project> projects = participationDao.findAllByUser(user).stream()
-                .map(Participation::getProject).collect(Collectors.toList());
+                .map(Participation::getProject).distinct().collect(Collectors.toList());
         List<KnowledgeTree> knowledgeTreeList = knowledgeService.listUserKnowledge(user);
 
         return new UserProfile(user, projects, knowledgeTreeList);
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void updateUser(Long userId, String startDate) throws InstanceNotFoundException, ParseException {
+    public void updateUser(Long userId, String startDate) throws InstanceNotFoundException {
         User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
 
         userDao.save(new User(user.getId(), user.getName(), user.getEmail(), user.getRole(), startDate));

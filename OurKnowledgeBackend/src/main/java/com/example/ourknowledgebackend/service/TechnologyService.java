@@ -11,5 +11,5 @@ public interface TechnologyService {
 
     List<TechnologyTree> addTechnology( Long userId, String name, Long parentId, boolean relevant) throws InstanceNotFoundException, DuplicateInstanceException, PermissionException;
 
-    List<TechnologyTree> deleteTechnology(Long userId, Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException;
+    List<TechnologyTree> deleteTechnology(Long technologyId, boolean deleteChildren) throws HaveChildrenException, PermissionException, InstanceNotFoundException;
 }

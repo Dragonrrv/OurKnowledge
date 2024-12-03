@@ -13,7 +13,7 @@ public interface UserService {
 
     Block<UserResult> listUsers(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException;
 
-    UserProfile showProfile(Long profileId, Long userId) throws InstanceNotFoundException;
+    UserProfile showProfile(Long userId) throws InstanceNotFoundException;
 
     void updateUser(Long userId, String startDate) throws InstanceNotFoundException, ParseException;
 }

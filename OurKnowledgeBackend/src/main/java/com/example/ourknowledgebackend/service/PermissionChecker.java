@@ -9,7 +9,7 @@ import com.example.ourknowledgebackend.model.entities.User;
 
 public interface PermissionChecker {
 
-    User checkUser(Long userId) throws InstanceNotFoundException;
+    Long getUserIdByAuthentication();
 
     Technology checkTechnology(Long technologyId)
             throws InstanceNotFoundException;

@@ -1,35 +1,40 @@
 import {appFetch, config} from "./appFetch";
 
-export const findFilters = (userId, onSuccess) =>
+export const findFilters = (onSuccess) =>
     appFetch(`/filter/list`,
-        config('POST', {userId}), onSuccess);
+        config('POST', {}), onSuccess);
 
 export const findByFilterId = (filterId, onSuccess) =>
     appFetch(`/filter`,
         config('Post', {filterId}), onSuccess);
 
-export const getDefaultFilter = (userId, onSuccess) =>
+export const getDefaultFilter = (onSuccess) =>
     appFetch(`/filter/default`,
-        config('Post', {userId}), onSuccess);
+        config('Post', {}), onSuccess);
 
-export const saveFilter = (userId, filterName, onSuccess) =>
+export const saveFilter = (filterName, onSuccess) =>
     appFetch(`/filter/save`,
-        config('Post', {userId, filterName}), onSuccess);
+        config('Post', {filterName}), onSuccess);
 
-export const clearFilter = (userId, onSuccess) =>
+export const clearFilter = (onSuccess) =>
     appFetch(`/filter/clear`,
-        config('Post', {userId}), onSuccess);
+        config('Post', {}), onSuccess);
 
-export const deleteFilter = (userId, filterId, onSuccess) =>
+export const deleteFilter = (filterId, onSuccess) =>
     appFetch(`/filter/delete`,
-        config('Post', {userId, filterId}), onSuccess);
+        config('Post', {filterId}), onSuccess);
 
-export const updateFilterParam = (userId, filterParamId, filterId, technologyId, mandatory, recommended, onSuccess) =>
+export const updateFilterParam = (filterParamId, filterId, technologyId, mandatory, recommended, onSuccess) =>
     appFetch(`/filter/filterParam/update`,
-        config('Post', {userId, filterParamId, filterId, technologyId, mandatory, recommended}),
+        config('Post', {filterParamId, filterId, technologyId, mandatory, recommended}),
         onSuccess);
 
-export const useProjectAsFilter = (userId, projectId, onSuccess) =>
+export const useProjectAsFilter = (projectId, onSuccess) =>
     appFetch(`/filter/createByProject`,
-        config('Post', {userId, projectId}),
+        config('Post', {projectId}),
+        onSuccess);
+
+export const useUserAsFilter = (userId, onSuccess) =>
+    appFetch(`/filter/createByUser`,
+        config('Post', {userId}),
         onSuccess);

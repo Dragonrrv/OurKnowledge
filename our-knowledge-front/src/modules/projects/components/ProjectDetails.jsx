@@ -15,7 +15,6 @@ const ProjectDetails = () => {
     const {id} = useParams();
 
     const projectDetails = useSelector(selectors.getProjectDetails);
-    const userId = useSelector(users.selectors.getUserId);
     const userRole = useSelector(users.selectors.getUserRole);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -27,7 +26,7 @@ const ProjectDetails = () => {
     }, [dispatch]);
 
     const useAsFilter = () => {
-        dispatch(filters.actions.useProjectAsFilter(userId, projectDetails.project.id));
+        dispatch(filters.actions.useProjectAsFilter(projectDetails.project.id));
         navigate('/filters/newProjectFilter/' + projectDetails.project.name)
     }
 

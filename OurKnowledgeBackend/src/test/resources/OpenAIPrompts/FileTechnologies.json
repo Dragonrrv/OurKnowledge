@@ -1,0 +1,43 @@
+{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Te voy a pasar palabras y me vas a contestar solo con 'Si' o 'No' si son tecnologías que podría usar un informático"
+    },
+    {
+      "role": "user",
+      "content": "Backend, keyckoack, silla, JUnit, Pamplona, UwU, HidroNeumática, electronica, Mama"
+    }
+  ],
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "technology_evaluation",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "evaluations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "La palabra proporcionada para evaluar."
+                },
+                "result": {
+                  "type": "string",
+                  "enum": ["Si", "No"],
+                  "description": "El resultado de si la palabra es una tecnología que podría usar un informático ('Si' o 'No')."
+                }
+              },
+              "required": ["name", "result"]
+            }
+          }
+        },
+        "required": ["evaluations"]
+      }
+    }
+  }
+}

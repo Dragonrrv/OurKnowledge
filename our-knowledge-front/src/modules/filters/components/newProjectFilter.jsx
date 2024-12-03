@@ -1,8 +1,7 @@
 import TechnologyFilter from "./TechnologyFilter";
 import React, {useEffect, useState} from "react";
 import filters from "../index";
-import {useDispatch, useSelector} from "react-redux";
-import users from "../../users";
+import {useDispatch} from "react-redux";
 import {FormattedMessage} from "react-intl";
 import {useNavigate, useParams} from "react-router-dom";
 
@@ -11,16 +10,15 @@ const newProjectFilter = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const userId = useSelector(users.selectors.getUserId);
     const [filterName, setFilterName] = useState(filterNameParam);
 
     useEffect(() => {
-        dispatch(filters.actions.getDefaultFilter(userId));
+        dispatch(filters.actions.getDefaultFilter());
     }, [dispatch]);
 
     const saveFilter = (event) => {
         event.preventDefault();
-        dispatch(filters.actions.saveFilter(userId, filterName));
+        dispatch(filters.actions.saveFilter(filterName));
         navigate(-1);
     }
 

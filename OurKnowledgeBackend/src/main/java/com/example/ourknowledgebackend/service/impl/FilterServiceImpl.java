@@ -44,6 +44,8 @@ public class FilterServiceImpl implements FilterService {
 
     private final UsesDao usesDao;
 
+    private final KnowledgeDao knowledgeDao;
+
 
     @Value("${app.constants.default_filter_name}")
     private String defaultFilter;
@@ -55,8 +57,8 @@ public class FilterServiceImpl implements FilterService {
     }
 
     @Override
-    public CompleteFilter getFilter(Long filterId) throws InstanceNotFoundException {
-        Filter filter = filterDao.findById(filterId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", filterId));
+    public CompleteFilter getFilter(Long userId, Long filterId) throws InstanceNotFoundException, PermissionException {
+        Filter filter = permissionChecker.checkFilterExistsAndBelongsTo(filterId, userId);
         List<FilterParamTechnology> filterParamTechnologyList = extendedTechnologyDao.findTechnologiesWithFilter(filter.getId());
         List<FilterParamTree> filterParamTreeList = common.ListToTreeList(filterParamTechnologyList, FilterParamTree::new);
         return new CompleteFilter(filter, filterParamTreeList);
@@ -66,7 +68,11 @@ public class FilterServiceImpl implements FilterService {
     public CompleteFilter getDefaultFilter(Long userId) throws InstanceNotFoundException {
         User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
         Filter filter = filterDao.findByUserAndName(user, defaultFilter).orElseThrow(() -> new InstanceNotFoundException("project.entity.filter", null));
-        return getFilter(filter.getId());
+        try {
+            return getFilter(userId, filter.getId());
+        } catch (PermissionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -112,7 +118,18 @@ public class FilterServiceImpl implements FilterService {
         filterParamDao.saveAll(filterParamList);
     }
 
-    public void addFilterParam(Filter filter, Long technologyId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException, PermissionException, InvalidAttributesException, DuplicateInstanceException {
+    @Override
+    public void createByUser(Long userId, Long userAsFilterId) throws InstanceNotFoundException {
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
+        User userAsFilter = userDao.findById(userAsFilterId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userAsFilterId));
+        Filter filter = filterDao.findByUserAndName(user, defaultFilter).orElse(null);
+        List<FilterParam> filterParamList = knowledgeDao.findAllByUser(userAsFilter).stream()
+                .map( knowledge -> new FilterParam( filter, knowledge.getTechnology(), false, true ) ).collect(Collectors.toList());
+        clearFilter(userId);
+        filterParamDao.saveAll(filterParamList);
+    }
+
+    private void addFilterParam(Filter filter, Long technologyId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException, PermissionException, InvalidAttributesException, DuplicateInstanceException {
         Technology technology = technologyDao.findById(technologyId).orElseThrow(() -> new InstanceNotFoundException("project.entity.technology", technologyId));
         if(mandatory && recommended || !(mandatory || recommended)){
             throw new InvalidAttributesException();
@@ -132,14 +149,32 @@ public class FilterServiceImpl implements FilterService {
                 Optional<Technology> parentTechnology = technologyDao.findById(technology.getParentId());
                 parentTechnology.ifPresent(value -> addFilterParamHierarchy(filter, value, mandatory, recommended));
             }
+            if (mandatory && brotherFilterParams.stream().noneMatch(FilterParam::isMandatory)) {
+                FilterParam filterParamParent = filterParamDao.findByFilterAndTechnologyId(filter, technology.getParentId()).orElse(null);
+                updateFilterParamHierarchy(filterParamParent, true, false);
+            }
         }
         if(!filterParamDao.existsByFilterAndTechnology(filter, technology)){
             filterParamDao.save(new FilterParam(filter, technology, mandatory, recommended));
         }
     }
 
-    public void deleteFilterParam(Long filterParamId) throws InstanceNotFoundException {
+    private void deleteFilterParam(Long filterParamId) throws InstanceNotFoundException {
         FilterParam filterParam = filterParamDao.findById(filterParamId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filterParam", filterParamId));
+        if (filterParam.isMandatory()) {
+            FilterParamTechnology filterParamTechnology = extendedTechnologyDao.findFilterParamTechnology(filterParamId);
+            if (filterParamTechnology.getRecommendedUnnecessary()){
+                updateFilterParam(filterParamId, false, true);
+                return;
+            }
+            List<FilterParam> filterParamBrothers = filterParamDao.findAllByFilterAndTechnologyParentId(filterParam.getFilter(), filterParam.getTechnology().getParentId());
+            filterParamBrothers.remove(filterParam);
+            if (!filterParamBrothers.isEmpty() && filterParamBrothers.stream().noneMatch(FilterParam::isMandatory)) {
+                filterParamDao.delete(filterParam);
+                updateFilterParam(filterParamDao.findByFilterAndTechnologyId(filterParam.getFilter(), filterParam.getTechnology().getParentId()).orElse(null).getId(), false, true);
+                return;
+            }
+        }
         deleteFilterParamHierarchy(filterParam, filterParam.isRecommended());
     }
 
@@ -160,12 +195,26 @@ public class FilterServiceImpl implements FilterService {
         filterParamDao.delete(filterParam);
     }
 
-    public void updateFilterParam(Long filterParamId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException {
+    private void updateFilterParam(Long filterParamId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException {
         FilterParam filterParam = filterParamDao.findById(filterParamId).orElseThrow(() -> new InstanceNotFoundException("project.entity.filterParam", filterParamId));
+        updateFilterParamHierarchy(filterParam, mandatory, recommended);
+    }
+
+    private void updateFilterParamHierarchy(FilterParam filterParam, Boolean mandatory, Boolean recommended) {
+        if (filterParam.getTechnology().getParentId() != null) {
+            List<FilterParam> brotherFilterParams = filterParamDao.findAllByFilterAndTechnologyParentId(filterParam.getFilter(), filterParam.getTechnology().getParentId());
+            brotherFilterParams.remove(filterParam);
+
+            if (brotherFilterParams.isEmpty()) {
+                FilterParam filterParamParent = filterParamDao.findByFilterAndTechnologyId(filterParam.getFilter(), filterParam.getTechnology().getParentId()).orElse(null);
+                updateFilterParamHierarchy(filterParamParent, mandatory, recommended);
+            }
+        }
         filterParam.setMandatory(mandatory);
         filterParam.setRecommended(recommended);
         filterParamDao.save(filterParam);
     }
+
 
     @Override
     public Long updateFilterParam(Long userId, Long filterParamId, Long filterId, Long technologyId, Boolean mandatory, Boolean recommended) throws InstanceNotFoundException, InvalidAttributesException, PermissionException, DuplicateInstanceException {

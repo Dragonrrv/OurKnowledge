@@ -1,6 +1,6 @@
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import projects from "../index";
 import technologies from "../../technologies";
 import {FormattedMessage} from "react-intl";
@@ -13,11 +13,38 @@ const UpdateProject = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const projectDetails = useSelector(projects.selectors.getProjectDetails);
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+        console.log(event.target.files[0])
+    };
 
     const updateProject = (name, description, startDate, status, size) => {
         dispatch(projects.actions.updateProject(projectDetails.project.id, name, description, startDate, status, size, false, []));
         navigate('/projects/projectDetails/0')
     }
+
+    const sendFile = (event) => {
+        event.preventDefault();
+
+        if (!selectedFile) {
+            alert("Por favor selecciona un archivo");
+            return;
+        }
+
+        const reader = new FileReader();
+
+        // Cuando se complete la lectura del archivo
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
+            console.log(fileContent); // Aquí obtienes el contenido del archivo
+            dispatch(projects.actions.sendFile(projectDetails.project.id, selectedFile.name.split('.').pop(), fileContent));
+        };
+
+        // Lee el archivo como texto (esto era lo que faltaba)
+        reader.readAsText(selectedFile);
+    };
 
     useEffect(() => {
         dispatch(technologies.actions.findTechnologies());
@@ -30,6 +57,9 @@ const UpdateProject = () => {
                          sizeV={projectDetails.project.size}
                          buttonV={<FormattedMessage id='project.global.buttons.update'/>}
                          onClick={updateProject}/>
+
+            <input type="file" onChange={handleFileChange} />
+            <button onClick={sendFile}>Enviar Archivo</button>
 
             <h6 style={{marginTop: '10px'}}><FormattedMessage id='project.projects.addProject.TechnologiesUsed'/></h6>
             <div style={{ width: '350px'}}>

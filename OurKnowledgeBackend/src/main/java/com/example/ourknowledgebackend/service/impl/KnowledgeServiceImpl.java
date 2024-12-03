@@ -30,6 +30,8 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     private final KnowledgeDao knowledgeDao;
 
+    private final UserDao userDao;
+
     private final TechnologyDao technologyDao;
 
     private final ExtendedTechnologyDao extendedTechnologyDao;
@@ -51,7 +53,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     @Override
     public List<Knowledge> addKnowledge(Long userId, Long technologyId, String technologyName, Long parentTechnologyId) throws InstanceNotFoundException, DuplicateInstanceException, InvalidAttributesException {
-        User user = permissionChecker.checkUser(userId);
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
         Technology technology;
         if(technologyId==null){
             if(technologyName!=null){
@@ -89,7 +91,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     @Override
     public void deleteKnowledge(Long userId, Long knowledgeId) throws InstanceNotFoundException, PermissionException {
-        User user = permissionChecker.checkUser(userId);
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
         Knowledge knowledge = permissionChecker.checkKnowledgeExistsAndBelongsTo(knowledgeId, userId);
         deleteKnowledgeHierarchy(user, knowledge);
 
@@ -113,7 +115,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
 
     @Override
     public void updateKnowledge(Long userId, Long knowledgeId, Boolean mainSkill, Boolean likeIt) throws InstanceNotFoundException, PermissionException {
-        User user = permissionChecker.checkUser(userId);
+        User user = userDao.findById(userId).orElseThrow(() -> new InstanceNotFoundException("project.entity.user", userId));
         Knowledge knowledge = permissionChecker.checkKnowledgeExistsAndBelongsTo(knowledgeId, userId);
         if (mainSkill != null) {
             knowledge.setMainSkill(mainSkill);

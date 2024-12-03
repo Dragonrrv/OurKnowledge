@@ -7,10 +7,10 @@ const findFiltersCompleted = filterList => ({
     filterList
 });
 
-export const findFilters = (userId) => dispatch => {
+export const findFilters = () => dispatch => {
 
     dispatch(clearFiltersResult());
-    backend.filterService.findFilters(userId,
+    backend.filterService.findFilters(
         result => dispatch(findFiltersCompleted(result)));
 
 }
@@ -24,14 +24,14 @@ const findFilterCompleted = filterDetails => ({
     filterDetails
 });
 
-export const findFilterById = filterId => dispatch => {
+export const findFilterById = (filterId) => dispatch => {
     backend.filterService.findByFilterId(filterId,
         filterDetails => dispatch(findFilterCompleted(filterDetails)));
 }
 
 
-export const getDefaultFilter = userId => dispatch => {
-    backend.filterService.getDefaultFilter(userId,
+export const getDefaultFilter = () => dispatch => {
+    backend.filterService.getDefaultFilter(
         filterDetails => dispatch(findFilterCompleted(filterDetails)));
 }
 
@@ -40,18 +40,18 @@ const updateFiltersCompleted = filterList => ({
     filterList
 });
 
-export const saveFilter = (userId, filterName) => dispatch => {
-    backend.filterService.saveFilter(userId, filterName,
+export const saveFilter = (filterName) => dispatch => {
+    backend.filterService.saveFilter(filterName,
         result => dispatch(updateFiltersCompleted(result)));
 }
 
-export const clearFilter = (userId) => dispatch => {
-    backend.filterService.clearFilter(userId,
+export const clearFilter = () => dispatch => {
+    backend.filterService.clearFilter(
         result => dispatch(updateFilterCompleted(result)));
 }
 
-export const deleteFilter = (userId, filterId) => dispatch => {
-    backend.filterService.deleteFilter(userId, filterId,
+export const deleteFilter = (filterId) => dispatch => {
+    backend.filterService.deleteFilter(filterId,
         result => dispatch(updateFiltersCompleted(result)));
 }
 
@@ -60,12 +60,17 @@ const updateFilterCompleted = filterDetails => ({
     filterDetails
 });
 
-export const updateFilterParam = (userId, filterParamId, filterId, technologyId, mandatory, relevant) => dispatch => {
-    backend.filterService.updateFilterParam(userId, filterParamId, filterId, technologyId, mandatory, relevant,
+export const updateFilterParam = (filterParamId, filterId, technologyId, mandatory, relevant) => dispatch => {
+    backend.filterService.updateFilterParam(filterParamId, filterId, technologyId, mandatory, relevant,
         filterDetails => dispatch(updateFilterCompleted(filterDetails)));
 }
 
-export const useProjectAsFilter = (userId, projectId) => dispatch => {
-    backend.filterService.useProjectAsFilter(userId, projectId,
+export const useProjectAsFilter = (projectId) => dispatch => {
+    backend.filterService.useProjectAsFilter(projectId,
+        filterDetails => dispatch(findFilterCompleted(filterDetails)))
+}
+
+export const useUserAsFilter = (userId) => dispatch => {
+    backend.filterService.useUserAsFilter(userId,
         filterDetails => dispatch(findFilterCompleted(filterDetails)))
 }

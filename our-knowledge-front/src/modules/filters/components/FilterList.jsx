@@ -13,20 +13,20 @@ const FilterList = () => {
     const dispatch = useDispatch();
     const filterList = useSelector(selectors.getFilterList);
     const filterName = useSelector(selectors.getFilterName);
-    const userId = useSelector(users.selectors.getUserId);
 
     useEffect(() => {
-        dispatch(filters.actions.findFilters(userId));
+        dispatch(filters.actions.findFilters());
     }, [dispatch]);
 
     const useFilter = (filterId) => {
+        console.log(filterId)
         dispatch(actions.findFilterById(filterId));
     };
 
     const handleRemove = (filterId) => {
 
         if (window.confirm(intl.formatMessage({ id: 'project.filters.filterList.delete.confirmation' }))) {
-            dispatch(actions.deleteFilter(userId, filterId));
+            dispatch(actions.deleteFilter(filterId));
         }
     };
 

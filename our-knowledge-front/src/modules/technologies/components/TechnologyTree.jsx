@@ -3,18 +3,16 @@ import PropTypes from 'prop-types';
 
 import {useEffect, useState, useRef } from "react";
 import * as actions from "../actions";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {useIntl} from "react-intl";
 import AddTechnology from "../../common/components/AddTechnology";
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
-import users from "../../users";
 import TreeList from "../../common/components/TreeList";
 
 const TechnologyTree = ({tree, dept}) => {
 
     const intl = useIntl();
     const dispatch = useDispatch();
-    const userId = useSelector(users.selectors.getUserId);
     const [isOpen, setIsOpen] = useState(true);
     const [showAddMenu, setShowAddMenu] = useState(false);
     const [addMenuPosition, setAddMenuPosition] = useState({ x: 0, y: 0 });
@@ -31,7 +29,7 @@ const TechnologyTree = ({tree, dept}) => {
             : 'project.technologies.technology.delete.confirmation';
 
         if (window.confirm(intl.formatMessage({ id: confirmMessage }))) {
-            dispatch(actions.removeTechnology(userId, tree.parent.id, hasChildren));
+            dispatch(actions.removeTechnology(tree.parent.id, hasChildren));
         }
     };
 

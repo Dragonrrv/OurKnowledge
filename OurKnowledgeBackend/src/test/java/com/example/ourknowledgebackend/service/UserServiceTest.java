@@ -204,7 +204,7 @@ class UserServiceTest {
         Knowledge knowledge4 = knowledgeDao.save(new Knowledge(user, technology4, false, false));
 
         try {
-            UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
+            UserProfile userProfile = userService.showProfile(user.getId());
 
             assertEquals(userProfile.getUser(), user);
             // todos los datos correctos
@@ -243,7 +243,7 @@ class UserServiceTest {
         Knowledge knowledge5 = knowledgeDao.save(new Knowledge(user2, technology1, false, false));
 
         try {
-            UserProfile userProfile = userService.showProfile(user.getId(), user.getId());
+            UserProfile userProfile = userService.showProfile(user.getId());
 
             assertEquals(userProfile.getUser(), user);
             // todos los datos correctos

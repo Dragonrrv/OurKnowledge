@@ -11,14 +11,12 @@ import FilterList from "../../filters/components/FilterList";
 const FindUsersAdmin = () => {
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const userId = useSelector(users.selectors.getUserId);
     const filterId = useSelector(filters.selectors.getFilterId);
     const [keywords, setKeywords] = useState('');
     const [useFilter, setUseFilter] = useState(false);
 
     useEffect(() => {
-        dispatch(filters.actions.getDefaultFilter(userId));
+        dispatch(filters.actions.getDefaultFilter());
         dispatch(users.actions.findUsers(1, ''));
     }, [dispatch]);
 
@@ -30,7 +28,7 @@ const FindUsersAdmin = () => {
 
     const clearFilter = event => {
         event.preventDefault();
-        dispatch(filters.actions.clearFilter(userId));
+        dispatch(filters.actions.clearFilter());
     }
 
     return (

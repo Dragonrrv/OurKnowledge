@@ -8,19 +8,17 @@ import {Link, useNavigate} from "react-router-dom";
 import FilterList from "../../filters/components/FilterList";
 import MoreOptions from "../../filters/components/MoreOptions";
 import filters from "../../filters";
-import users from "../../users";
 
 const FindProjectsAdmin = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const userId = useSelector(users.selectors.getUserId);
     const filterId = useSelector(filters.selectors.getFilterId);
     const [keywords, setKeywords] = useState('');
     const [useFilter, setUseFilter] = useState(false);
 
     useEffect(() => {
-        dispatch(filters.actions.getDefaultFilter(userId));
+        dispatch(filters.actions.getDefaultFilter());
         dispatch(projects.actions.findProjects(1, ''));
     }, [dispatch]);
 
@@ -32,7 +30,7 @@ const FindProjectsAdmin = () => {
 
     const clearFilter = event => {
         event.preventDefault();
-        dispatch(filters.actions.clearFilter(userId));
+        dispatch(filters.actions.clearFilter());
     }
 
     return (

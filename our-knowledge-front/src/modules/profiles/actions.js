@@ -12,10 +12,10 @@ export const findProfileCompleted = profile => ({
     profile
 });
 
-export const findProfile = (userId, profileId) => dispatch => {
+export const findProfile = (userId) => dispatch => {
 
     dispatch(clearProfile());
-    backend.userService.getProfile(userId, profileId,
+    backend.userService.getProfile(userId,
         result => dispatch(findProfileCompleted(result)))
 }
 
@@ -23,27 +23,27 @@ const clearProfile = () => ({
     type: actionTypes.CLEAR_PROFILE
 });
 
-export const updateKnowledge = (userId, knowledgeId, mainSkill, likeIt, onSuccess,
+export const updateKnowledge = (knowledgeId, mainSkill, likeIt, onSuccess,
                                        onErrors) => dispatch =>
-    backend.knowledgeService.updateKnowledge(userId,
+    backend.knowledgeService.updateKnowledge(
         knowledgeId, mainSkill, likeIt, profile => {
             dispatch(profileUpdated(profile));
             onSuccess();
         },
         onErrors);
 
-export const addKnowledge = (userId, technologyId, technologyName, parentTechnologyId, onSuccess,
+export const addKnowledge = (technologyId, technologyName, parentTechnologyId, onSuccess,
                                        onErrors) => dispatch =>
-    backend.knowledgeService.addKnowledge(userId,
+    backend.knowledgeService.addKnowledge(
         technologyId, technologyName, parentTechnologyId, profile => {
             dispatch(profileUpdated(profile));
             onSuccess();
         },
         onErrors);
 
-export const deleteKnowledge = (userId, knowledgeId, onSuccess,
+export const deleteKnowledge = (knowledgeId, onSuccess,
                                        onErrors) => dispatch =>
-    backend.knowledgeService.deleteKnowledge(userId,
+    backend.knowledgeService.deleteKnowledge(
         knowledgeId, profile => {
             dispatch(profileUpdated(profile));
             onSuccess();

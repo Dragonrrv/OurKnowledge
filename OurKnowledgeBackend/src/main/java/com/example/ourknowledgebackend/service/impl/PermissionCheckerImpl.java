@@ -6,6 +6,9 @@ import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.PermissionChecker;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,15 +29,11 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private FilterDao filterDao;
 
     @Override
-    public User checkUser(Long userId) throws InstanceNotFoundException {
-
-        Optional<User> user = userDao.findById(userId);
-
-        if (!user.isPresent()) {
-            throw new InstanceNotFoundException("project.entities.user", userId);
-        }
-
-        return user.get();
+    public Long getUserIdByAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        String email = jwt.getClaim("email");
+        return userDao.findByEmail(email).getId();
     }
 
     @Override
