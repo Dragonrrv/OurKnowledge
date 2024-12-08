@@ -11,7 +11,6 @@ import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.ProjectService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
@@ -28,7 +27,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,8 +34,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
-
-    private Map<String, Object> jsonRequest;
 
     private final ObjectMapper objectMapper;
 
@@ -64,11 +60,6 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserDao userDao;
 
     private final KnowledgeDao knowledgeDao;
-
-    @PostConstruct
-    public void init() throws IOException {
-        jsonRequest = objectMapper.readValue(new ClassPathResource("openAIPrompts/FileTechnologies.json").getInputStream(), Map.class);
-    }
 
     @Override
     public Block<ProjectResult> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException {
@@ -178,17 +169,17 @@ public class ProjectServiceImpl implements ProjectService {
 
     private List<Long> getAITechnologiesId(String fileContent) {
         try {
+            Map<String, Object> jsonRequest = objectMapper.readValue(new ClassPathResource("openAIPrompts/FileTechnologies.json").getInputStream(), Map.class);
             List<Technology> technologies = technologyDao.findAllByRelevantTrue();
             Map<String, String> technologiesJson = new HashMap<>();
             technologiesJson.put("technologies", objectMapper.writeValueAsString(technologies));
             jsonRequest = MapFormatter.formatMap(jsonRequest, Map.of("configContent", fileContent, "technologiesContent", technologiesJson.toString()));
-            Map<String, Object> response = openAIService.askGPT(jsonRequest);
-            List<Long> technologyIds = new ArrayList<>();
-            List<Map<String, Object>> technologiesIdsMap = (List<Map<String, Object>>) response.get("technologies");
-            for (Map<String, Object> technology : technologiesIdsMap) {
-                technologyIds.add(((Number) technology.get("id")).longValue());
-            }
-            return technologyIds;
+            String content = openAIService.askGPT(jsonRequest).get("content").toString();
+            JsonNode technologiesNode = objectMapper.readTree(content).get("technologies");
+            List<Long> technologiesId = new ArrayList<>();
+            technologiesNode.forEach(technology -> technologiesId.add(technology.get("id").longValue()));
+
+            return technologiesId;
         } catch (Exception e) {
             throw new RuntimeException();
         }

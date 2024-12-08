@@ -76,6 +76,7 @@ export default {
     'project.projects.button.updateProject': 'Update Project',
     'project.projects.button.addProject': 'New Project',
     'project.projects.button.addParticipation': 'Add Participation',
+    'project.projects.updateProject.button.sendFile': 'Send File',
     'project.projectDetails.usedTechnologies': 'Used Technologies',
     'project.projectDetails.deleteValidation.knowledgeDelete': 'Do you want to delete the knowledge in your profile too?',
     'project.projectDetails.participatedDevelopers': 'Developers that work on this project',
@@ -85,6 +86,8 @@ export default {
     'project.projects.addProject.status': 'Status: ',
     'project.projects.addProject.size': 'Expected size: ',
     'project.projects.addProject.TechnologiesUsed': 'Mark technologies used: ',
+    'project.projects.updateProject.useProcessing': 'Use Processing:',
+    'project.projects.updateProject.useAI': 'Use AI:',
 
     'project.filters.newFilter': 'Save custom filter',
     'project.filters.filterName': 'Filter Name: ',
