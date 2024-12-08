@@ -18,9 +18,9 @@ export const updateProject = (id, name, description, startDate, status, size, up
     appFetch(`/project/update`,
         config('Post', {id, name, description, startDate, status, size, updateTechnologies, technologyIdList}), onSuccess);
 
-export const sendProjectFile = (id, extension, fileContent, onSuccess) =>
+export const sendProjectFile = (id, extension, fileContent, useProcessing, useAi, onSuccess) =>
     appFetch(`/project/updateWithFile`,
-        config('Post', {id, extension, fileContent}), onSuccess);
+        config('Post', {id, extension, fileContent, useProcessing, useAi}), onSuccess);
 
 export const addUses = (projectId, technologyId, onSuccess) =>
     appFetch(`/project/uses/add`,

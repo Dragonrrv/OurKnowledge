@@ -2,6 +2,8 @@ package com.example.ourknowledgebackend.service.impl;
 
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
+import com.example.ourknowledgebackend.infrastructure.MapFormatter;
+import com.example.ourknowledgebackend.infrastructure.OpenAIService;
 import com.example.ourknowledgebackend.model.*;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.Block;
@@ -9,8 +11,10 @@ import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.ProjectService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -24,6 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,9 +37,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
+    private Map<String, Object> jsonRequest;
+
+    private final ObjectMapper objectMapper;
+
     private final Common common;
 
     private final KnowledgeService knowledgeService;
+
+    private final OpenAIService openAIService;
 
     private final ProjectDao projectDao;
 
@@ -53,6 +64,11 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserDao userDao;
 
     private final KnowledgeDao knowledgeDao;
+
+    @PostConstruct
+    public void init() throws IOException {
+        jsonRequest = objectMapper.readValue(new ClassPathResource("openAIPrompts/FileTechnologies.json").getInputStream(), Map.class);
+    }
 
     @Override
     public Block<ProjectResult> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException {
@@ -136,28 +152,46 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void updateProjectWithFile(Long id, String extension, String fileContent) throws InstanceNotFoundException {
+    public void updateProjectWithFile(Long id, String extension, String fileContent, Boolean useProcessing, Boolean useAI) throws InstanceNotFoundException {
         Project project = projectDao.findById(id).orElseThrow(() -> new InstanceNotFoundException("project.entity.project", id));
-        List<Long> technologiesId;
-
-        switch (extension){
-            case "xml":
-                technologiesId = new ArrayList<>(readXmlTechnologies(fileContent).stream()
+        List<Long> technologiesId = new ArrayList<>();
+        if(useProcessing){
+            switch (extension) {
+                case "xml" -> technologiesId.addAll(readXmlTechnologies(fileContent).stream()
                         .map(Technology::getId)
-                        .collect(Collectors.toList()));
-                break;
-            case "json":
-                technologiesId = new ArrayList<>(readJsonTechnologies(fileContent).stream()
+                        .toList());
+                case "json" -> technologiesId.addAll(readJsonTechnologies(fileContent).stream()
                         .map(Technology::getId)
-                        .collect(Collectors.toList()));
-                break;
-            default:
-                throw new RuntimeException();
+                        .toList());
+                default -> throw new RuntimeException();
+            }
+        }
+        if(useAI){
+            List<Long> aiTechnologiesId = getAITechnologiesId(fileContent);
+            technologiesId.addAll(aiTechnologiesId);
         }
 
         updateProjectTechnologies(project, technologiesId);
 
         projectDao.save(project);
+    }
+
+    private List<Long> getAITechnologiesId(String fileContent) {
+        try {
+            List<Technology> technologies = technologyDao.findAllByRelevantTrue();
+            Map<String, String> technologiesJson = new HashMap<>();
+            technologiesJson.put("technologies", objectMapper.writeValueAsString(technologies));
+            jsonRequest = MapFormatter.formatMap(jsonRequest, Map.of("configContent", fileContent, "technologiesContent", technologiesJson.toString()));
+            Map<String, Object> response = openAIService.askGPT(jsonRequest);
+            List<Long> technologyIds = new ArrayList<>();
+            List<Map<String, Object>> technologiesIdsMap = (List<Map<String, Object>>) response.get("technologies");
+            for (Map<String, Object> technology : technologiesIdsMap) {
+                technologyIds.add(((Number) technology.get("id")).longValue());
+            }
+            return technologyIds;
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 
     private List<Technology> readXmlTechnologies(String pomContent) {

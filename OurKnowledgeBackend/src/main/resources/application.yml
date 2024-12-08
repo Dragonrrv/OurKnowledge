@@ -42,15 +42,17 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-uri: "http://localhost:8080/realms/OurKnowledge"
+          issuer-uri: "${issuer-uri}"
           jwk-set-uri: " ${spring.security.oauth2.resource-server.jwt.issuer-uri}/protocol/openid-connect/certs"
+  config:
+    import: classpath:private.yml
 
 jwt:
   auth:
     converter:
-      resource-id: "ourknowledge-client"
+      resource-id: "${resource-id}"
       principle-attribute: "preferred_username"
 
 openai:
   url: "https://api.openai.com/v1"
-  api-key: ""
+  api-key: "${api-key}"

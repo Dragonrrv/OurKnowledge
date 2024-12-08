@@ -10,8 +10,6 @@ import com.example.ourknowledgebackend.model.entities.Uses;
 import com.example.ourknowledgebackend.model.entities.Verification;
 
 import javax.naming.directory.InvalidAttributesException;
-import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface ProjectService {
@@ -24,7 +22,7 @@ public interface ProjectService {
 
     void updateProject(Long id, String name, String description, String status, String startDate, int size, Boolean updateTechnologies, List<Long> technologiesId) throws InstanceNotFoundException, DuplicateInstanceException;
 
-    void updateProjectWithFile(Long id, String extension, String fileText) throws InstanceNotFoundException, DuplicateInstanceException;
+    void updateProjectWithFile(Long id, String extension, String fileText, Boolean useProcessing, Boolean useAi) throws InstanceNotFoundException, DuplicateInstanceException;
 
     void deleteProject(Long projectId) throws InstanceNotFoundException;
 

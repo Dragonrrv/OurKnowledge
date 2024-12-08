@@ -49,8 +49,8 @@ export const updateProject = (id, name, description, startDate, status, size, up
         projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 
-export const sendFile = (id, extension, fileContent) => dispatch => {
-    backend.projectService.sendProjectFile(id, extension, fileContent,
+export const sendFile = (id, extension, fileContent, useProcessing, useAi) => dispatch => {
+    backend.projectService.sendProjectFile(id, extension, fileContent, useProcessing, useAi,
         projectDetails => dispatch(updateProjectCompleted(projectDetails)));
 }
 

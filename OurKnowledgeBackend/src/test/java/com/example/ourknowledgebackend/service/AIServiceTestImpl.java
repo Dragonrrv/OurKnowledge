@@ -1,19 +1,19 @@
 package com.example.ourknowledgebackend.service;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class TestGPTTestImpl {
+class AIServiceTestImpl {
 
     @Autowired
-    private TestGPT testGPT;
+    private AIService AIService;
 
-    @Test
-    void llamada() {
-        testGPT.llamada();
-    }
+    // Test only manually
+    //@Test
+    //void llamada() {
+    //    AIService.llamada();
+    //}
 }

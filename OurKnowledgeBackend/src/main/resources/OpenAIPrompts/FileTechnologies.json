@@ -3,40 +3,35 @@
   "messages": [
     {
       "role": "system",
-      "content": "Te voy a pasar palabras y me vas a contestar solo con 'Si' o 'No' si son tecnologías que podría usar un informático"
+      "content": "Te voy a pasar un archivo de configuración de una aplicación y un listado de tecnologías o conocimientos json en forma de arbol.\nDebes responder las tecnologías que detectes que pueda tener el programa con esté archivo de configuración y que estén en el segundo json enviado.\nAñade las tecnologías solo si crees que implementa todas las padres."
     },
     {
       "role": "user",
-      "content": "Backend, keyckoack, silla, JUnit, Pamplona, UwU, HidroNeumática, electronica, Mama"
+      "content": "El archivo de configuración es el siguiente:\n ${configContent} \n\n Las tecnologías o conocimientos son los siguientes:\n ${technologiesContent}"
     }
   ],
   "response_format": {
     "type": "json_schema",
     "json_schema": {
-      "name": "technology_evaluation",
+      "name": "recognised_technologies",
       "schema": {
         "type": "object",
         "properties": {
-          "evaluations": {
+          "technologies": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "La palabra proporcionada para evaluar."
-                },
-                "result": {
-                  "type": "string",
-                  "enum": ["Si", "No"],
-                  "description": "El resultado de si la palabra es una tecnología que podría usar un informático ('Si' o 'No')."
+                "id": {
+                  "type": "integer",
+                  "description": "Technology Id"
                 }
               },
-              "required": ["name", "result"]
+              "required": ["id"]
             }
           }
         },
-        "required": ["evaluations"]
+        "required": ["technologies"]
       }
     }
   }

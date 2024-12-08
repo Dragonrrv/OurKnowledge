@@ -1,0 +1,3 @@
+Te voy a pasar un archivo de configuración de una aplicación y un listado de tecnologías o conocimientos json en forma de arbol.
+Debes responder las tecnologías que detectes que pueda tener el programa con esté archivo de configuración y que estén en el segundo json enviado.
+Añade las tecnologías solo si crees que implementa todas las padres.

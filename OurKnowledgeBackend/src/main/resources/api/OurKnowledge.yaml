@@ -840,6 +840,10 @@ components:
           type: string
         fileContent:
           type: string
+        useProcessing:
+          type: boolean
+        useAi:
+          type: boolean
 
     updateProjectResponse:
       $ref: '#/components/schemas/projectDetailsResponse'

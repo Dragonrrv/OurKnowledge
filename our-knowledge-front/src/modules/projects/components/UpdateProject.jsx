@@ -35,14 +35,12 @@ const UpdateProject = () => {
 
         const reader = new FileReader();
 
-        // Cuando se complete la lectura del archivo
         reader.onload = function(e) {
             const fileContent = e.target.result;
-            console.log(fileContent); // Aquí obtienes el contenido del archivo
-            dispatch(projects.actions.sendFile(projectDetails.project.id, selectedFile.name.split('.').pop(), fileContent));
+            console.log(fileContent);
+            dispatch(projects.actions.sendFile(projectDetails.project.id, selectedFile.name.split('.').pop(), fileContent, false, true));
         };
 
-        // Lee el archivo como texto (esto era lo que faltaba)
         reader.readAsText(selectedFile);
     };
 

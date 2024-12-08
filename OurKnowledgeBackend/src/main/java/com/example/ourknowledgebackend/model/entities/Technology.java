@@ -1,5 +1,6 @@
 package com.example.ourknowledgebackend.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +12,7 @@ public class Technology {
     private Long id;
     private String name;
     private Long parentId;
+    @JsonIgnore
     private boolean relevant;
 
     public Technology() {

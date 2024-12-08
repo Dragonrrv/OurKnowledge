@@ -5,7 +5,10 @@ import com.example.ourKnowledge.api.ProjectApi;
 import com.example.ourKnowledge.api.TechnologyApi;
 import com.example.ourKnowledge.api.UserApi;
 import com.example.ourKnowledge.api.model.*;
-import com.example.ourknowledgebackend.exceptions.*;
+import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
+import com.example.ourknowledgebackend.exceptions.HaveChildrenException;
+import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
+import com.example.ourknowledgebackend.exceptions.PermissionException;
 import com.example.ourknowledgebackend.model.UserResult;
 import com.example.ourknowledgebackend.model.entities.Participation;
 import com.example.ourknowledgebackend.model.entities.Project;
@@ -15,15 +18,10 @@ import com.example.ourknowledgebackend.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.naming.directory.InvalidAttributesException;
-import java.io.File;
 import java.text.ParseException;
-import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 @RestController
@@ -239,7 +237,8 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi, Filt
     public ResponseEntity updateProjectWithFile(UpdateWithFileRequestDTO updateWithFileRequestDTO) {
         try {
             projectService.updateProjectWithFile( longId(updateWithFileRequestDTO.getId()),
-                    updateWithFileRequestDTO.getExtension(), updateWithFileRequestDTO.getFileContent());
+                    updateWithFileRequestDTO.getExtension(), updateWithFileRequestDTO.getFileContent(),
+                    updateWithFileRequestDTO.getUseProcessing(), updateWithFileRequestDTO.getUseAi());
         return ResponseEntity.status(200).body(projectService.projectDetails(longId(updateWithFileRequestDTO.getId())));
         } catch (DuplicateInstanceException e) {
             return ResponseEntity.status(409).body(e);
