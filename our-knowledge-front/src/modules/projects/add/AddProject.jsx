@@ -4,7 +4,7 @@ import projects from "../index";
 import technologies from "../../technologies";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ProjectForm from "./ProjectForm";
+import ProjectForm from "../components/ProjectForm";
 
 const AddProject = () => {
     const dispatch = useDispatch();

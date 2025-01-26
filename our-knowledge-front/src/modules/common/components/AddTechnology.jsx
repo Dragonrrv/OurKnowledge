@@ -4,6 +4,7 @@ import * as developActions from "../../profiles/actions";
 import {useState} from "react";
 import {useDispatch} from "react-redux";
 import PropTypes from "prop-types";
+import {Box} from "@mui/material";
 
 const AddTechnology = ({parentId, relevant, onAdd}) => {
 
@@ -23,11 +24,11 @@ const AddTechnology = ({parentId, relevant, onAdd}) => {
     };
 
     return (
-        <div>
+        <Box sx={{marginLeft: "4px"}}>
             <div style={{marginTop: '4px'}} className="context-menu-title">
                 {intl.formatMessage({id: 'project.technologies.technologies.add'})}
             </div>
-            <form style={{marginTop: '2px', marginBottom: '0.2px'}} onSubmit={handleAddTechnology} className="context-menu-form">
+            <form style={{marginTop: '2px', marginBottom: '1px'}} onSubmit={handleAddTechnology} className="context-menu-form">
                 <input
                     type="text"
                     value={newTechnologyName}
@@ -39,7 +40,7 @@ const AddTechnology = ({parentId, relevant, onAdd}) => {
                     {intl.formatMessage({id: 'project.global.buttons.add'})}
                 </button>
             </form>
-        </div>
+        </Box>
 
     )
 }

@@ -2,10 +2,7 @@ package com.example.ourknowledgebackend.service;
 
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.exceptions.PermissionException;
-import com.example.ourknowledgebackend.model.entities.Filter;
-import com.example.ourknowledgebackend.model.entities.Knowledge;
-import com.example.ourknowledgebackend.model.entities.Technology;
-import com.example.ourknowledgebackend.model.entities.User;
+import com.example.ourknowledgebackend.model.entities.*;
 
 public interface PermissionChecker {
 
@@ -24,4 +21,9 @@ public interface PermissionChecker {
 
     Knowledge checkKnowledge(User user, Technology technology)
             throws InstanceNotFoundException;
+
+    Verification checkVerificationExistsAndBelongTo(Long verificationId, Long userId)
+            throws InstanceNotFoundException, PermissionException;;
+
+    Participation checkParticipationExistsAndBelongsTo(Long participationId, Long userId) throws InstanceNotFoundException, PermissionException;
 }

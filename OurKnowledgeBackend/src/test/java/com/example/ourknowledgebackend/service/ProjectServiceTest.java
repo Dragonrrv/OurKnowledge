@@ -2,6 +2,7 @@ package com.example.ourknowledgebackend.service;
 
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
+import com.example.ourknowledgebackend.exceptions.PermissionException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
 import com.example.ourknowledgebackend.model.ProjectResult;
 import com.example.ourknowledgebackend.model.SimpleVerification;
@@ -798,13 +799,13 @@ class ProjectServiceTest {
         Participation participation = participationDao.save(new Participation(project, user, "2024-08-21", null));
         Participation expected = new Participation(project, user, "2024-08-22", "2024-08-24");
         try {
-            projectService.updateParticipate(participation.getId(), expected.getStartDate(), expected.getEndDate());
+            projectService.updateParticipate(user.getId(), participation.getId(), expected.getStartDate(), expected.getEndDate());
             Participation result = participationDao.findAll().iterator().next();
 
             assertEquals(expected.getStartDate(), result.getStartDate());
             assertEquals(expected.getEndDate(), result.getEndDate());
 
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | PermissionException e) {
             assert false;
         }
     }
@@ -816,10 +817,32 @@ class ProjectServiceTest {
         Participation participation = participationDao.save(new Participation(project, user, "2024-08-21", null));
         Participation expected = new Participation(project, user, "2024-08-22", "2024-08-24");
         try {
-            projectService.updateParticipate(NON_EXISTENT_ID, expected.getStartDate(), expected.getEndDate());
+            projectService.updateParticipate(user.getId(), NON_EXISTENT_ID, expected.getStartDate(), expected.getEndDate());
             assert false;
         } catch (InstanceNotFoundException e) {
+
             assert true;
+
+        } catch (PermissionException e) {
+            assert false;
+        }
+    }
+
+    @Test
+    void updateParticipatePermissionException() {
+        Project project = projectDao.save(new Project("name1", "description1", "doing", "2024-08-01", 1));
+        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
+        Participation participation = participationDao.save(new Participation(project, user, "2024-08-21", null));
+        Participation expected = new Participation(project, user, "2024-08-22", "2024-08-24");
+        try {
+            projectService.updateParticipate(NON_EXISTENT_ID, participation.getId(), expected.getStartDate(), expected.getEndDate());
+            assert false;
+        } catch (InstanceNotFoundException e) {
+            assert false;
+        } catch (PermissionException e) {
+
+            assert true;
+
         }
     }
 
@@ -886,7 +909,7 @@ class ProjectServiceTest {
         Verification verification5 = verificationDao.save(new Verification(knowledge5, uses5));
 
         try {
-            projectService.deleteVerification(verification2.getId(), false);
+            projectService.deleteVerification(user.getId(), verification2.getId(), false);
 
             List<Verification> verificationList = verificationDao.findAllByKnowledgeUser(user);
             List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
@@ -898,7 +921,7 @@ class ProjectServiceTest {
 
             assertEquals(5, knowledgeList.size());
 
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | PermissionException e) {
             assert false;
         }
     }
@@ -932,7 +955,7 @@ class ProjectServiceTest {
         Verification verification5 = verificationDao.save(new Verification(knowledge5, uses5));
 
         try {
-            projectService.deleteVerification(verification2.getId(), true);
+            projectService.deleteVerification(user.getId(), verification2.getId(), true);
 
             List<Verification> verificationList = verificationDao.findAllByKnowledgeUser(user);
             List<Knowledge> knowledgeList = knowledgeDao.findAllByUser(user);
@@ -947,7 +970,7 @@ class ProjectServiceTest {
             assertEquals(knowledge5, knowledgeList.get(2));
             assertEquals(3, knowledgeList.size());
 
-        } catch (InstanceNotFoundException e) {
+        } catch (InstanceNotFoundException | PermissionException e) {
             assert false;
         }
     }

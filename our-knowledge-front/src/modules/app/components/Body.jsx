@@ -7,7 +7,7 @@ import users, {FindUsersAdmin, FindUsersDeveloper} from '../../users';
 import {Technologies} from "../../technologies";
 import {Profile, UpdateProfile} from "../../profiles";
 import {FindProjectsDeveloper, FindProjectsAdmin, ProjectDetails, AddProject, UpdateProject} from "../../projects";
-import NewProjectFilter from "../../filters/components/newProjectFilter";
+import NewProjectFilter from "../../filters/add/newProjectFilter";
 
 const Body = () => {
 
@@ -25,6 +25,7 @@ const Body = () => {
                 {role==="Admin" && <Route path="/projects/addProject" element={<AddProject/>}/>}
                 {role==="Admin" && <Route path="/projects/updateProject" element={<UpdateProject/>}/>}
                 {role==="Admin" && <Route path="/users/findUsersAdmin" element={<FindUsersAdmin/>}/>}
+                {role==="Admin" && <Route path="/filters/newProjectFilter" element={<NewProjectFilter/>}/>}
                 {role==="Admin" && <Route path="/filters/newProjectFilter/:filterNameParam" element={<NewProjectFilter/>}/>}
                 {role==="Developer" && <Route path="/projects/findProjectsDeveloper" element={<FindProjectsDeveloper/>}/>}
                 {role==="Developer" && <Route path="/users/findUsersDeveloper" element={<FindUsersDeveloper/>}/>}

@@ -1,15 +1,6 @@
 import {FormattedMessage} from "react-intl";
-import {useDispatch, useSelector} from "react-redux";
-import users from "../../users";
-import React, {useEffect, useState} from "react";
-import filters from "../index";
-import TechnologyFilter from "./TechnologyFilter";
-import {saveFilter} from "../actions";
-import * as selectors from "../selectors";
-import FilterList from "./FilterList";
-import TreeList from "../../common/components/TreeList";
-import FilterTechnologyTree from "./FilterTechnologyTree";
-import projects from "../../projects";
+import {useState} from "react";
+import TechnologyFilter from "../../components/TechnologyFilter";
 
 
 const MoreOptions = () => {

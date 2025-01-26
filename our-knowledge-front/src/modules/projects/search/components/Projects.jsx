@@ -1,7 +1,7 @@
 import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 
-import {ProjectLink} from '../../common';
+import {ProjectLink} from '../../../common';
 
 const Projects = ({projects}) => (
 

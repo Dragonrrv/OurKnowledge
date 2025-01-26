@@ -2,7 +2,6 @@ package com.example.ourknowledgebackend.model.entities;
 
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,5 +11,4 @@ public interface ParticipationDao extends CrudRepository<Participation, Long> {
     Optional<Participation> findByUserAndProjectAndEndDateIsNull(User user, Project project);
 
     List<Participation> findAllByProjectOrderByStartDate(Project project);
-
 }

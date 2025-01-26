@@ -2,8 +2,8 @@ import {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {FormattedMessage} from 'react-intl';
 
-import ProjectsResult from './ProjectsResult';
-import projects from "../index";
+import ProjectsResult from '../components/ProjectsResult';
+import projects from "../../index";
 
 const FindProjectsDeveloper = () => {
 

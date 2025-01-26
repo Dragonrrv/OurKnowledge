@@ -4,13 +4,14 @@ import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.exceptions.PermissionException;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.PermissionChecker;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,6 +28,12 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     @Autowired
     private FilterDao filterDao;
+
+    @Autowired
+    private VerificationDao verificationDao;
+
+    @Autowired
+    private ParticipationDao participationDao;
 
     @Override
     public Long getUserIdByAuthentication() {
@@ -82,9 +89,27 @@ public class PermissionCheckerImpl implements PermissionChecker {
     }
 
     @Override
-    public Knowledge checkKnowledge(User user, Technology technology) throws InstanceNotFoundException {
+    public Knowledge checkKnowledge(User user, Technology technology){
         Optional<Knowledge> knowledge = knowledgeDao.findByUserAndTechnology(user, technology);
 
         return knowledge.orElse(null);
+    }
+
+    @Override
+    public Verification checkVerificationExistsAndBelongTo(Long verificationId, Long userId) throws InstanceNotFoundException, PermissionException {
+        Verification verification = verificationDao.findById(verificationId).orElseThrow(() -> new InstanceNotFoundException("project.entity.verification", verificationId));
+        if (!verification.getKnowledge().getUser().getId().equals(userId)) {
+            throw new PermissionException();
+        }
+        return verification;
+    }
+
+    @Override
+    public Participation checkParticipationExistsAndBelongsTo(Long participationId, Long userId) throws InstanceNotFoundException, PermissionException {
+        Participation participation = participationDao.findById(participationId).orElseThrow(() -> new InstanceNotFoundException("project.entity.participation", participationId));
+        if (!participation.getUser().getId().equals(userId)) {
+            throw new PermissionException();
+        }
+        return participation;
     }
 }

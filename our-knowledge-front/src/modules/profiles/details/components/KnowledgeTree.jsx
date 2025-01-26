@@ -2,10 +2,10 @@
 import PropTypes from 'prop-types';
 
 import {useState} from "react";
-import TechnologyTreeName from "../../common/components/TechnologyTreeName";
-import TickBox from "../../common/components/TickBox";
-import TreeList from "../../common/components/TreeList";
-import {ProjectLink} from "../../common";
+import TechnologyTreeName from "../../../common/components/TechnologyTreeName";
+import TreeList from "../../../common/components/TreeList";
+import {ProjectLink} from "../../../common";
+import {Checkbox} from "@mui/material";
 
 const KnowledgeTree = ({tree, dept}) => {
     const [isOpen, setIsOpen] = useState(true);
@@ -24,11 +24,11 @@ const KnowledgeTree = ({tree, dept}) => {
                 <div style={{flexBasis: '40%', paddingLeft: 2*dept+'em'}}>
                     <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
                 </div>
-                <div style={{flexBasis: '10%'}}>
-                    <TickBox ok={tree.parent.mainSkill} clickable={false}/>
+                <div style={{flexBasis: '10%', maxHeight: '1px', marginTop: '-6px' }}>
+                    <Checkbox checked={tree.parent.mainSkill} color="success" disableRipple={true} style={{ cursor: 'default' }} />
                 </div>
-                <div style={{flexBasis: '10%'}}>
-                    <TickBox ok={tree.parent.likeIt} clickable={false}/>
+                <div style={{flexBasis: '10%', maxHeight: '1px', marginTop: '-6px' }}>
+                    <Checkbox checked={tree.parent.likeIt} color="success" disableRipple={true} style={{ cursor: 'default' }} />
                 </div>
 
                 <div style={{flexBasis: '40%', display: 'flex', gap: '20px', overflow: 'auto'}}>
@@ -57,11 +57,16 @@ KnowledgeTree.propTypes = {
             knowledgeId: PropTypes.number.isRequired,
             likeIt: PropTypes.bool.isRequired,
             mainSkill: PropTypes.bool.isRequired,
-            verificationList: PropTypes.array.isRequired
+            verificationList: PropTypes.arrayOf(
+                PropTypes.shape({
+                    projectId: PropTypes.number.isRequired,
+                    projectName: PropTypes.string.isRequired
+                })
+            ).isRequired
         }).isRequired,
         children: PropTypes.array.isRequired
-    }).isRequired
-
+    }).isRequired,
+    dept: PropTypes.number.isRequired
 };
 
 export default KnowledgeTree;

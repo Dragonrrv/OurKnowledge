@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 
 import {Link} from 'react-router-dom';
+import {Chip} from "@mui/material";
 
 const ProjectLink = ({id, name}) => {
     return (
-        <Link to={`/projects/projectDetails/${id}`}>
+        <Link title={name} to={`/projects/projectDetails/${id}`}>
             {name}
         </Link>
     );

@@ -2,12 +2,14 @@
 import PropTypes from 'prop-types';
 
 import {useEffect, useState, useRef } from "react";
-import * as actions from "../actions";
+import * as actions from "../../actions";
 import {useDispatch} from "react-redux";
 import {useIntl} from "react-intl";
-import AddTechnology from "../../common/components/AddTechnology";
-import TechnologyTreeName from "../../common/components/TechnologyTreeName";
-import TreeList from "../../common/components/TreeList";
+import AddTechnology from "../../../common/components/AddTechnology";
+import TechnologyTreeName from "../../../common/components/TechnologyTreeName";
+import TreeList from "../../../common/components/TreeList";
+import {Button, IconButton} from "@mui/material";
+import {Delete} from "@mui/icons-material";
 
 const TechnologyTree = ({tree, dept}) => {
 
@@ -49,13 +51,11 @@ const TechnologyTree = ({tree, dept}) => {
                 setShowAddMenu(!showAddMenu);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [showAddMenu]);
 
     return (
         <div>
@@ -63,22 +63,13 @@ const TechnologyTree = ({tree, dept}) => {
                 <div style={{paddingLeft: 2*dept+'em'}}>
                     <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
                 </div>
-                <button
-                    onClick={handleRemove}
-                    title={`${intl.formatMessage({ id: 'project.global.buttons.delete' })} ${tree.parent.name}`}
-                    style={{
-                        color: 'white',
-                        marginLeft: '10px',
-                        border: 'none',
-                        background: 'red',
-                        cursor: 'pointer',
-                        borderRadius: '30%',
-                        height: '25px', // Ajusta la altura
-                        lineHeight: '25px', // Ajusta la altura del texto
-                    }}
-                >
-                    X
-                </button>
+                <div style={{height: "20px", marginTop: "-15px"}}>
+                    <IconButton title={`${intl.formatMessage({ id: 'project.global.buttons.delete' })} ${tree.parent.name}`}
+                                onClick={handleRemove}>
+                        <Delete scale="0.8" />
+                    </IconButton>
+                </div>
+
             </div>
             {showAddMenu && (
                 <div
@@ -109,7 +100,8 @@ TechnologyTree.propTypes = {
             name: PropTypes.string.isRequired
         }).isRequired,
         children: PropTypes.array.isRequired
-    }).isRequired
+    }).isRequired,
+    dept: PropTypes.number.isRequired
 };
 
 export default TechnologyTree;

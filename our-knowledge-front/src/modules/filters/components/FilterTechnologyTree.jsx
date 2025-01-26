@@ -1,17 +1,23 @@
+import {useEffect} from 'react';
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
-import TickBox from "../../common/components/TickBox";
 import TreeList from "../../common/components/TreeList";
 import PropTypes from "prop-types";
 import {useState} from "react";
 import * as actions from "../actions";
 import {useDispatch, useSelector} from "react-redux";
 import * as selectors from "../selectors";
+import {Checkbox} from "@mui/material";
 
 const FilterTechnologyTree = ({tree, dept}) => {
 
     const dispatch = useDispatch();
     const filterId = useSelector(selectors.getFilterId);
     const [isOpen, setIsOpen] = useState(true);
+    const [isMandatory, setIsMandatory] = useState(tree.parent.mandatory);
+
+    useEffect( () => {
+        setIsMandatory(tree.parent.mandatory);
+    }, [tree.parent.mandatory]);
 
     const toggleOpen = () => {
         setIsOpen(!isOpen);
@@ -19,7 +25,7 @@ const FilterTechnologyTree = ({tree, dept}) => {
 
     const updateMandatory = () => {
         dispatch(actions.updateFilterParam(tree.parent.filterParamId, filterId, tree.parent.id,
-            !tree.parent.mandatory, false))
+            !isMandatory, false))
     };
 
     const updateRecommended = () => {
@@ -34,13 +40,13 @@ const FilterTechnologyTree = ({tree, dept}) => {
                     <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
                 </div>
                 {!tree.parent.unnecessary && (
-                    <div style={{flexBasis: '40%', display: 'flex', marginTop: '5px'}}>
+                    <div style={{flexBasis: '40%', display: 'flex', maxHeight: '1px', marginTop: '-6px'}}>
                         <div style={{flexBasis: '50%'}}>
-                            <TickBox ok={tree.parent.mandatory} clickable={true} onClick={updateMandatory}/>
+                            <Checkbox checked={isMandatory} color="success" onClick={updateMandatory} />
                         </div>
                         {!tree.parent.recommendedUnnecessary && (
                             <div style={{flexBasis: '50%'}}>
-                                <TickBox ok={tree.parent.recommended} clickable={true} onClick={updateRecommended}/>
+                                <Checkbox checked={tree.parent.recommended} color="success" onClick={updateRecommended} />
                             </div>
                         )}
                     </div>
@@ -65,7 +71,8 @@ FilterTechnologyTree.propTypes = {
             recommendedUnnecessary: PropTypes.bool.isRequired
         }).isRequired,
         children: PropTypes.array.isRequired
-    }).isRequired
+    }).isRequired,
+    dept: PropTypes.number.isRequired
 };
 
 export default FilterTechnologyTree;

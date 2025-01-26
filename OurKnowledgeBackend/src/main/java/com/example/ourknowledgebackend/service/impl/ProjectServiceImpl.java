@@ -2,12 +2,14 @@ package com.example.ourknowledgebackend.service.impl;
 
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
+import com.example.ourknowledgebackend.exceptions.PermissionException;
 import com.example.ourknowledgebackend.infrastructure.MapFormatter;
 import com.example.ourknowledgebackend.infrastructure.OpenAIService;
 import com.example.ourknowledgebackend.model.*;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.Block;
 import com.example.ourknowledgebackend.service.KnowledgeService;
+import com.example.ourknowledgebackend.service.PermissionChecker;
 import com.example.ourknowledgebackend.service.ProjectService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,6 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserDao userDao;
 
     private final KnowledgeDao knowledgeDao;
+    private final PermissionChecker permissionChecker;
 
     @Override
     public Block<ProjectResult> listProjects(int page, int size, String keywords, Long filterId) throws InstanceNotFoundException {
@@ -105,7 +108,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = new Project(name, description, status, startDate, size);
         projectDao.save(project);
         try{
-            updateProjectTechnologies(project, technologiesId);
+            updateProjectTechnologies(project, technologiesId, true);
         } catch (InstanceNotFoundException e) {
             projectDao.delete(project);
             throw e;
@@ -136,7 +139,7 @@ public class ProjectServiceImpl implements ProjectService {
             project.setSize(size);
         }
         if(updateTechnologies){
-            updateProjectTechnologies(project, technologiesId);
+            updateProjectTechnologies(project, technologiesId, true);
         }
         projectDao.save(project);
     }
@@ -162,7 +165,7 @@ public class ProjectServiceImpl implements ProjectService {
             technologiesId.addAll(aiTechnologiesId);
         }
 
-        updateProjectTechnologies(project, technologiesId);
+        updateProjectTechnologies(project, technologiesId, false);
 
         projectDao.save(project);
     }
@@ -196,12 +199,10 @@ public class ProjectServiceImpl implements ProjectService {
 
             XPath xPath = XPathFactory.newInstance().newXPath();
 
-            ArrayList<String> technologyTokens = new ArrayList<>();
-
             String expression = "/project/dependencies/dependency";
             NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
 
-            technologyTokens.addAll(getGroupAndArtifactIds(nodeList));
+            ArrayList<String> technologyTokens = new ArrayList<>(getGroupAndArtifactIds(nodeList));
 
             expression = "/project/build/plugins/plugin";
             nodeList = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
@@ -212,7 +213,7 @@ public class ProjectServiceImpl implements ProjectService {
             Set<String> uniqueTokens = new HashSet<>(technologyTokens);
             technologyTokens = new ArrayList<>(uniqueTokens);
 
-            return technologyDao.findAllByNameInIgnoreCase(technologyTokens);
+            return technologyDao.findAllByRelevantTrueAndNameInIgnoreCase(technologyTokens);
 
         } catch (Exception e) {
             throw new RuntimeException();
@@ -224,12 +225,10 @@ public class ProjectServiceImpl implements ProjectService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(jsonContent);
 
-            ArrayList<String> technologyTokens = new ArrayList<>();
-
             String projectName = jsonNode.get("name").asText();
             JsonNode dependencies = jsonNode.get("dependencies");
 
-            technologyTokens.addAll(separateBySymbols(projectName));
+            ArrayList<String> technologyTokens = new ArrayList<>(separateBySymbols(projectName));
 
             Iterator<String> fieldNames = dependencies.fieldNames();
             while (fieldNames.hasNext()) {
@@ -238,7 +237,7 @@ public class ProjectServiceImpl implements ProjectService {
             Set<String> uniqueTokens = new HashSet<>(technologyTokens);
             technologyTokens = new ArrayList<>(uniqueTokens);
 
-            return technologyDao.findAllByNameInIgnoreCase(technologyTokens);
+            return technologyDao.findAllByRelevantTrueAndNameInIgnoreCase(technologyTokens);
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -262,9 +261,11 @@ public class ProjectServiceImpl implements ProjectService {
         return Arrays.asList(text.toLowerCase().split("[./@-]"));
     }
 
-    public void updateProjectTechnologies(Project project, List<Long> technologiesId) throws InstanceNotFoundException {
+    private void updateProjectTechnologies(Project project, List<Long> technologiesId, Boolean reset) throws InstanceNotFoundException {
 
-        usesDao.deleteAll();
+        if(reset){
+            usesDao.deleteAllByProject(project);
+        }
 
         for (Long technologyId : technologiesId) {
             try {
@@ -276,7 +277,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void deleteProject(Long projectId) throws InstanceNotFoundException {
         Optional<Project> project =  projectDao.findById(projectId);
-        if(!project.isPresent()){
+        if(project.isEmpty()){
             throw new InstanceNotFoundException("project.entities.technology", projectId);
         }
         projectDao.delete(project.get());
@@ -337,8 +338,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Participation updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException {
-        Participation participation = participationDao.findById(participationId).orElseThrow(() -> new InstanceNotFoundException("project.entity.participation", participationId));
+    public Participation updateParticipate(Long userId, Long participationId, String startDate, String endDate) throws InstanceNotFoundException, PermissionException {
+        Participation participation = permissionChecker.checkParticipationExistsAndBelongsTo(participationId, userId);
         if(startDate != null) {
             participation.setStartDate(startDate);
         }
@@ -385,7 +386,7 @@ public class ProjectServiceImpl implements ProjectService {
     private Verification addVerificationHierarchy(Uses uses, Knowledge knowledge) {
         if (knowledge.getTechnology().getParentId() != null) {
             Optional<Verification> parentVerification = verificationDao.findByUsesProjectAndKnowledgeUserAndKnowledgeTechnologyId(uses.getProject(), knowledge.getUser(), knowledge.getTechnology().getParentId());
-            if (!parentVerification.isPresent()) {
+            if (parentVerification.isEmpty()) {
                 addVerificationHierarchy(usesDao.findByProjectAndTechnologyId(uses.getProject(), uses.getTechnology().getParentId()),
                         knowledgeDao.findByUserAndTechnologyId(knowledge.getUser(),knowledge.getTechnology().getParentId()));
             }
@@ -394,8 +395,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Verification deleteVerification(Long verificationId, Boolean deleteKnowledge) throws InstanceNotFoundException {
-        Verification verification = verificationDao.findById(verificationId).orElseThrow(() -> new InstanceNotFoundException("project.entity.verification", verificationId));;
+    public Verification deleteVerification(Long userId, Long verificationId, Boolean deleteKnowledge) throws InstanceNotFoundException, PermissionException {
+        Verification verification = permissionChecker.checkVerificationExistsAndBelongTo(verificationId, userId);
 
         return deleteVerificationHierarchy(verification, deleteKnowledge);
     }

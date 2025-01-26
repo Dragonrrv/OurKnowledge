@@ -5,8 +5,9 @@ import * as selectors from '../selectors';
 import {useEffect} from "react";
 import technologies from "../index";
 import TreeList from "../../common/components/TreeList";
-import TechnologyTree from "./TechnologyTree";
+import TechnologyTree from "./components/TechnologyTree";
 import AddTechnology from "../../common/components/AddTechnology";
+import {Box} from "@mui/material";
 
 const Technologies= () => {
 
@@ -28,24 +29,18 @@ const Technologies= () => {
                     <FormattedMessage id="project.technologies.technologies.title"/>
                 </h5>
             </div>
-            <table className="table table-striped table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">
-                        <FormattedMessage id='project.global.fields.name'/>
-                    </th>
-                    <th scope="col">
-                        <FormattedMessage id='project.technologies.technologies.statistics'/>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
+            <Box>
+                <Box sx={{display: "flex", marginTop: "20px"}}>
+                    <Box sx={{flexGrow: "1"}}>
+                        <h6><FormattedMessage id='project.global.fields.name'/></h6>
                         <TreeList treeType={TechnologyTree} treeList={technologyTreeList} dept={0}/>
                         <AddTechnology parentId={null} relevant={true}/>
-                    </tr>
-                </tbody>
-            </table>
+                    </Box>
+                    <Box sx={{flexGrow: "1"}}>
+                        <h6><FormattedMessage id='project.technologies.technologies.statistics'/></h6>
+                    </Box>
+                </Box>
+            </Box>
         </div>
     )
 }

@@ -1,11 +1,11 @@
 import {useSelector, useDispatch} from 'react-redux';
 import {FormattedMessage} from 'react-intl';
 
-import * as selectors from '../selectors';
-import * as actions from '../actions';
-import {Pager} from '../../common';
+import * as selectors from '../../selectors';
+import * as actions from '../../actions';
+import {Pager} from '../../../common';
 import Projects from './Projects';
-import filters from "../../filters";
+import filters from "../../../filters";
 
 const ProjectsResult = ({keywords, useFilter}) => {
 

@@ -1,13 +1,11 @@
 package com.example.ourknowledgebackend.model.entities;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.example.ourknowledgebackend.model.KnownTechnology;
-import com.example.ourknowledgebackend.model.UsesTechnology;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface TechnologyDao extends CrudRepository<Technology, Long> {
 
@@ -17,5 +15,6 @@ public interface TechnologyDao extends CrudRepository<Technology, Long> {
 
     Optional<Technology> findByNameAndParentId(String name, Long parentId);
 
-    @Query("SELECT t FROM Technology t WHERE LOWER(t.name) IN :names")
-    List<Technology> findAllByNameInIgnoreCase(@Param("names") List<String> names);}
+    @Query("SELECT t FROM Technology t WHERE t.relevant is TRUE AND LOWER(t.name) IN :names")
+    List<Technology> findAllByRelevantTrueAndNameInIgnoreCase(@Param("names") List<String> names);
+}

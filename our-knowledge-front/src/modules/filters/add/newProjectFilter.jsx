@@ -1,4 +1,4 @@
-import TechnologyFilter from "./TechnologyFilter";
+import TechnologyFilter from "../components/TechnologyFilter";
 import React, {useEffect, useState} from "react";
 import filters from "../index";
 import {useDispatch} from "react-redux";

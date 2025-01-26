@@ -2,14 +2,13 @@
 import PropTypes from 'prop-types';
 
 import {useEffect, useState, useRef } from "react";
-import * as actions from "../actions";
-import {useDispatch, useSelector} from "react-redux";
-import AddTechnology from "../../common/components/AddTechnology";
-import TechnologyTreeName from "../../common/components/TechnologyTreeName";
-import TickBox from "../../common/components/TickBox";
-import users from "../../users";
-import TreeList from "../../common/components/TreeList";
+import * as actions from "../../actions";
+import {useDispatch} from "react-redux";
+import AddTechnology from "../../../common/components/AddTechnology";
+import TechnologyTreeName from "../../../common/components/TechnologyTreeName";
+import TreeList from "../../../common/components/TreeList";
 import {useIntl} from "react-intl";
+import {Checkbox} from "@mui/material";
 
 const UpdateKnowledgeTree = ({tree, dept}) => {
 
@@ -41,13 +40,11 @@ const UpdateKnowledgeTree = ({tree, dept}) => {
                 setShowAddMenu(!showAddMenu);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [contextMenuRef, showAddMenu]);
 
     const changeKnowledge = (known, technologyId, knowledgeId) => {
         if(known){
@@ -71,21 +68,25 @@ const UpdateKnowledgeTree = ({tree, dept}) => {
     return (
         <div>
             <div onContextMenu={handleAddMenu}  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{paddingLeft: 2*dept+'em'}}>
+                <div style={{paddingLeft: 2*dept+'em', flexBasis: '70%',}}>
                     <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
                 </div>
-                <div style={{ display: 'flex', gap: '60px' }}>
-                    <div style={{marginRight : tree.parent.knowledgeId==null ? '160px' : '0px'}}>
-                        <TickBox ok={tree.parent.knowledgeId!=null} clickable={true}
-                                 onClick={() => changeKnowledge(tree.parent.knowledgeId!=null, tree.parent.id, tree.parent.knowledgeId)}/>
+                <div style={{flexBasis: '30%', display: 'flex'}}>
+                    <div style={{flexBasis: '33%', maxHeight: '1px', marginTop: '-21px' }}>
+                        <Checkbox checked={tree.parent.knowledgeId != null} color="success"
+                                  onClick={() => changeKnowledge(tree.parent.knowledgeId != null, tree.parent.id, tree.parent.knowledgeId)}/>
                     </div>
-                    {tree.parent.knowledgeId!=null &&
-                        <TickBox ok={tree.parent.mainSkill} clickable={true}
-                                 onClick={() => updateMainSkill(tree.parent.mainSkill, tree.parent.knowledgeId)}/>
+                    {tree.parent.knowledgeId != null &&
+                        <div style={{flexBasis: '33%', maxHeight: '1px', marginTop: '-21px' }}>
+                            <Checkbox checked={tree.parent.mainSkill} color="success"
+                                      onClick={() => updateMainSkill(tree.parent.mainSkill, tree.parent.knowledgeId)}/>
+                        </div>
                     }
                     {tree.parent.knowledgeId != null &&
-                    <TickBox ok={tree.parent.likeIt} clickable={true}
-                             onClick={() => updateLikeIt(tree.parent.likeIt, tree.parent.knowledgeId)}/>
+                        <div style={{flexBasis: '33%', maxHeight: '1px', marginTop: '-21px' }}>
+                            <Checkbox checked={tree.parent.likeIt} color="success"
+                                      onClick={() => updateLikeIt(tree.parent.likeIt, tree.parent.knowledgeId)}/>
+                        </div>
                     }
                 </div>
             </div>
@@ -122,8 +123,8 @@ UpdateKnowledgeTree.propTypes = {
             mainSkill: PropTypes.bool
         }).isRequired,
         children: PropTypes.array.isRequired
-    }).isRequired
-
+    }).isRequired,
+    dept: PropTypes.number.isRequired
 };
 
 export default UpdateKnowledgeTree;

@@ -16,4 +16,5 @@ public interface UsesDao extends CrudRepository<Uses, Long> {
 
     Optional<Uses> findByProjectAndTechnology(Project project, Technology technology);
 
+    void deleteAllByProject(Project project);
 }

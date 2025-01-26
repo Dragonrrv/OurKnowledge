@@ -2,6 +2,7 @@ package com.example.ourknowledgebackend.service;
 
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
+import com.example.ourknowledgebackend.exceptions.PermissionException;
 import com.example.ourknowledgebackend.model.ProjectDetails;
 import com.example.ourknowledgebackend.model.ProjectResult;
 import com.example.ourknowledgebackend.model.entities.Participation;
@@ -32,11 +33,11 @@ public interface ProjectService {
 
     Participation participate(Long userId, Long projectId, String startDate, String endDate) throws InstanceNotFoundException, DuplicateInstanceException;
 
-    Participation updateParticipate(Long participationId, String startDate, String endDate) throws InstanceNotFoundException;
+    Participation updateParticipate(Long userId, Long participationId, String startDate, String endDate) throws InstanceNotFoundException, PermissionException;
 
     List<Verification> listVerification(Long userId, Long project) throws InstanceNotFoundException, InvalidAttributesException;
 
     Verification addVerification(Long userId, Long usesId) throws InstanceNotFoundException;
 
-    Verification deleteVerification(Long verificationId, Boolean deleteKnowledge) throws InstanceNotFoundException;
+    Verification deleteVerification(Long userId, Long verificationId, Boolean deleteKnowledge) throws InstanceNotFoundException, PermissionException;
 }

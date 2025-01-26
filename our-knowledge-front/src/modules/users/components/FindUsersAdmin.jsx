@@ -5,8 +5,8 @@ import users from "../index";
 import UsersResult from "./UsersResult";
 import {Link, useNavigate} from "react-router-dom";
 import filters from "../../filters";
-import MoreOptions from "../../filters/components/MoreOptions";
-import FilterList from "../../filters/components/FilterList";
+import MoreOptions from "../../filters/add/components/MoreOptions";
+import FilterList from "../../filters/add/components/FilterList";
 
 const FindUsersAdmin = () => {
 

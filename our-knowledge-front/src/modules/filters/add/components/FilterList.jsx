@@ -1,9 +1,9 @@
 import {useDispatch, useSelector} from "react-redux";
-import * as selectors from "../selectors";
-import * as actions from "../actions";
+import * as selectors from "../../selectors";
+import * as actions from "../../actions";
 import React, {useEffect} from "react";
-import filters from "../index";
-import users from "../../users";
+import filters from "../../index";
+import users from "../../../users";
 import {FormattedMessage, useIntl} from "react-intl";
 
 

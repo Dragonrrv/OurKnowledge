@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FormattedMessage} from 'react-intl';
 
-import ProjectsResult from './ProjectsResult';
-import projects from "../index";
+import ProjectsResult from '../components/ProjectsResult';
+import projects from "../../index";
 import {Link, useNavigate} from "react-router-dom";
-import FilterList from "../../filters/components/FilterList";
-import MoreOptions from "../../filters/components/MoreOptions";
-import filters from "../../filters";
+import FilterList from "../../../filters/add/components/FilterList";
+import MoreOptions from "../../../filters/add/components/MoreOptions";
+import filters from "../../../filters";
+import {Button, ButtonGroup} from "@mui/material";
 
 const FindProjectsAdmin = () => {
 
@@ -43,29 +44,26 @@ const FindProjectsAdmin = () => {
                                value={keywords} onChange={e => setKeywords(e.target.value)}/>
                     </div>
                     <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
-                        <button className="btn btn-primary my-2 my-sm-0"
+                        <Button  component={Link} to={`/projects/addProject`}
                                 style={{
                                     padding: '20px 40px', /* Relleno interno */
-                                }}
-                                onClick={() => navigate('/projects/addProject')}
-                        >
+                                }}>
                             <FormattedMessage id="project.projects.button.addProject"/>
-                        </button>
+                        </Button>
                     </div>
                 </div>
                 <MoreOptions/>
-                <div style={{display: 'flex'}}>
-                    <div className="nav-link" onClick={e => findProjects(e)} style={{cursor: 'pointer', color: 'blue'}} onMouseEnter={e => e.target.style.color = 'darkBlue'}  // Hover color
-                         onMouseLeave={e => e.target.style.color = 'blue'}>
-                        <FormattedMessage id='project.filters.search'/>
-                    </div><div className="nav-link" onClick={e => clearFilter(e)} style={{cursor: 'pointer', color: 'blue'}} onMouseEnter={e => e.target.style.color = 'darkBlue'}  // Hover color
-                         onMouseLeave={e => e.target.style.color = 'blue'}>
-                        <FormattedMessage id='project.filters.clear'/>
-                    </div>
-                    <Link className="nav-link" to={`/filters/newProjectFilter`}>
-                        <FormattedMessage id="project.filters.newFilter"/>
-                    </Link>
-                </div>
+                <ButtonGroup variant="text" aria-label="Basic button group">
+                    <Button onClick={e => findProjects(e)}>
+                        <FormattedMessage id='project.filters.search' />
+                    </Button>
+                    <Button onClick={e => clearFilter(e)}>
+                        <FormattedMessage id='project.filters.clear' />
+                    </Button>
+                    <Button component={Link} to={`/filters/newProjectFilter`}>
+                        <FormattedMessage id="project.filters.newFilter" />
+                    </Button>
+                </ButtonGroup>
                 <ProjectsResult keywords={keywords} useFilter={useFilter}/>
             </div>
             <FilterList/>

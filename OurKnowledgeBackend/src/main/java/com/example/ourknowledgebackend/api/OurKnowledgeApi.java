@@ -302,8 +302,11 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi, Filt
     public ResponseEntity updateParticipate(UpdateParticipateRequestDTO updateParticipateRequestDTO){
         try {
             Participation participation = projectService.updateParticipate(permissionChecker.getUserIdByAuthentication(),
+                    longId(updateParticipateRequestDTO.getParticipationId()),
                     updateParticipateRequestDTO.getStartDate(), updateParticipateRequestDTO.getEndDate());
             return ResponseEntity.status(200).body(projectService.projectDetails(participation.getProject().getId()));
+        } catch (PermissionException e) {
+            return ResponseEntity.status(403).body(e);
         } catch (InstanceNotFoundException e) {
             return ResponseEntity.status(404).body(e);
         }
@@ -340,8 +343,11 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi, Filt
         try {
             Verification verification = projectService.deleteVerification(
                     permissionChecker.getUserIdByAuthentication(),
+                    longId(deleteVerificationRequestDTO.getVerificationId()),
                     deleteVerificationRequestDTO.getDeleteKnowledge());
             return ResponseEntity.status(200).body(projectService.projectDetails(verification.getUses().getProject().getId()));
+        } catch (PermissionException e) {
+            return ResponseEntity.status(403).body(e);
         } catch (InstanceNotFoundException e) {
             return ResponseEntity.status(404).body(e);
         }
