@@ -1,8 +1,7 @@
-import {useEffect} from 'react';
 import TechnologyTreeName from "../../common/components/TechnologyTreeName";
 import TreeList from "../../common/components/TreeList";
 import PropTypes from "prop-types";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import * as actions from "../actions";
 import {useDispatch, useSelector} from "react-redux";
 import * as selectors from "../selectors";
@@ -13,11 +12,17 @@ const FilterTechnologyTree = ({tree, dept}) => {
     const dispatch = useDispatch();
     const filterId = useSelector(selectors.getFilterId);
     const [isOpen, setIsOpen] = useState(true);
-    const [isMandatory, setIsMandatory] = useState(tree.parent.mandatory);
+    const [needRender, setNeedRender] = useState(false)
 
-    useEffect( () => {
-        setIsMandatory(tree.parent.mandatory);
-    }, [tree.parent.mandatory]);
+    useEffect(() => {
+        reRender()
+    },[tree.parent.mandatory, tree.parent.recommended]);
+
+    const reRender = () => {
+        setNeedRender(true)
+        const timer = setTimeout(() => setNeedRender(false), 0);
+        return () => clearTimeout(timer);
+    }
 
     const toggleOpen = () => {
         setIsOpen(!isOpen);
@@ -25,7 +30,7 @@ const FilterTechnologyTree = ({tree, dept}) => {
 
     const updateMandatory = () => {
         dispatch(actions.updateFilterParam(tree.parent.filterParamId, filterId, tree.parent.id,
-            !isMandatory, false))
+            !tree.parent.mandatory, false))
     };
 
     const updateRecommended = () => {
@@ -39,10 +44,10 @@ const FilterTechnologyTree = ({tree, dept}) => {
                 <div style={{flexBasis: '60%', paddingLeft: 2*dept+'em'}}>
                     <TechnologyTreeName name={tree.parent.name} isOpen={isOpen} hasChildren={tree.children.length>0} onClick={toggleOpen}/>
                 </div>
-                {!tree.parent.unnecessary && (
+                {!needRender && !tree.parent.unnecessary && (
                     <div style={{flexBasis: '40%', display: 'flex', maxHeight: '1px', marginTop: '-6px'}}>
                         <div style={{flexBasis: '50%'}}>
-                            <Checkbox checked={isMandatory} color="success" onClick={updateMandatory} />
+                            <Checkbox checked={tree.parent.mandatory} color="success" onClick={updateMandatory} />
                         </div>
                         {!tree.parent.recommendedUnnecessary && (
                             <div style={{flexBasis: '50%'}}>
@@ -51,6 +56,7 @@ const FilterTechnologyTree = ({tree, dept}) => {
                         )}
                     </div>
                 )}
+
             </div>
             {isOpen && (
                 <TreeList treeType={FilterTechnologyTree} treeList={tree.children} dept={dept+1} />

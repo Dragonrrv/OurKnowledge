@@ -13,7 +13,6 @@ import {Button, ButtonGroup} from "@mui/material";
 const FindProjectsAdmin = () => {
 
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const filterId = useSelector(filters.selectors.getFilterId);
     const [keywords, setKeywords] = useState('');
     const [useFilter, setUseFilter] = useState(false);
@@ -44,7 +43,7 @@ const FindProjectsAdmin = () => {
                                value={keywords} onChange={e => setKeywords(e.target.value)}/>
                     </div>
                     <div style={{marginTop: '20px', marginLeft: '20px', marginRight: '20px'}}>
-                        <Button  component={Link} to={`/projects/addProject`}
+                        <Button  component={Link} to={`/projects/addProject`} variant="contained"
                                 style={{
                                     padding: '20px 40px', /* Relleno interno */
                                 }}>

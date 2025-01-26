@@ -28,7 +28,6 @@ const UsesTree = ({tree, dept}) => {
         if(verification == null) {
             dispatch(actions.addVerification(tree.parent.usesId))
         } else {
-            console.log(verification);
             dispatch(actions.deleteVerification(verification.id, window.confirm(intl.formatMessage({ id: "project.projectDetails.deleteValidation.knowledgeDelete" }))))
         }
     };
