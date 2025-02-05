@@ -34,18 +34,20 @@ const FilterList = () => {
     }
 
     return (
-        <Box sx={{border: '1px solid black', borderRadius: '8px', padding: '10px', marginLeft: "20px"}}>
+        <Box sx={{border: '1px solid black', borderRadius: '8px', padding: '10px', marginLeft: "20px", maxWidth: "200px"}}>
             <h6 style={{marginTop: '20px', marginBottom: '10px'}}><FormattedMessage id="project.global.fields.savedFilters"/></h6>
             {filterList && (
                 <Box >
                     {filterList.map(filter =>
                         <Box key={filter.id} sx={{marginTop: "5px"}}>
                             {filter.name === filterName ? (
-                                <Chip label={filter.name} onDelete={() => handleRemove(filter.id)}
+                                <Chip label={filter.name} title={filter.name}
+                                      onDelete={() => handleRemove(filter.id)}
                                       deleteIcon={<Delete />}
                                 />
                             ) : (
-                                <Chip label={filter.name} onClick={() => useFilter(filter.id)}
+                                <Chip label={filter.name} title={filter.name}
+                                      onClick={() => useFilter(filter.id)}
                                       onDelete={() => handleRemove(filter.id)}
                                       deleteIcon={<Delete />}
                                       variant="outlined"

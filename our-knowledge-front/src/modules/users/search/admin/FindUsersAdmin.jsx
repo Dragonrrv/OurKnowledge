@@ -1,12 +1,13 @@
 import {useDispatch, useSelector} from "react-redux";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {FormattedMessage} from "react-intl";
-import users from "../index";
-import UsersResult from "./UsersResult";
-import {Link, useNavigate} from "react-router-dom";
-import filters from "../../filters";
-import MoreOptions from "../../filters/add/components/MoreOptions";
-import FilterList from "../../filters/add/components/FilterList";
+import users from "../../index";
+import UsersResult from "../common/components/UsersResult";
+import Users from "./components/Users";
+import {Link} from "react-router-dom";
+import filters from "../../../filters";
+import MoreOptions from "../../../filters/add/components/MoreOptions";
+import FilterList from "../../../filters/add/components/FilterList";
 
 const FindUsersAdmin = () => {
 
@@ -52,7 +53,7 @@ const FindUsersAdmin = () => {
                         <FormattedMessage id="project.filters.newFilter"/>
                     </Link>
                 </div>
-                <UsersResult keywords={keywords} useFilter={useFilter}/>
+                <UsersResult UsersType={Users} keywords={keywords} useFilter={useFilter}/>
             </div>
             <FilterList/>
         </div>

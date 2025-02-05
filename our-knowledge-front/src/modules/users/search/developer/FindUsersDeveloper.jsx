@@ -1,18 +1,17 @@
-import {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
-
-import ProjectsResult from '../common/components/ProjectsResult';
-import Projects from './components/Projects';
-import projects from "../../index";
+import {useDispatch} from "react-redux";
+import {useEffect, useState} from "react";
+import users from "../../index";
+import UsersResult from "../common/components/UsersResult";
+import Users from "./components/Users";
 import {Box} from "@mui/material";
 
-const FindProjectsDeveloper = () => {
+const FindUsersDeveloper = () => {
 
     const dispatch = useDispatch();
     const [keywords, setKeywords] = useState('');
 
     useEffect(() => {
-        dispatch(projects.actions.findProjects(1, keywords.trim()));
+        dispatch(users.actions.findUsers(1, keywords.trim()));
     }, [dispatch, keywords]);
 
     return (
@@ -22,11 +21,11 @@ const FindProjectsDeveloper = () => {
                        style={{ maxWidth: '250px'}}
                        value={keywords} onChange={e => setKeywords(e.target.value)}/>
             </Box>
-            <ProjectsResult ProjectsType={Projects} keywords={keywords} useFilter={false}/>
+            <UsersResult UsersType={Users} keywords={keywords} useFilter={false}/>
         </div>
 
     );
 
 }
 
-export default FindProjectsDeveloper;
+export default FindUsersDeveloper;

@@ -1,8 +1,8 @@
 import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 
-import {ProjectLink} from '../../common';
-import ProfileLink from "../../common/components/ProfileLink";
+import {ProjectLink} from '../../../../common';
+import ProfileLink from "../../../../common/components/ProfileLink";
 
 const Users = ({users}) => (
 
@@ -19,9 +19,6 @@ const Users = ({users}) => (
                 <th scope="col">
                     <FormattedMessage id='project.global.fields.startDate'/>
                 </th>
-                <th scope="col">
-                    <FormattedMessage id='project.global.fields.recommendedTechnologies'/>
-                </th>
             </tr>
         </thead>
 
@@ -31,7 +28,6 @@ const Users = ({users}) => (
                     <td><ProfileLink id={user.id} name={user.email}/></td>
                     <td>{user.name}</td>
                     <td>{user.startDate}</td>
-                    <td>{user.recommendedCount}</td>
                 </tr>
             )}
         </tbody>

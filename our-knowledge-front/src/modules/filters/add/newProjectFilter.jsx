@@ -1,16 +1,15 @@
 import TechnologyFilter from "../components/TechnologyFilter";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import filters from "../index";
 import {useDispatch} from "react-redux";
 import {FormattedMessage} from "react-intl";
 import {useNavigate, useParams} from "react-router-dom";
+import {Button} from "@mui/material";
 
 const newProjectFilter = () => {
-    const {filterNameParam} = useParams() || '';
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [filterName, setFilterName] = useState(filterNameParam);
+    const [filterName, setFilterName] = useState(useParams().filterNameParam || '');
 
     useEffect(() => {
         dispatch(filters.actions.getDefaultFilter());
@@ -29,9 +28,9 @@ const newProjectFilter = () => {
                    value={filterName} onChange={e => setFilterName(e.target.value)}/>
             <TechnologyFilter/>
             <div style={{marginTop: '20px'}}>
-                <button className="btn btn-primary my-2 my-sm-0" onClick={e => saveFilter(e)}>
+                <Button variant="contained" onClick={saveFilter}>
                     <FormattedMessage id='project.global.buttons.save'/>
-                </button>
+                </Button>
             </div>
         </div>
     );

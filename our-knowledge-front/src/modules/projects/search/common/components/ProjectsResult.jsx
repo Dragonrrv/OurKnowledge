@@ -1,14 +1,13 @@
 import {useSelector, useDispatch} from 'react-redux';
 import {FormattedMessage} from 'react-intl';
 
-import * as selectors from '../../selectors';
-import * as actions from '../../actions';
-import {Pager} from '../../../common';
-import Projects from './Projects';
-import filters from "../../../filters";
+import * as selectors from '../../../selectors';
+import * as actions from '../../../actions';
+import {Pager} from '../../../../common';
+import filters from "../../../../filters";
+import PropTypes from "prop-types";
 
-const ProjectsResult = ({keywords, useFilter}) => {
-
+const ProjectsResult = ({ ProjectsType: Projects, keywords, useFilter}) => {
 
     const projectsResult = useSelector(selectors.getProjectsResult);
     const filterId = useSelector(filters.selectors.getFilterId);
@@ -21,7 +20,7 @@ const ProjectsResult = ({keywords, useFilter}) => {
     if (projectsResult.items.length === 0) {
         return (
             <div className="alert alert-danger" role="alert">
-                <FormattedMessage id='project.catalog.FindProjectsResult.noProjectsFound'/>
+                <FormattedMessage id='project.projects.findProjectsResult.noProjectsFound'/>
             </div>
         );
     }
@@ -49,6 +48,12 @@ const ProjectsResult = ({keywords, useFilter}) => {
 
     );
 
+}
+
+ProjectsResult.propTypes = {
+    ProjectsType: PropTypes.elementType.isRequired,
+    keywords: PropTypes.string.isRequired,
+    useFilter: PropTypes.bool.isRequired,
 }
 
 export default ProjectsResult;

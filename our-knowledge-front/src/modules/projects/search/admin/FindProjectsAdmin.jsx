@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {FormattedMessage} from 'react-intl';
 
-import ProjectsResult from '../components/ProjectsResult';
+import ProjectsResult from '../common/components/ProjectsResult';
+import Projects from './components/Projects';
 import projects from "../../index";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import FilterList from "../../../filters/add/components/FilterList";
 import MoreOptions from "../../../filters/add/components/MoreOptions";
 import filters from "../../../filters";
@@ -63,7 +64,7 @@ const FindProjectsAdmin = () => {
                         <FormattedMessage id="project.filters.newFilter" />
                     </Button>
                 </ButtonGroup>
-                <ProjectsResult keywords={keywords} useFilter={useFilter}/>
+                <ProjectsResult ProjectsType={Projects} keywords={keywords} useFilter={useFilter}/>
             </div>
             <FilterList/>
         </div>

@@ -74,7 +74,7 @@ export default {
     'project.projects.button.updateParticipation': 'Update Participation',
     'project.projects.participationList.alreadyParticipate': 'Remember you already have a participation',
 
-    'project.projects.FindProjectsResult.noProjectsFound': 'Not Projects Found',
+    'project.projects.findProjectsResult.noProjectsFound': 'Not Projects Found',
     'project.projects.button.updateProject': 'Update Project',
     'project.projects.button.addProject': 'New Project',
     'project.projects.button.addParticipation': 'Add Participation',
@@ -98,5 +98,7 @@ export default {
     'project.filters.filterByName': 'Filter by name: ',
     'project.filters.technologyFilter.title': 'Filter by technologies: ',
     'project.filters.filterList.noFilters': 'There\'s not filters saved',
+
+    'project.users.findUsersResult.noUsersFound': 'Not Users Found',
 
 }
