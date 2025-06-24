@@ -110,11 +110,10 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnology() {
-        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         try {
             String name = "Java";
             Long parentId = null;
-            technologyService.addTechnology(user.getId(), name, parentId, true);
+            technologyService.addTechnology(name, parentId, true);
             Optional<Technology> result = technologyDao.findByNameAndParentId(name, parentId);
 
             assert(result.isPresent());
@@ -126,12 +125,11 @@ class TechnologyServiceTest {
 
     @Test
     void addExistedTechnologyAdmin() {
-        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         String name = "Java";
         Long parentId = null;
         technologyDao.save(new Technology(name, parentId, false));
         try {
-            technologyService.addTechnology(user.getId(), name, parentId, true);
+            technologyService.addTechnology(name, parentId, true);
             Technology technology = technologyDao.findByNameAndParentId(name, parentId).get();
 
             assert technology.isRelevant();
@@ -143,11 +141,10 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyDeveloper() {
-        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         String name = "Java";
         Long parentId = null;
         try {
-            technologyService.addTechnology(user.getId(), name, parentId, false);
+            technologyService.addTechnology(name, parentId, false);
             Technology technology = technologyDao.findByNameAndParentId(name, parentId).get();
 
             assertFalse(technology.isRelevant());
@@ -158,21 +155,9 @@ class TechnologyServiceTest {
     }
 
     @Test
-    void addTechnologyUserNotFound() {
-        try {
-            technologyService.addTechnology(NON_EXISTENT_ID, "Java", null, true);
-        } catch (InstanceNotFoundException e) {
-            assert true;
-        } catch (DuplicateInstanceException | PermissionException e) {
-            assert false;
-        }
-    }
-
-    @Test
     void addTechnologyParentTechnologyNotFound() {
-        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         try {
-            technologyService.addTechnology(user.getId(), "Java", NON_EXISTENT_ID, true);
+            technologyService.addTechnology( "Java", NON_EXISTENT_ID, true);
         } catch (InstanceNotFoundException e) {
             assert true;
         } catch (DuplicateInstanceException | PermissionException e) {
@@ -182,10 +167,9 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyAdminDuplicate() {
-        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         technologyDao.save(new Technology("Java", null, true));
         try {
-            technologyService.addTechnology(user.getId(), "Java", null, true);
+            technologyService.addTechnology("Java", null, true);
         } catch (InstanceNotFoundException | PermissionException e) {
             assert false;
         } catch (DuplicateInstanceException e) {
@@ -195,10 +179,9 @@ class TechnologyServiceTest {
 
     @Test
     void addTechnologyDeveloperDuplicate() {
-        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
         technologyDao.save(new Technology("Java", null, true));
         try {
-            technologyService.addTechnology(user.getId(), "Java", null, false);
+            technologyService.addTechnology("Java", null, false);
         } catch (InstanceNotFoundException | PermissionException e) {
             assert false;
         } catch (DuplicateInstanceException e) {
@@ -207,25 +190,7 @@ class TechnologyServiceTest {
     }
 
     @Test
-    void addTechnologyPermissionException() {
-        User user = userDao.save(new User("Juan", "example@example.com", developerRole, null));
-        String name = "Java";
-        Long parentId = null;
-        try {
-            technologyService.addTechnology(user.getId(), name, parentId, true);
-            assert false;
-        } catch (InstanceNotFoundException | DuplicateInstanceException e) {
-            assert false;
-        } catch (PermissionException e) {
-
-            assert true;
-
-        }
-    }
-
-    @Test
     void deleteTechnology() {
-        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         Technology technology = technologyDao.save(new Technology("Java", null, true));
         try {
             technologyService.deleteTechnology(technology.getId(), false);
@@ -240,7 +205,6 @@ class TechnologyServiceTest {
 
     @Test
     void deleteChildTechnologies() {
-        User user = userDao.save(new User("Juan", "example@example.com", adminRole, null));
         Technology technology1 = technologyDao.save(new Technology("Backend", null, true));
         Technology technology2 = technologyDao.save(new Technology("Spring", technology1.getId(), true));
         Technology technology3 = technologyDao.save(new Technology("Maven", technology1.getId(), true));

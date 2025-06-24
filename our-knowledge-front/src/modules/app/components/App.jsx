@@ -25,8 +25,6 @@ const App = () => {
             setIsAuthenticated(authenticated);
         });
 
-
-
     }, [dispatch]);
 
     if(!isAuthenticated){

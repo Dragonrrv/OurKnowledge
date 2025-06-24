@@ -3,20 +3,21 @@ package com.example.ourknowledgebackend.service.impl;
 import com.example.ourknowledgebackend.exceptions.DuplicateInstanceException;
 import com.example.ourknowledgebackend.exceptions.InstanceNotFoundException;
 import com.example.ourknowledgebackend.exceptions.PermissionException;
-import com.example.ourknowledgebackend.model.*;
+import com.example.ourknowledgebackend.model.KnowledgeTree;
+import com.example.ourknowledgebackend.model.KnownTechnology;
+import com.example.ourknowledgebackend.model.SimpleVerification;
 import com.example.ourknowledgebackend.model.entities.*;
 import com.example.ourknowledgebackend.service.KnowledgeService;
 import com.example.ourknowledgebackend.service.PermissionChecker;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.example.ourknowledgebackend.service.TechnologyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.naming.directory.InvalidAttributesException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +59,7 @@ public class KnowledgeServiceImpl implements KnowledgeService {
         if(technologyId==null){
             if(technologyName!=null){
                 try {
-                    technologyService.addTechnology(userId, technologyName, parentTechnologyId, false);
+                    technologyService.addTechnology(technologyName, parentTechnologyId, false);
                 } catch (PermissionException | DuplicateInstanceException ignored) {}
                 technology = technologyDao.findByNameAndParentId(technologyName, parentTechnologyId).get();
             } else {

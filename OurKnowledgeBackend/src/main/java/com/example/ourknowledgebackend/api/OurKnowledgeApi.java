@@ -59,8 +59,8 @@ public class OurKnowledgeApi implements TechnologyApi, UserApi, ProjectApi, Filt
     @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity addTechnology(AddTechnologyRequestDTO addTechnologyRequestDTO) {
         try {
-            return ResponseEntity.status(200).body(technologyService.addTechnology( permissionChecker.getUserIdByAuthentication(),
-                    addTechnologyRequestDTO.getName(), longId(addTechnologyRequestDTO.getParentId()), true));
+            return ResponseEntity.status(200).body(technologyService.addTechnology(addTechnologyRequestDTO.getName(),
+                    longId(addTechnologyRequestDTO.getParentId()), true));
         } catch (InstanceNotFoundException e) {
             return ResponseEntity.status(404).body(e);
         } catch (DuplicateInstanceException e) {
